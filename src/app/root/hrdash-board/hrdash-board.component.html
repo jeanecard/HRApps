@@ -1,0 +1,14 @@
+<div fxFlex fxLayout="column" fxLayoutGap="10px">
+    <div fxLayout="row wrap">
+        <div *ngFor="let card of cards | async" fxFlex="25" fxFlex.sm="50" fxFlex.xs="100" style="padding: 5px;"
+            fxLayoutAlign=" stretch">
+            <mat-card class="card">
+                <div fxFlex fxLayout="column" fxLayoutGap="10px">
+                    <mat-spinner *ngIf="!card?.loaded"></mat-spinner>
+                    <img mat-card-image [alt]="card.alt" [src]="card.src" fxFlex="90" (load)="onImageLoaded(card)" />
+                    <button fxFlex mat-flat-button color="primary" (click)="onClick(card)">{{ card.title }}</button>
+                </div>
+            </mat-card>
+        </div>
+    </div>
+</div>

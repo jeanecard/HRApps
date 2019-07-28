@@ -1,0 +1,17 @@
+<mat-grid-list [cols]="columnCount" rowHeight="4:3" (window:resize)="onResize($event)">
+    <mat-grid-tile *ngFor="let card of cards" rowspan="1">
+        <div fxFlex fxLayout="column">
+            <mat-toolbar>
+                <mat-toolbar-row>
+                    <span>{{card.title}}</span>
+                    <span class="example-spacer"></span>
+                    <button mat-button>
+                        <mat-icon class="example-icon" aria-hidden="false" aria-label="Example user verified icon">
+                            more_vert</mat-icon>
+                    </button>
+                </mat-toolbar-row>
+            </mat-toolbar>
+            <img [alt]="card.alt" [src]="card.src" class="center" fxLayoutAlign="center" />
+        </div>
+    </mat-grid-tile>
+</mat-grid-list>
