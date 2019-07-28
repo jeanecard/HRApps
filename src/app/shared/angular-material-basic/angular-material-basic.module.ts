@@ -7,9 +7,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms'; // !TODO not 
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
-
-import { MatButtonModule, MatGridListModule } from '@angular/material';
 import {
+  MatButtonModule,
+  MatGridListModule,
   MatToolbarModule,
   MatSidenavModule,
   MatIconModule,
