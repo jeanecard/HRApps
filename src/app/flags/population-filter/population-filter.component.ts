@@ -13,8 +13,8 @@ export class PopulationFilterComponent implements OnInit {
 
   @Output() populationChanged = new EventEmitter<PopulationFilterModel>();
   population: PopulationFilterModel = new PopulationFilterModel();
-  private amountCtrl = new FormControl('5000000');
-  private overCtrl = new FormControl(true);
+  public amountCtrl = new FormControl('5000000');
+  public overCtrl = new FormControl(true);
 
 
   constructor() { }

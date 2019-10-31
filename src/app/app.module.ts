@@ -12,12 +12,14 @@ import { RootModule } from './root/root.module';
 import { build$ } from 'protractor/built/element';
 import { AppRoutingModule } from './app-routing.module';
 import { HighlightDirective } from './highlight.directive';
+import { FormatNumberDirective } from './shared/format-number.directive';
 
 
 @NgModule({
   declarations: [
     AppComponent,
     HighlightDirective,
+    FormatNumberDirective
   ],
   imports: [
     BrowserModule,
