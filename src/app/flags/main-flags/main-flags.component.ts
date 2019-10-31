@@ -66,5 +66,7 @@ export class MainFlagsComponent implements OnInit {
       this.breakpoint = 6;
     }
   }
+
+
 }
 

@@ -1,0 +1,12 @@
+<mat-card>
+    <mat-form-field [floatLabel]="always">
+        <mat-select placeholder="Language" (selectionChange)="onSelectionChange($event)">
+            <mat-option *ngFor="let language of languages" [value]="language">
+                {{language.name}}
+            </mat-option>
+        </mat-select>
+        <mat-label>
+            Language
+        </mat-label>
+    </mat-form-field>
+</mat-card>

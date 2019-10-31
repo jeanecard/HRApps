@@ -1,17 +1,17 @@
-<mat-grid-list [cols]="columnCount" rowHeight="4:3" (window:resize)="onResize($event)">
-    <mat-grid-tile *ngFor="let card of cards" rowspan="1">
-        <div fxFlex fxLayout="column">
-            <mat-toolbar>
-                <mat-toolbar-row>
-                    <span>{{card.title}}</span>
-                    <span class="example-spacer"></span>
-                    <button mat-button>
-                        <mat-icon class="example-icon" aria-hidden="false" aria-label="Example user verified icon">
-                            more_vert</mat-icon>
-                    </button>
-                </mat-toolbar-row>
-            </mat-toolbar>
-            <img [alt]="card.alt" [src]="card.src" class="center" fxLayoutAlign="center" />
-        </div>
-    </mat-grid-tile>
-</mat-grid-list>
+<div fxLayout="row wrap" fxLayoutAlign="space-around center" fxLayoutGap="10px grid"
+    style="flex-flow: row wrap; display: flex; align-items: center; box-sizing: border-box; margin: 0px -10px -10px 0px; place-content: center space-around;">
+    <div fxFlex *ngFor="let member of cards">
+        <mat-card fxFlex>
+            <mat-card-header>
+                <mat-card-title>{{member.name}}</mat-card-title>
+                <mat-card-subtitle>{{member.nativeName}}</mat-card-subtitle>
+            </mat-card-header>
+            <img mat-card-image [src]="member.flag" alt="Flag of {{member.name}}">
+            <mat-card-content>
+                <p>
+                    Population : {{member.population}}
+                </p>
+            </mat-card-content>
+        </mat-card>
+    </div>
+</div>

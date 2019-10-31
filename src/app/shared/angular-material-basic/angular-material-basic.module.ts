@@ -6,6 +6,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'; // !TODO not angular material module
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSliderModule } from '@angular/material/slider';
 
 import {
   MatButtonModule,
@@ -37,6 +38,7 @@ import { MatInputModule } from '@angular/material/input';
     MatListModule,
     MatTableModule,
     MatSlideToggleModule,
+    MatSliderModule,
     MatCheckboxModule,
     MatDialogModule,
     MatMenuModule,
@@ -59,6 +61,7 @@ import { MatInputModule } from '@angular/material/input';
     MatListModule,
     MatTableModule,
     MatSlideToggleModule,
+    MatSliderModule,
     MatCheckboxModule,
     MatDialogModule,
     MatMenuModule,

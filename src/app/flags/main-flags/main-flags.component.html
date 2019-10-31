@@ -4,48 +4,20 @@
         [attr.role]="isHandset ? 'dialog' : 'navigation'" [mode]="(isHandset | async)!.matches ? 'over' : 'side'"
         [opened]="!(isHandset | async)!.matches">
         <mat-toolbar color="primary">
-            <img src="../../../assets/icons/Flag14.svg" alt="HR Flag icon" class="logo-img">
+            <!-- <img src="../../../assets/icons/International.png" alt="HR Flag icon" class="logo-img"> -->
             <span>HR Flags</span>
         </mat-toolbar>
-        <div fxFlex fxLayout="column" fxLayoutGap="10px">
-            <form>
-                <mat-card>
-                    <mat-form-field class="example-full-width">
-                        <input type="text" placeholder="Continent" aria-label="Continent" matInput
-                            [formControl]="myControl" [matAutocomplete]="auto">
-                        <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
-                            <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
-                                {{option}}
-                            </mat-option>
-                        </mat-autocomplete>
-                    </mat-form-field>
-                </mat-card>
-
-                <mat-card>
-                    <mat-form-field class="example-full-width">
-                        <input type="text" placeholder="Langage" aria-label="Continent" matInput
-                            [formControl]="myControl" [matAutocomplete]="auto">
-                        <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
-                            <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
-                                {{option}}
-                            </mat-option>
-                        </mat-autocomplete>
-                    </mat-form-field>
-                </mat-card>
-                <mat-divider></mat-divider>
-                <mat-card>
-                    <mat-form-field class="example-full-width">
-                        <input type="text" placeholder="Inhabitants (less than)" aria-label="Continent" matInput
-                            [formControl]="myControl" [matAutocomplete]="auto">
-                        <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
-                            <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
-                                {{option}}
-                            </mat-option>
-                        </mat-autocomplete>
-                    </mat-form-field>
-                </mat-card>
-            </form>
-        </div>
+        <!-- <div fxFlex fxLayout="column" fxLayoutGap="10px"> -->
+        <form>
+            <app-region-filter
+                (regionSelected)="languageFilterer.onRegionChange($event);flagsList.onRegionChanged($event)">
+            </app-region-filter>
+            <app-language-filter #languageFilterer (languageChanged)="flagsList.onLanguageChanged($event)">
+            </app-language-filter>
+            <app-population-filter (populationChanged)="flagsList.onPopulationChanged($event)">
+            </app-population-filter>
+        </form>
+        <!-- </div> -->
     </mat-sidenav>
     <!-- Main Tool Bar -->
     <mat-sidenav-content>
@@ -55,7 +27,7 @@
             </button>
         </mat-toolbar>
         <!-- MAIN CONTENT -->
-        <app-flags-list></app-flags-list>
+        <app-flags-list #flagsList></app-flags-list>
     </mat-sidenav-content>
 
 </mat-sidenav-container>

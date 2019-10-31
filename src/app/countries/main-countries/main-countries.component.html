@@ -1,6 +1,23 @@
-<div fxFlex fxLayout="column" fxLayoutGap="10px">
-    <div fxFlex="100" style="padding: 5px;">
-        <h1>Maps 2 under construction </h1>
-        <img mat-card-image src='./assets/icons/barrier.svg' alt="barrier" />
-    </div>
-</div>
+<mat-sidenav-container>
+    <mat-sidenav></mat-sidenav>
+    <mat-sidenav-content>
+        <div fxLayout="row wrap" fxFlex fxLayoutAlign="space-around center" fxLayoutGap="10px grid"
+            style="flex-flow: row wrap; display: flex; align-items: center; box-sizing: border-box; margin: 0px -10px -10px 0px; place-content: center space-around;">
+            <div fxFlex *ngFor="let member of members">
+                <mat-card fxFlex>
+                    <mat-card-header>
+                        <div mat-card-avatar class="example-header-image"></div>
+                        <mat-card-title>{{member.title}}</mat-card-title>
+                        <mat-card-subtitle>{{member.subtitle}}</mat-card-subtitle>
+                    </mat-card-header>
+                    <img mat-card-image [src]="member.url" alt="Photo of {{member.title}}">
+                    <mat-card-content>
+                        <p>
+                            {{member.content}}
+                        </p>
+                    </mat-card-content>
+                </mat-card>
+            </div>
+        </div>
+    </mat-sidenav-content>
+</mat-sidenav-container>

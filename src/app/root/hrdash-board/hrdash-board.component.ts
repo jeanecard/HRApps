@@ -14,7 +14,7 @@ export class HRDashBoardComponent {
   cards = this.breakpointObserver.observe(Breakpoints.Handset).pipe(
     map(({ matches }) => {
       return [
-        { title: 'HR Flags', alt: 'Flag', src: '../../../assets/icons/Flag14.svg', textImage: 'truc', reDirect: '/flags' },
+        { title: 'HR Flags', alt: 'Flag', src: '../../../assets/icons/International.png', textImage: 'truc', reDirect: '/flags' },
         { title: 'HR Map', alt: 'Map', src: '../../../assets/icons/map95.svg', textImage: 'truc', reDirect: '/countries' },
         {
           title: 'HR GeoLocation',

@@ -11,10 +11,14 @@ export class MainGeoLocatorComponent implements OnInit {
     alt: 'En construction',
     title: 'En construction ...'
   };
+  data: Array<number> = new Array<number>();
 
   constructor() { }
 
   ngOnInit() {
+    for (let i = 0; i < 10; i++) {
+      this.data.push(1);
+    }
   }
 
 }

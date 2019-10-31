@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { environment } from '../environments/environment';
+import { HttpClientModule } from '@angular/common/http';
 
 
 import { AppComponent } from './app.component';
@@ -10,10 +11,13 @@ import { RootModule } from './root/root.module';
 
 import { build$ } from 'protractor/built/element';
 import { AppRoutingModule } from './app-routing.module';
+import { HighlightDirective } from './highlight.directive';
+
 
 @NgModule({
   declarations: [
     AppComponent,
+    HighlightDirective,
   ],
   imports: [
     BrowserModule,
@@ -21,6 +25,7 @@ import { AppRoutingModule } from './app-routing.module';
     BrowserAnimationsModule,
     RootModule,
     AppRoutingModule,
+    HttpClientModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
