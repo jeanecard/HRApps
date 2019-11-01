@@ -14,17 +14,33 @@ export class HRDashBoardComponent {
   cards = this.breakpointObserver.observe(Breakpoints.Handset).pipe(
     map(({ matches }) => {
       return [
-        { title: 'HR Flags', alt: 'Flag', src: '../../../assets/icons/International.png', textImage: 'truc', reDirect: '/flags' },
-        { title: 'HR Map', alt: 'Map', src: '../../../assets/icons/map95.svg', textImage: 'truc', reDirect: '/countries' },
+        {
+          title: 'HR Flags',
+          alt: 'Flag',
+          src: '../../../assets/icons/International.png',
+          caption: 'Search country flags',
+          reDirect: '/flags'
+        },
+        {
+          title: 'HR Map',
+          alt: 'Map',
+          src: '../../../assets/icons/map95.svg',
+          caption: 'Search country on map',
+          reDirect: '/countries'
+        },
         {
           title: 'HR GeoLocation',
           alt: 'Geo location',
-          src: '../../../assets/icons/geoLocator11.svg',
-          textImage: 'truc',
+          src: '../../../assets/icons/geoLocator12.svg',
+          caption: 'Search anything on map',
           reDirect: '/geolocator'
         },
         {
-          title: 'HR Ornithology', alt: 'Bird', src: '../../../assets/icons/hrnithologie4.svg', textImage: 'truc', reDirect: '/ornithology'
+          title: 'HR Ornithology',
+          alt: 'Bird',
+          src: '../../../assets/icons/hrnithologie4.svg',
+          caption: 'Birds sound recognition',
+          reDirect: '/ornithology'
         }
       ];
     })

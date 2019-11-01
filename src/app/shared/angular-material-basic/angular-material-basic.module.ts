@@ -21,6 +21,7 @@ import {
   MatDialogModule,
   MatMenuModule,
   MatRadioModule,
+  MatBadgeModule,
 } from '@angular/material';
 
 import { MatInputModule } from '@angular/material/input';
@@ -50,6 +51,7 @@ import { MatInputModule } from '@angular/material/input';
     ReactiveFormsModule,
     MatAutocompleteModule,
     MatProgressSpinnerModule,
+    MatBadgeModule
   ],
   exports: [
     MatCardModule,
@@ -72,7 +74,8 @@ import { MatInputModule } from '@angular/material/input';
     MatInputModule,
     ReactiveFormsModule,
     MatAutocompleteModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatBadgeModule
   ],
 })
 export class AngularMaterialBasicModule { }

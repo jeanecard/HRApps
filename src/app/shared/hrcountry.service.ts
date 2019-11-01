@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { Region } from '../model/region';
 import { Language } from '../model/language';
 import { PopulationFilterModel } from '../model/population-filter-model';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -32,6 +33,19 @@ export class HRCountryService {
       console.log('To do rxjs Filter');
     }
     console.log('Je vais faire une query avec : ' + query);
-    return this.http.get<HRCountry[]>(query);
+    if (population) {
+      if (population.over) {
+        console.log('population supérieure à  : ' + population.amount);
+
+        return this.http.get<HRCountry[]>(query).pipe(map(countries => countries.filter(
+          country => country.population > population.amount)));
+      } else {
+        console.log('population inférieure à  : ' + population.amount);
+        return this.http.get<HRCountry[]>(query).pipe(map(countries => countries.filter(
+          country => country.population < population.amount)));
+      }
+    } else {
+      return this.http.get<HRCountry[]>(query);
+    }
   }
 }

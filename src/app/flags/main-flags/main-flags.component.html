@@ -5,7 +5,7 @@
         [opened]="!(isHandset | async)!.matches">
         <mat-toolbar color="primary">
             <!-- <img src="../../../assets/icons/International.png" alt="HR Flag icon" class="logo-img"> -->
-            <span>HR Flags</span>
+            <span matBadge="{{flagsList.cards?.length}}" matBadgeOverlap="false" matBadgeColor="warn">HR Flags</span>
         </mat-toolbar>
         <!-- <div fxFlex fxLayout="column" fxLayoutGap="10px"> -->
         <form>
