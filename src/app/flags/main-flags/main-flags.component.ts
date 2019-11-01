@@ -15,25 +15,14 @@ import { FormControl } from '@angular/forms';
 export class MainFlagsComponent implements OnInit {
 
   myControl = new FormControl();
-  options: string[] = ['All', 'Africa', 'Europe', 'Asia', 'Polar', 'America', 'Oceania'];
-  filteredOptions: Observable<string[]>;
+
   isHandset: Observable<BreakpointState> = this.breakpointObserver.observe(Breakpoints.Handset);
   breakpoint = 1;
 
   constructor(private breakpointObserver: BreakpointObserver) {
   }
 
-  onImageLoaded(card: any): void {
-    if (card) {
-      card.loaded = true;
-    }
-  }
-
   ngOnInit() {
-    this.filteredOptions = this.myControl.valueChanges.pipe(
-      startWith(''),
-      map(value => this._filter(value))
-    );
     if (window.innerWidth <= 400) {
       this.breakpoint = 1;
     } else if (window.innerWidth <= 600) {
@@ -46,13 +35,6 @@ export class MainFlagsComponent implements OnInit {
       this.breakpoint = 6;
     }
   }
-
-  private _filter(value: string): string[] {
-    const filterValue = value.toLowerCase();
-
-    return this.options.filter(option => option.toLowerCase().indexOf(filterValue) === 0);
-  }
-
   onResize(event: any): void {
     if (event.target.innerWidth <= 400) {
       this.breakpoint = 1;
@@ -66,7 +48,5 @@ export class MainFlagsComponent implements OnInit {
       this.breakpoint = 6;
     }
   }
-
-
 }
 

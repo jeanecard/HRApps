@@ -1,23 +1,31 @@
-<mat-sidenav-container>
-    <mat-sidenav></mat-sidenav>
-    <mat-sidenav-content>
-        <div fxLayout="row wrap" fxFlex fxLayoutAlign="space-around center" fxLayoutGap="10px grid"
-            style="flex-flow: row wrap; display: flex; align-items: center; box-sizing: border-box; margin: 0px -10px -10px 0px; place-content: center space-around;">
-            <div fxFlex *ngFor="let member of members">
-                <mat-card fxFlex>
-                    <mat-card-header>
-                        <div mat-card-avatar class="example-header-image"></div>
-                        <mat-card-title>{{member.title}}</mat-card-title>
-                        <mat-card-subtitle>{{member.subtitle}}</mat-card-subtitle>
-                    </mat-card-header>
-                    <img mat-card-image [src]="member.url" alt="Photo of {{member.title}}">
-                    <mat-card-content>
-                        <p>
-                            {{member.content}}
-                        </p>
-                    </mat-card-content>
-                </mat-card>
-            </div>
-        </div>
+<mat-sidenav-container class="sidenav-container">
+    <!-- LEFT SIDE NAV -->
+    <mat-sidenav #leftDrawer class="left-sidenav" position="start" fixedInViewport="true"
+        [attr.role]="isHandset ? 'dialog' : 'navigation'" [mode]="(isHandset | async)!.matches ? 'over' : 'side'"
+        [opened]="!(isHandset | async)!.matches">
+        <mat-toolbar color="primary">
+            <span matBadge="{{flagsList?.cards?.length}}" matBadgeOverlap="false" matBadgeColor="warn">HR Map</span>
+        </mat-toolbar>
+        <form>
+            <!-- <app-region-filter
+                (regionSelected)="languageFilterer.onRegionChange($event);flagsList.onRegionChanged($event)">
+            </app-region-filter>
+            <app-language-filter #languageFilterer (languageChanged)="flagsList.onLanguageChanged($event)">
+            </app-language-filter>
+            <app-population-filter (populationChanged)="flagsList.onPopulationChanged($event)">
+            </app-population-filter> -->
+        </form>
+        <!-- </div> -->
+    </mat-sidenav>
+    <!-- Main Tool Bar -->
+    <mat-sidenav-content class="saucisse">
+        <mat-toolbar color="primary">
+            <button type="button" aria-label="Toggle sidenav" mat-icon-button (click)="leftDrawer.toggle()">
+                <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+            </button>
+        </mat-toolbar>
+        <!-- MAIN CONTENT -->
+        <div id="map" class="map"></div>
     </mat-sidenav-content>
+
 </mat-sidenav-container>
