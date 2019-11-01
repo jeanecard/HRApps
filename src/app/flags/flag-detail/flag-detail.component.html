@@ -1,1 +1,18 @@
-<p>flag-detail works!</p>
+<mat-card class="example-card">
+    <mat-card-header>
+        <!-- <div mat-card-avatar class="example-header-image"></div> -->
+        <mat-card-title>{{data.name}}</mat-card-title>
+        <mat-card-subtitle>{{data.nativeName}} ({{data.alpha3Code}})</mat-card-subtitle>
+    </mat-card-header>
+    <img mat-card-image [src]="data.flag" alt="XX">
+    <mat-card-content>
+        <p>
+            Capital : {{data.capital}}<br>
+            Inahbitants : {{data.population}}
+        </p>
+    </mat-card-content>
+    <mat-card-actions>
+        <button mat-button (click)="onCloseClick()">CLOSE</button>
+        <button mat-button>SHARE</button>
+    </mat-card-actions>
+</mat-card>

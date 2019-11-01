@@ -8,6 +8,9 @@ import OlView from 'ol/View';
 import { fromLonLat } from 'ol/proj';
 import { Observable } from 'rxjs';
 import { BreakpointState, BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { Language } from 'src/app/model/language';
+import { Region } from 'src/app/model/region';
+import { PopulationFilterModel } from 'src/app/model/population-filter-model';
 
 @Component({
   selector: 'app-main-countries',
@@ -22,6 +25,12 @@ export class MainCountriesComponent implements OnInit, AfterViewInit {
   view: OlView;
   isHandset: Observable<BreakpointState> = this.breakpointObserver.observe(Breakpoints.Handset);
   breakpoint = 1;
+
+  language: Language = null;
+  region: Region = Region.All;
+  population: PopulationFilterModel = null;
+  countriesList: Array<any>[] = new Array<any>();
+
   constructor(private breakpointObserver: BreakpointObserver) { }
 
   ngOnInit() {
@@ -47,5 +56,26 @@ export class MainCountriesComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     this.map.setTarget('map');
+  }
+
+  onLanguageChanged(languageEvent: Language) {
+    this.language = languageEvent;
+    console.log('Je suis notifié sur langage');
+    console.log(languageEvent);
+    // this.populateCards(this.region, this.language, this.population);
+  }
+
+  onPopulationChanged(populationEvent: PopulationFilterModel) {
+    this.population = populationEvent;
+    console.log('Je suis notifié sur population');
+    console.log(populationEvent);
+    // this.populateCards(this.region, this.language, this.population);
+  }
+
+  onRegionChanged(regionEvent: Region) {
+    this.region = regionEvent;
+    console.log('Je suis notifié sur region');
+    console.log(regionEvent);
+    // this.populateCards(this.region, this.language, this.population);
   }
 }

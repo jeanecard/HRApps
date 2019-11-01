@@ -6,6 +6,7 @@ import { CountriesRoutingModule } from './countries-routing.module';
 import { LayoutModule } from '@angular/cdk/layout';
 import { AngularMaterialBasicModule } from '../shared/angular-material-basic/angular-material-basic.module';
 import { RootModule } from '../root/root.module';
+import { FiltersModule } from '../shared/components/filters.module';
 
 
 @NgModule({
@@ -15,7 +16,8 @@ import { RootModule } from '../root/root.module';
     CommonModule,
     LayoutModule,
     AngularMaterialBasicModule,
-    RootModule
+    RootModule,
+    FiltersModule
   ],
   exports: [
     MainCountriesComponent

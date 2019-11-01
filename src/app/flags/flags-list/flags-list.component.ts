@@ -1,9 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ɵConsole } from '@angular/core';
 import { Language } from 'src/app/model/language';
 import { PopulationFilterModel } from 'src/app/model/population-filter-model';
 import { Region } from 'src/app/model/region';
 import { HRCountryService } from 'src/app/shared/hrcountry.service';
 import { HRCountry } from 'src/app/model/hrcountry';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { FlagDetailComponent } from '../flag-detail/flag-detail.component';
+
 
 @Component({
   selector: 'app-flags-list',
@@ -17,7 +20,9 @@ export class FlagsListComponent implements OnInit {
   region: Region = Region.All;
   population: PopulationFilterModel = null;
 
-  constructor(private countryService: HRCountryService) { }
+  constructor(
+    private countryService: HRCountryService,
+    public dialog: MatDialog) { }
 
   populateCards(regionParam: Region, languageParam: Language, populationParam: PopulationFilterModel) {
     this.cards = new Array<HRCountry>();
@@ -65,4 +70,15 @@ export class FlagsListComponent implements OnInit {
     this.populateCards(this.region, this.language, this.population);
   }
 
+  openDialog(country: HRCountry): void {
+    const dialogRef = this.dialog.open(FlagDetailComponent, {
+      width: '400px',
+      data: country
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+      // this.animal = result;
+    });
+  }
 }

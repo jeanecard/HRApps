@@ -7,23 +7,21 @@ import { MainFlagsComponent } from './main-flags/main-flags.component';
 import { FlagDetailComponent } from './flag-detail/flag-detail.component';
 import { FlagsRoutingModule } from './flags-routing.module';
 import { FlagsListComponent } from './flags-list/flags-list.component';
-import { RegionFilterComponent } from './region-filter/region-filter.component';
-import { LanguageFilterComponent } from './language-filter/language-filter.component';
-import { PopulationFilterComponent } from './population-filter/population-filter.component';
+import { FiltersModule } from '../shared/components/filters.module';
 
 @NgModule({
   declarations: [
     MainFlagsComponent,
     FlagDetailComponent,
     FlagsListComponent,
-    RegionFilterComponent,
-    LanguageFilterComponent,
-    PopulationFilterComponent],
+  ],
+  entryComponents: [FlagDetailComponent],
   imports: [
     FlagsRoutingModule,
     CommonModule,
     LayoutModule,
-    AngularMaterialBasicModule
+    AngularMaterialBasicModule,
+    FiltersModule
   ],
   exports: [
     MainFlagsComponent,

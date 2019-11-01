@@ -4,16 +4,15 @@
         [attr.role]="isHandset ? 'dialog' : 'navigation'" [mode]="(isHandset | async)!.matches ? 'over' : 'side'"
         [opened]="!(isHandset | async)!.matches">
         <mat-toolbar color="primary">
-            <span matBadge="{{flagsList?.cards?.length}}" matBadgeOverlap="false" matBadgeColor="warn">HR Map</span>
+            <span matBadge="{{countriesList?.length}}" matBadgeOverlap="false" matBadgeColor="warn">HR Map</span>
         </mat-toolbar>
         <form>
-            <!-- <app-region-filter
-                (regionSelected)="languageFilterer.onRegionChange($event);flagsList.onRegionChanged($event)">
+            <app-region-filter (regionSelected)="languageFilterer.onRegionChange($event);onRegionChanged($event)">
             </app-region-filter>
-            <app-language-filter #languageFilterer (languageChanged)="flagsList.onLanguageChanged($event)">
+            <app-language-filter #languageFilterer (languageChanged)="onLanguageChanged($event)">
             </app-language-filter>
-            <app-population-filter (populationChanged)="flagsList.onPopulationChanged($event)">
-            </app-population-filter> -->
+            <app-population-filter (populationChanged)="onPopulationChanged($event)">
+            </app-population-filter>
         </form>
         <!-- </div> -->
     </mat-sidenav>
