@@ -1,6 +1,6 @@
 <mat-card>
 
-    <mat-form-field [floatLabel]="always">
+    <mat-form-field>
         <mat-select placeholder="Region" [(value)]="selectedRegion" (selectionChange)="onSelection($event)">
             <mat-option *ngFor="let region of regions$ |async" [value]="region">
                 {{region}}

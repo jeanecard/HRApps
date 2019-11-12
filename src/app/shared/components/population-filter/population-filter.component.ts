@@ -15,24 +15,33 @@ export class PopulationFilterComponent implements OnInit {
   public amountCtrl = new FormControl();
   public overCtrl = new FormControl();
 
-
+  public populationsFilter = [
+    { value: 0, name: 'No filter' },
+    { value: 100000, name: '100 000' },
+    { value: 1000000, name: '1 Million' },
+    { value: 5000000, name: '5 Millions' },
+    { value: 20000000, name: '20 Millions' },
+    { value: 100000000, name: '100 Millions' },
+    { value: 500000000, name: '500 Millions' },
+    { value: 1000000000, name: '1 Billion' }
+  ];
 
   constructor() { }
 
   ngOnInit() {
   }
-
   onSelection(populationEvent: MatSelectChange) {
-    console.log('Selection changee pour composant Population (ddl) : ' + populationEvent.value);
     const populationValue = populationEvent.value;
     this.population.amount = populationValue;
     this.populationChanged.emit(this.population);
   }
   onToggle(populationEvent: MatSlideToggleChange) {
-    console.log('Selection changee pour composant Population (toggle): ' + populationEvent.checked);
-
-    const toggleValue = populationEvent.checked;
-    this.population.over = toggleValue;
-    this.populationChanged.emit(this.population);
+    if (this.population
+      && typeof this.population.amount !== 'undefined'
+      && this.population.amount.toString() !== '0') { // TODO voir pourquoi les valeurs sont convertteis en String dans FormControl.
+      const toggleValue = populationEvent.checked;
+      this.population.over = toggleValue;
+      this.populationChanged.emit(this.population);
+    }
   }
 }

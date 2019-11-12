@@ -16,11 +16,17 @@ export class LanguageFilterComponent implements OnInit {
   @Output() languageChanged = new EventEmitter<Language>();
   languages$: Observable<Language[]>;
   isWorking: boolean;
+  languagesCount: number;
 
   constructor(private languageService: LanguageService) {
     this.isWorking = true;
     this.languages$ = languageService.getLanguagesByContinent(null);
-    this.languages$.subscribe(data => this.isWorking = false);
+    this.languages$.subscribe(data => {
+      this.isWorking = false;
+      if (data) {
+        this.languagesCount = data.length;
+      }
+    });
   }
 
   ngOnInit() {

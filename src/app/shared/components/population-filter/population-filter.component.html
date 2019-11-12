@@ -1,15 +1,9 @@
 <mat-card>
-    <!-- <mat-form-field [floatLabel]="always"> -->
     <mat-form-field>
         <mat-select placeholder="Population" [formControl]="amountCtrl" (selectionChange)="onSelection($event)">
-            <mat-option value="">No filter</mat-option>
-            <mat-option value="100000">100 000</mat-option>
-            <mat-option value="1000000">1 Million</mat-option>
-            <mat-option value="5000000">5 Millions</mat-option>
-            <mat-option value="20000000">20 Millions</mat-option>
-            <mat-option value="100000000">100 Millions</mat-option>
-            <mat-option value="500000000">500 Millions</mat-option>
-            <mat-option value="1000000000">1 Billion</mat-option>
+            <mat-option *ngFor="let option of populationsFilter" value="{{ option.value }}">
+                {{ option.name }}
+            </mat-option>
         </mat-select>
     </mat-form-field>
     <p>Less &nbsp;<mat-slide-toggle [formControl]="overCtrl" (change)="onToggle($event)">Over</mat-slide-toggle>

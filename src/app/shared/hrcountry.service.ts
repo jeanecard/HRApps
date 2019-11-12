@@ -18,7 +18,7 @@ export class HRCountryService {
 
   getCountries(region: Region, language: Language, population: PopulationFilterModel): Observable<HRCountry[]> {
     const urlToQuery = this.getURL(region, language, population);
-    if (population) {
+    if (population && population.amount > 0) {
       if (population.over) {
         this.http.get<HRCountry[]>(urlToQuery)
           .subscribe(data => {

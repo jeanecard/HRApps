@@ -20,14 +20,21 @@ export class FlagsListComponent implements OnInit {
   region: Region = Region.All;
   population: PopulationFilterModel = null;
   countriesCount = '-';
+  isWorking: boolean;
+  isMoreCoutries: boolean;
 
   hrCountries$: Observable<HRCountry[]>;
 
   constructor(
     private countryService: HRCountryService,
     public dialog: MatDialog) {
+    this.isWorking = true;
+    this.isMoreCoutries = true;
     this.hrCountries$ = countryService.getCountries(this.region, this.language, this.population);
-    this.hrCountries$.subscribe(data => this.countriesCount = data.length.toString());
+    this.hrCountries$.subscribe(data => {
+      this.countriesCount = data.length.toString();
+      this.isWorking = false;
+    });
   }
 
   ngOnInit() {
@@ -45,19 +52,19 @@ export class FlagsListComponent implements OnInit {
   }
 
   onLanguageChanged(languageEvent: Language) {
+    this.isWorking = true;
     this.language = languageEvent;
     this.hrCountries$ = this.countryService.getCountries(this.region, this.language, this.population);
   }
 
   onPopulationChanged(populationEvent: PopulationFilterModel) {
-    console.log('Population changée interceptée. Montant : ' + populationEvent.amount + ' toggle : ' + populationEvent.over);
+    this.isWorking = true;
     this.population = populationEvent;
-    console.log('mmmmmmmmmmmmmmmmmmmm');
-    console.log(populationEvent);
     this.hrCountries$ = this.countryService.getCountries(this.region, this.language, this.population);
   }
 
   onRegionChanged(regionEvent: Region) {
+    this.isWorking = true;
     this.region = regionEvent;
     this.hrCountries$ = this.countryService.getCountries(this.region, this.language, this.population);
   }

@@ -1,5 +1,5 @@
 <mat-card>
-    <mat-form-field [floatLabel]="always">
+    <mat-form-field>
         <mat-select placeholder="Language" (selectionChange)="onSelectionChange($event)">
             <mat-option *ngFor="let language of languages$ | async" [value]="language">
                 {{language.name}}
@@ -9,5 +9,6 @@
             Language
         </mat-label>
         <mat-spinner [diameter]='20' *ngIf="isWorking"></mat-spinner>
+        <span matBadge="{{languagesCount}}" matBadgeOverlap="false" matBadgeColor="accent" *ngIf="!isWorking"></span>
     </mat-form-field>
 </mat-card>

@@ -1,16 +1,17 @@
 export class PopulationFilterModel {
-    private _amount: number = 0;
-    private _over: boolean = false;
+    private amount$: number;
+    private over$: boolean;
+
     get amount(): number {
-        return this._amount;
+        return this.amount$;
     }
     set amount(value: number) {
-        this._amount = value;
+        this.amount$ = value;
     }
     get over(): boolean {
-        return this._over;
+        return this.over$;
     }
     set over(value: boolean) {
-        this._over = value;
+        this.over$ = value;
     }
 }
