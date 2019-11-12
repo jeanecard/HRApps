@@ -2,6 +2,7 @@
     <!-- <mat-form-field [floatLabel]="always"> -->
     <mat-form-field>
         <mat-select placeholder="Population" [formControl]="amountCtrl" (selectionChange)="onSelection($event)">
+            <mat-option value="">No filter</mat-option>
             <mat-option value="100000">100 000</mat-option>
             <mat-option value="1000000">1 Million</mat-option>
             <mat-option value="5000000">5 Millions</mat-option>

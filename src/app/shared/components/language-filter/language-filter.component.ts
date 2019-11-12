@@ -5,6 +5,7 @@ import { Observable, from } from 'rxjs';
 import { LanguageService } from 'src/app/shared/language.service';
 import { Region } from 'src/app/model/region';
 import { MatSelectChange } from '@angular/material';
+import { ValueConverter } from '@angular/compiler/src/render3/view/template';
 
 @Component({
   selector: 'app-language-filter',
@@ -13,28 +14,16 @@ import { MatSelectChange } from '@angular/material';
 })
 export class LanguageFilterComponent implements OnInit {
   @Output() languageChanged = new EventEmitter<Language>();
-  @Input() region: Region;
-
-  languages: Language[];
-  selectedLanguage: Language;
+  languages$: Observable<Language[]>;
+  isWorking: boolean;
 
   constructor(private languageService: LanguageService) {
-
+    this.isWorking = true;
+    this.languages$ = languageService.getLanguagesByContinent(null);
+    this.languages$.subscribe(data => this.isWorking = false);
   }
 
   ngOnInit() {
-    this.region = Region.All;
-    this.languageService.getLanguagesByContinent(this.region).subscribe((data: Language[]) => {
-      this.languages = new Array<Language>();
-      const emptyLanguage = new Language();
-      emptyLanguage.name = '';
-      this.languages.push(emptyLanguage);
-      data.forEach(element => {
-        this.languages.push(element);
-      });
-    }
-    );
-
   }
 
   onSelectionChange(languageEvent: MatSelectChange) {
@@ -42,16 +31,7 @@ export class LanguageFilterComponent implements OnInit {
   }
 
   onRegionChange(regionEvent: Region) {
-    this.region = regionEvent;
-    this.languageService.getLanguagesByContinent(this.region).subscribe((data: Language[]) => {
-      this.languages = new Array<Language>();
-      const emptyLanguage = new Language();
-      emptyLanguage.name = '';
-      this.languages.push(emptyLanguage);
-      data.forEach(element => {
-        this.languages.push(element);
-      });
-    }
-    );
+    this.isWorking = true;
+    this.languages$ = this.languageService.getLanguagesByContinent(regionEvent);
   }
 }

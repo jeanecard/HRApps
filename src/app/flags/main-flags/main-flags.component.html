@@ -5,13 +5,16 @@
         [opened]="!(isHandset | async)!.matches">
         <mat-toolbar color="primary">
             <!-- <img src="../../../assets/icons/International.png" alt="HR Flag icon" class="logo-img"> -->
-            <span matBadge="{{flagsList.cards?.length}}" matBadgeOverlap="false" matBadgeColor="warn">HR Flags</span>
+            <span matBadge="{{flagsList.countriesCount}}" matBadgeOverlap="false" matBadgeColor="warn">HR
+                Flags</span>
         </mat-toolbar>
         <!-- <div fxFlex fxLayout="column" fxLayoutGap="10px"> -->
         <form>
             <app-region-filter
                 (regionSelected)="languageFilterer.onRegionChange($event);flagsList.onRegionChanged($event)">
+
             </app-region-filter>
+
             <app-language-filter #languageFilterer (languageChanged)="flagsList.onLanguageChanged($event)">
             </app-language-filter>
             <app-population-filter (populationChanged)="flagsList.onPopulationChanged($event)">

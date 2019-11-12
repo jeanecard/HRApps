@@ -1,51 +1,59 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { HRCountry } from '../model/hrcountry';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { Region } from '../model/region';
 import { Language } from '../model/language';
 import { PopulationFilterModel } from '../model/population-filter-model';
-import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class HRCountryService {
 
+  private countries$ = new Subject<HRCountry[]>();
+  private ServiceURL = 'https://fullcoreservices-ci.azurewebsites.net/api/v1.0/';
+
   constructor(private http: HttpClient) { }
 
   getCountries(region: Region, language: Language, population: PopulationFilterModel): Observable<HRCountry[]> {
-    let query = 'https://fullcoreservices-ci.azurewebsites.net/api/v1.0/';
-    if (region) {
-      if (language && language.iso639_1 && language.iso639_1 !== '') {
-        query = query + 'HRCountriesByContinentByLangage/' + region.toString() + '/' + language.iso639_1;
-      } else {
-        query = query + 'HRCountriesByContinent/' + region.toString();
-      }
-    } else {
-      if (language && language.iso639_1 && language.iso639_1 !== '') {
-        query = query + 'HRCountriesByContinentByLangage/' + Region.All.toString() + '/' + language.iso639_1;
-      } else {
-        query = query + 'HRCountriesByContinent/All';
-      }
-    }
-    if (population) {
-      console.log('To do rxjs Filter');
-    }
-    console.log('Je vais faire une query avec : ' + query);
+    const urlToQuery = this.getURL(region, language, population);
     if (population) {
       if (population.over) {
-        console.log('population supérieure à  : ' + population.amount);
-
-        return this.http.get<HRCountry[]>(query).pipe(map(countries => countries.filter(
-          country => country.population > population.amount)));
+        this.http.get<HRCountry[]>(urlToQuery)
+          .subscribe(data => {
+            this.countries$.next(data.filter(item => item.population > population.amount));
+          });
       } else {
-        console.log('population inférieure à  : ' + population.amount);
-        return this.http.get<HRCountry[]>(query).pipe(map(countries => countries.filter(
-          country => country.population < population.amount)));
+        this.http.get<HRCountry[]>(urlToQuery).subscribe(data => {
+          this.countries$.next(data.filter(item => item.population < population.amount));
+        });
       }
     } else {
-      return this.http.get<HRCountry[]>(query);
+      this.http.get<HRCountry[]>(urlToQuery)
+        .subscribe(data => {
+          this.countries$.next(data);
+        });
     }
+    return this.countries$.asObservable();
+  }
+
+  /// Process WebService URL
+  getURL(region: Region, language: Language, population: PopulationFilterModel): string {
+    let urlToQuery = this.ServiceURL;
+    if (region) {
+      if (language && language.iso639_1 && language.iso639_1 !== '') {
+        urlToQuery += 'HRCountriesByContinentByLangage/' + region.toString() + '/' + language.iso639_1;
+      } else {
+        urlToQuery += 'HRCountriesByContinent/' + region.toString();
+      }
+    } else {
+      if (language && language.iso639_1 && language.iso639_1 !== '') {
+        urlToQuery += 'HRCountriesByContinentByLangage/' + Region.All.toString() + '/' + language.iso639_1;
+      } else {
+        urlToQuery += 'HRCountriesByContinent/All';
+      }
+    }
+    return urlToQuery;
   }
 }

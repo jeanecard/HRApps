@@ -6,6 +6,7 @@ import { HRCountryService } from 'src/app/shared/hrcountry.service';
 import { HRCountry } from 'src/app/model/hrcountry';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FlagDetailComponent } from '../flag-detail/flag-detail.component';
+import { Observable } from 'rxjs';
 
 
 @Component({
@@ -15,27 +16,21 @@ import { FlagDetailComponent } from '../flag-detail/flag-detail.component';
 })
 export class FlagsListComponent implements OnInit {
   columnCount = 3;
-  cards: Array<HRCountry> = null;
   language: Language = null;
   region: Region = Region.All;
   population: PopulationFilterModel = null;
+  countriesCount = '-';
+
+  hrCountries$: Observable<HRCountry[]>;
 
   constructor(
     private countryService: HRCountryService,
-    public dialog: MatDialog) { }
-
-  populateCards(regionParam: Region, languageParam: Language, populationParam: PopulationFilterModel) {
-    this.cards = new Array<HRCountry>();
-    this.countryService.getCountries(regionParam, languageParam, populationParam).subscribe((data: HRCountry[]) => {
-      data.forEach(element => {
-        this.cards.push(element);
-      });
-    }
-    );
+    public dialog: MatDialog) {
+    this.hrCountries$ = countryService.getCountries(this.region, this.language, this.population);
+    this.hrCountries$.subscribe(data => this.countriesCount = data.length.toString());
   }
 
   ngOnInit() {
-    this.populateCards(Region.All, null, null);
   }
   onResize(event: any): void {
     if (event.target.innerWidth <= 801) {
@@ -51,23 +46,20 @@ export class FlagsListComponent implements OnInit {
 
   onLanguageChanged(languageEvent: Language) {
     this.language = languageEvent;
-    console.log('Je suis notifié sur langage');
-    console.log(languageEvent);
-    this.populateCards(this.region, this.language, this.population);
+    this.hrCountries$ = this.countryService.getCountries(this.region, this.language, this.population);
   }
 
   onPopulationChanged(populationEvent: PopulationFilterModel) {
+    console.log('Population changée interceptée. Montant : ' + populationEvent.amount + ' toggle : ' + populationEvent.over);
     this.population = populationEvent;
-    console.log('Je suis notifié sur population');
+    console.log('mmmmmmmmmmmmmmmmmmmm');
     console.log(populationEvent);
-    this.populateCards(this.region, this.language, this.population);
+    this.hrCountries$ = this.countryService.getCountries(this.region, this.language, this.population);
   }
 
   onRegionChanged(regionEvent: Region) {
     this.region = regionEvent;
-    console.log('Je suis notifié sur region');
-    console.log(regionEvent);
-    this.populateCards(this.region, this.language, this.population);
+    this.hrCountries$ = this.countryService.getCountries(this.region, this.language, this.population);
   }
 
   openDialog(country: HRCountry): void {
@@ -77,8 +69,6 @@ export class FlagsListComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
-      // this.animal = result;
     });
   }
 }

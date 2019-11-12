@@ -1,13 +1,13 @@
 <mat-card>
-    <!-- <mat-form-field [floatLabel]="always"> -->
-    <mat-form-field>
+    <mat-form-field [floatLabel]="always">
         <mat-select placeholder="Language" (selectionChange)="onSelectionChange($event)">
-            <mat-option *ngFor="let language of languages" [value]="language">
+            <mat-option *ngFor="let language of languages$ | async" [value]="language">
                 {{language.name}}
             </mat-option>
         </mat-select>
         <mat-label>
             Language
         </mat-label>
+        <mat-spinner [diameter]='20' *ngIf="isWorking"></mat-spinner>
     </mat-form-field>
 </mat-card>

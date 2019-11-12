@@ -12,25 +12,21 @@ import { RegionService } from 'src/app/shared/region.service';
 export class RegionFilterComponent implements OnInit {
   @Output() regionSelected = new EventEmitter<Region>();
 
-  regions: Region[];
+  regions$: Observable<Region[]>;
   selectedRegion: Region;
+  isWorking: boolean;
 
-  constructor(private regionService: RegionService) { }
+  constructor(private regionService: RegionService) {
+    this.isWorking = true;
+    this.regions$ = regionService.getRegions();
+    this.regions$.subscribe(data => this.isWorking = false);
+  }
 
   ngOnInit() {
-    this.regionService.getRegions().subscribe((data: Region[]) => {
-      this.regions = new Array<Region>();
-      data.forEach(element => {
-        this.regions.push(element);
-      });
-    }
-    );
-    this.selectedRegion = Region.All;
   }
 
   onSelection(regionEvent) {
     const region = regionEvent.value;
-    console.log('region is : ' + region);
     this.regionSelected.emit(region);
     this.selectedRegion = region;
   }
