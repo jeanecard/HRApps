@@ -8,9 +8,13 @@ import { HRCountry } from 'src/app/model/hrcountry';
   styleUrls: ['./flag-detail.component.scss']
 })
 export class FlagDetailComponent {
+  displayedLangColumns: string[] = ['iso code', 'name', 'native name'];
+  displayedCurrencies: string[] = ['code', 'name','symbol'];
 
+  translations: HRCountry[];
   constructor(public dialogRef: MatDialogRef<FlagDetailComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: HRCountry) { }
+    @Inject(MAT_DIALOG_DATA) public data: HRCountry) { 
+    }
 
   onCloseClick(): void {
     this.dialogRef.close();

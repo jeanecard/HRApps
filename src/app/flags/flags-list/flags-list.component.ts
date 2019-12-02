@@ -24,17 +24,28 @@ export class FlagsListComponent implements OnInit {
   isMoreCoutries: boolean;
 
   hrCountries$: Observable<HRCountry[]>;
+  hrCountriesDisplayed: HRCountry[];
+  hrAllCountries: HRCountry[];
 
   constructor(
     private countryService: HRCountryService,
     public dialog: MatDialog) {
     this.isWorking = true;
-    this.isMoreCoutries = true;
+    this.isMoreCoutries = false;
     this.hrCountries$ = countryService.getCountries(this.region, this.language, this.population);
     this.hrCountries$.subscribe(data => {
-      this.countriesCount = data.length.toString();
+    this.countriesCount = data.length.toString();
+    this.hrAllCountries = data;
+    if(data.length > 21){
+      this.hrCountriesDisplayed = data.slice(0, 20);
+      this.isMoreCoutries = true;
+    } else{
+      this.hrCountriesDisplayed = data;
+      this.isMoreCoutries = false;
+    }
       this.isWorking = false;
     });
+    
   }
 
   ngOnInit() {
@@ -54,28 +65,35 @@ export class FlagsListComponent implements OnInit {
   onLanguageChanged(languageEvent: Language) {
     this.isWorking = true;
     this.language = languageEvent;
+    this.hrCountriesDisplayed = null;
     this.hrCountries$ = this.countryService.getCountries(this.region, this.language, this.population);
   }
 
   onPopulationChanged(populationEvent: PopulationFilterModel) {
     this.isWorking = true;
     this.population = populationEvent;
+    this.hrCountriesDisplayed = null;
     this.hrCountries$ = this.countryService.getCountries(this.region, this.language, this.population);
   }
 
   onRegionChanged(regionEvent: Region) {
     this.isWorking = true;
     this.region = regionEvent;
+    this.hrCountriesDisplayed = null;
     this.hrCountries$ = this.countryService.getCountries(this.region, this.language, this.population);
   }
 
   openDialog(country: HRCountry): void {
     const dialogRef = this.dialog.open(FlagDetailComponent, {
-      width: '400px',
+      width: '600px',
       data: country
     });
 
     dialogRef.afterClosed().subscribe(result => {
     });
+  }
+  onDisplayMore() : void{
+    this.hrCountriesDisplayed = this.hrAllCountries;
+    this.isMoreCoutries = false;
   }
 }

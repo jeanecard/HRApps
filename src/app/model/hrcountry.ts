@@ -6,4 +6,20 @@ export class HRCountry {
     public population: number;
     public nativeName: string;
     public flag: string;
+    public translations: Translations;
+    public area: number;
+    public currencies;
+    public languages;
+}
+
+export class Translations {
+    public de: string;
+    public es: string;
+    public fr: string;
+    public ja: string;
+    public it: number;
+    public br: string;
+    public pt: string;
+    public nl: string;
+    public hr: string;
 }

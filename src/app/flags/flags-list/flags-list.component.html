@@ -11,16 +11,16 @@
         <mat-card-actions>
         </mat-card-actions>
     </mat-card>
-    <div fxFlex *ngFor="let member of hrCountries$ |async">
+    <div fxFlex *ngFor="let member of hrCountriesDisplayed">
         <mat-card fxFlex>
             <mat-card-header>
                 <mat-card-title>{{member.name}}</mat-card-title>
                 <mat-card-subtitle>{{member.nativeName}}</mat-card-subtitle>
             </mat-card-header>
-            <img mat-card-image [src]="member.flag" alt="Flag of {{member.name}}">
+            <img mat-card-image class="test" [src]="member.flag" alt="Flag of {{member.name}}">
             <mat-card-content>
                 <p>
-                    Population : {{member.population}}
+                    <strong>Population : </strong>{{member.population}}
                 </p>
             </mat-card-content>
             <mat-card-actions>
@@ -32,4 +32,4 @@
     </div>
 </div>
 <!-- TODO no inline style -->
-<button mat-flat-button color="primary" style="width:100%">Display more</button>
+<button mat-flat-button color="primary" style="width:100%" *ngIf="isMoreCoutries" (click)="onDisplayMore()">Display more</button>

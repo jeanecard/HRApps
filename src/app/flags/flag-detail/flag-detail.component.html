@@ -1,18 +1,135 @@
 <mat-card class="example-card">
-    <mat-card-header>
-        <!-- <div mat-card-avatar class="example-header-image"></div> -->
-        <mat-card-title>{{data.name}}</mat-card-title>
-        <mat-card-subtitle>{{data.nativeName}} ({{data.alpha3Code}})</mat-card-subtitle>
-    </mat-card-header>
-    <img mat-card-image [src]="data.flag" alt="Flag of country">
-    <mat-card-content>
-        <p>
-            Capital : {{data.capital}}<br>
-            Inahbitants : {{data.population}}
-        </p>
-    </mat-card-content>
-    <mat-card-actions>
-        <button mat-button (click)="onCloseClick()">CLOSE</button>
-        <button mat-button>SHARE</button>
-    </mat-card-actions>
+        <mat-card-header>
+                <!-- <div mat-card-avatar class="example-header-image"></div> -->
+                <mat-card-title>{{data.name}}</mat-card-title>
+                <mat-card-subtitle>{{data.nativeName}} ({{data.alpha3Code}})
+                        <img class="imageHeader" [src]="data.flag" alt="Flag of country">
+                </mat-card-subtitle>
+        </mat-card-header>
 </mat-card>
+<mat-tab-group>
+        <mat-tab label="General">
+                <p>
+                        <mat-card-subtitle><strong>Capital :</strong> {{data.capital}} </mat-card-subtitle>
+                </p>
+
+                <p>
+                        <mat-card-subtitle><strong>Inahbitants : </strong>{{data.population}}</mat-card-subtitle>
+                </p>
+                <p>
+                        <mat-card-subtitle><strong>Area :</strong> {{data.area}}</mat-card-subtitle>
+                </p>
+                <mat-card-subtitle><strong>Currencies </strong></mat-card-subtitle>
+                <table mat-table [dataSource]="data.currencies" class="mat-elevation-z8">
+
+                        <!--- Note that these columns can be defined in any order.
+                              The actual rendered columns are set as a property on the row definition" -->
+
+                        <!-- Code Column -->
+                        <ng-container matColumnDef="code">
+                                <th mat-header-cell *matHeaderCellDef>Code </th>
+                                <td mat-cell *matCellDef="let currency"> {{currency.code}} </td>
+                        </ng-container>
+                        <!-- Name Column -->
+                        <ng-container matColumnDef="name">
+                                <th mat-header-cell *matHeaderCellDef>Name </th>
+                                <td mat-cell *matCellDef="let currency"> {{currency.name}} </td>
+                        </ng-container>
+                        <!-- Name Column -->
+                        <ng-container matColumnDef="symbol">
+                                <th mat-header-cell *matHeaderCellDef>Symbol </th>
+                                <td mat-cell *matCellDef="let currency"> {{currency.symbol}} </td>
+                        </ng-container>
+
+                        <tr mat-header-row *matHeaderRowDef="displayedCurrencies"></tr>
+                        <tr mat-row *matRowDef="let row; columns: displayedCurrencies;"></tr>
+                </table>
+        </mat-tab>
+        <mat-tab label="Languages">
+                <table mat-table [dataSource]="data.languages" class="mat-elevation-z8">
+
+                        <!--- Note that these columns can be defined in any order.
+                          The actual rendered columns are set as a property on the row definition" -->
+
+                        <!-- Position Column -->
+                        <ng-container matColumnDef="iso code">
+                                <th mat-header-cell *matHeaderCellDef> iso Code </th>
+                                <td mat-cell *matCellDef="let lang"> {{lang.iso639_2}} </td>
+                        </ng-container>
+
+                        <!-- Name Column -->
+                        <ng-container matColumnDef="name">
+                                <th mat-header-cell *matHeaderCellDef> Name </th>
+                                <td mat-cell *matCellDef="let lang"> {{lang.name}} </td>
+                        </ng-container>
+
+                        <!-- Weight Column -->
+                        <ng-container matColumnDef="native name">
+                                <th mat-header-cell *matHeaderCellDef> Native name </th>
+                                <td mat-cell *matCellDef="let lang"> {{lang.nativeName}} </td>
+                        </ng-container>
+
+                        <tr mat-header-row *matHeaderRowDef="displayedLangColumns"></tr>
+                        <tr mat-row *matRowDef="let row; columns: displayedLangColumns;"></tr>
+                </table>
+        </mat-tab>
+        <mat-tab label="Translations">
+                <div>
+                        <mat-card-subtitle><strong>Latin</strong>
+                        </mat-card-subtitle>
+                        <mat-divider></mat-divider>
+                </div>
+                <div style="flex-flow: row ; display: flex; flex-wrap: wrap; ">
+                        <div style="flex-flow: column ; display: flex ; margin: 20px">
+                                <div>
+                                        <mat-card-subtitle><strong>Croatian :</strong> {{data.translations.hr}}
+                                        </mat-card-subtitle>
+                                </div>
+                                <div>
+                                        <mat-card-subtitle><strong>Deutsh :</strong> {{data.translations.de}}
+                                        </mat-card-subtitle>
+                                </div>
+                                <div>
+                                        <mat-card-subtitle><strong>English :</strong> {{data.translations.br}}
+                                        </mat-card-subtitle>
+                                </div>
+                                <div>
+                                        <mat-card-subtitle><strong>French :</strong> {{data.translations.fr}}
+                                        </mat-card-subtitle>
+                                </div>
+                        </div>
+                        <div style="flex-flow: column ; display: flex ; margin: 20px">
+                                <!-- <div>
+                                        <mat-card-subtitle><strong>Japanese :</strong> {{data.translations.ja}}
+                                        </mat-card-subtitle>
+                                </div> -->
+                                <div>
+                                        <mat-card-subtitle><strong>Italian :</strong> {{data.translations.it}}
+                                        </mat-card-subtitle>
+                                </div>
+                                <div>
+                                        <mat-card-subtitle><strong>Netherland :</strong> {{data.translations.nl}}
+                                        </mat-card-subtitle>
+                                </div>
+                                <div>
+                                        <mat-card-subtitle><strong>Portuguese :</strong> {{data.translations.pt}}
+                                        </mat-card-subtitle>
+                                </div>
+                                <div>
+                                        <mat-card-subtitle><strong>Spanish :</strong> {{data.translations.es}}
+                                        </mat-card-subtitle>
+                                </div>
+                        </div>
+                        <div>
+                                <mat-card-subtitle><strong>Other</strong> </mat-card-subtitle>
+                                        <mat-divider></mat-divider>
+                                        <div style="flex-flow: column ; display: flex ; margin-left: 20px">
+                                                <mat-card-subtitle><strong>Japanese :</strong> {{data.translations.ja}}
+                                                </mat-card-subtitle>
+                                        </div>
+                        </div>
+                </div>
+        </mat-tab>
+</mat-tab-group>
+<button mat-button (click)="onCloseClick()">CLOSE</button>
+<button mat-button>SHARE</button>
