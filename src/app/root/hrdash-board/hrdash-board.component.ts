@@ -16,38 +16,47 @@ export class HRDashBoardComponent {
       return [
         {
           title: 'HR Flags',
-          alt: 'Flag',
+          tech: 'Full Angular Material',
+          alt: 'Image of a Flag',
           src: '../../../assets/icons/International.png',
           caption: 'Search country flags',
-          reDirect: '/flags'
+          reDirect: '/flags',
+          description: 'Look for a country Flag by Region, language and number of Inahbitants. To get information on a country, click on its flag in the result grid. Data available are capital city, area, currencies, languages spoken and much more ..'
         },
         {
           title: 'HR Map',
-          alt: 'Map',
+          tech: 'OpenLayer 4',
+          alt: 'Image of a Map',
           src: '../../../assets/icons/map95.svg',
           caption: 'Search country on map',
-          reDirect: '/countries'
+          reDirect: '/countries',
+          description: "Look for country on a world map by Region, language and number of Inahbitants. Work in progress..."
         },
         {
           title: 'HR GeoLocation',
-          alt: 'Geo location',
+          tech: 'Rapid API',
+          alt: 'Image of a map with a point of interest',
           src: '../../../assets/icons/geoLocator12.svg',
           caption: 'Search anything on map',
-          reDirect: '/geolocator'
+          reDirect: '/geolocator',
+          description: 'Look for any place on a world map by its name. Work in progress...'
         },
         {
           title: 'HR Ornithology',
-          alt: 'Bird',
+          tech: 'ML.NET',
+          alt: 'Image of a Bird',
           src: '../../../assets/icons/hrnithologie4.svg',
           caption: 'Birds sound recognition',
-          reDirect: '/ornithology'
+          reDirect: '/ornithology',
+          description: 'Birds sounds recognition by Machine learning. Work in progress...'
         }
       ];
     })
   );
-  onClick(card: any): void {
-    this.router.navigate([card.reDirect]);
-  }
+
+  onClick= function (item) {
+    this.router.navigateByUrl(item);
+};
   //
   onImageLoaded(card: any): void {
     if (card) {
