@@ -8,6 +8,7 @@ import { FlagDetailComponent } from './flag-detail/flag-detail.component';
 import { FlagsRoutingModule } from './flags-routing.module';
 import { FlagsListComponent } from './flags-list/flags-list.component';
 import { FiltersModule } from '../shared/components/filters.module';
+import { HRPresentationModule } from '../shared/components/hrpresentation.module';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,8 @@ import { FiltersModule } from '../shared/components/filters.module';
     CommonModule,
     LayoutModule,
     AngularMaterialBasicModule,
-    FiltersModule
+    FiltersModule,
+    HRPresentationModule
   ],
   exports: [
     MainFlagsComponent,

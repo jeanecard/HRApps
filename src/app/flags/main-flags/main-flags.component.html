@@ -4,11 +4,9 @@
         [attr.role]="isHandset ? 'dialog' : 'navigation'" [mode]="(isHandset | async)!.matches ? 'over' : 'side'"
         [opened]="!(isHandset | async)!.matches">
         <mat-toolbar color="primary">
-            <!-- <img src="../../../assets/icons/International.png" alt="HR Flag icon" class="logo-img"> -->
             <span matBadge="{{flagsList.countriesCount}}" matBadgeOverlap="false" matBadgeColor="accent">HR
                 Flags</span>
         </mat-toolbar>
-        <!-- <div fxFlex fxLayout="column" fxLayoutGap="10px"> -->
         <form>
             <app-region-filter
                 (regionSelected)="languageFilterer.onRegionChange($event);flagsList.onRegionChanged($event)">

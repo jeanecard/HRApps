@@ -1,0 +1,23 @@
+<mat-card-subtitle><strong>Currencies </strong></mat-card-subtitle>
+<table mat-table matSort [dataSource]="currenciesDataSource" class="mat-elevation-z8">
+
+        <!-- Code Column -->
+        <ng-container matColumnDef="code">
+                <th mat-header-cell *matHeaderCellDef>Code </th>
+                <td mat-cell *matCellDef="let currency"> {{currency.code}} </td>
+        </ng-container>
+        <!-- Name Column -->
+        <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header >Name </th>
+                <td mat-cell *matCellDef="let currency"> {{currency.name}} </td>
+        </ng-container>
+        <!-- Symbol Column -->
+        <ng-container matColumnDef="symbol">
+                <th mat-header-cell *matHeaderCellDef>Symbol </th>
+                <td mat-cell *matCellDef="let currency"> {{currency.symbol}} </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedCurrencies"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedCurrencies;"></tr>
+</table>
+<mat-paginator [hidePageSize]="true" [pageSize]="4"  ></mat-paginator>

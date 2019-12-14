@@ -1,3 +1,6 @@
+import { Currency } from "./currency";
+import { Language } from './language';
+
 export class HRCountry {
     public name: string;
     public alpha2Code: string;
@@ -8,8 +11,8 @@ export class HRCountry {
     public flag: string;
     public translations: Translations;
     public area: number;
-    public currencies;
-    public languages;
+    public currencies: Currency[];
+    public languages: Language[];
 }
 
 export class Translations {
