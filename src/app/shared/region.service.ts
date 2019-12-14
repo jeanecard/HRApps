@@ -9,8 +9,8 @@ import { first, last } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class RegionService {
-  //private ServiceURL = 'https://fullcoreservices-ci.azurewebsites.net/api/v1.0/HRContinent';
-  private ServiceURL = 'http://localhost:50147/api/v1.0/HRContinent';
+  private ServiceURL = 'https://fullcoreservices-ci.azurewebsites.net/api/v1.0/HRContinent';
+  //private ServiceURL = 'http://localhost:50147/api/v1.0/HRContinent';
 
   private regions$ = new Subject<Region[]>();
   private regionObservable$: Observable<Region[]>
