@@ -11,6 +11,15 @@
         <mat-card-actions>
         </mat-card-actions>
     </mat-card>
+    <mat-card fxFlex *ngIf="hrCountriesDisplayed?.length === 0">
+        <mat-card-header>
+            <mat-card-title>No result</mat-card-title>
+        </mat-card-header>
+        <img mat-card-image src="../../../assets/icons/no-result.png" >
+        <mat-card-content>
+        </mat-card-content>
+    </mat-card>
+
     <div fxFlex *ngFor="let member of hrCountriesDisplayed">
         <mat-card fxFlex>
             <mat-card-header>

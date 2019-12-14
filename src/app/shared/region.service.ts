@@ -9,25 +9,20 @@ import { first, last } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class RegionService {
-  private ServiceURL = 'https://fullcoreservices-ci.azurewebsites.net/api/v1.0/HRContinent';
-  //private ServiceURL = 'http://localhost:50147/api/v1.0/HRContinent';
-  
+  //private ServiceURL = 'https://fullcoreservices-ci.azurewebsites.net/api/v1.0/HRContinent';
+  private ServiceURL = 'http://localhost:50147/api/v1.0/HRContinent';
+
   private regions$ = new Subject<Region[]>();
-  private regionObservable$ : Observable<Region[]>
+  private regionObservable$: Observable<Region[]>
 
   constructor(private http: HttpClient) {
-    this.regionObservable$ = http.get<Region[]>(this.ServiceURL);
-    //!TODO revoir les subject avec une reemission
-      // .subscribe(data => {
-      //   console.log("RECU 1 depuis get");
-      //   this.regions$.next(data);
-      // });
   }
 
   getRegions(): Observable<Region[]> {
-   //Reemit last one before complete.
+    this.http.get<Region[]>(this.ServiceURL).subscribe(data => {
+      this.regions$.next(data);
+    });
 
-    return this.regionObservable$.pipe(last());
-    //return this.regions$.asObservable().pipe(last());
+    return this.regions$.asObservable();
   }
 }

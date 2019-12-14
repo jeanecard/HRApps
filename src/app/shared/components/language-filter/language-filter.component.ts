@@ -19,17 +19,18 @@ export class LanguageFilterComponent implements OnInit {
   languagesCount: number;
 
   constructor(private languageService: LanguageService) {
+
+  }
+
+  ngOnInit() {
     this.isWorking = true;
-    this.languages$ = languageService.getLanguagesByContinent(null);
+    this.languages$ = this.languageService.getLanguagesByContinent(null);
     this.languages$.subscribe(data => {
       this.isWorking = false;
       if (data) {
         this.languagesCount = data.length;
       }
-    });
-  }
-
-  ngOnInit() {
+    });    
   }
 
   onSelectionChange(languageEvent: MatSelectChange) {

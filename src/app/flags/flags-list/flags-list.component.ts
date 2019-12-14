@@ -30,25 +30,26 @@ export class FlagsListComponent implements OnInit {
   constructor(
     private countryService: HRCountryService,
     public dialog: MatDialog) {
-    this.isWorking = true;
-    this.isMoreCoutries = false;
-    this.hrCountries$ = countryService.getCountries(this.region, this.language, this.population);
-    this.hrCountries$.subscribe(data => {
-    this.countriesCount = data.length.toString();
-    this.hrAllCountries = data;
-    if(data.length > 21){
-      this.hrCountriesDisplayed = data.slice(0, 20);
-      this.isMoreCoutries = true;
-    } else{
-      this.hrCountriesDisplayed = data;
-      this.isMoreCoutries = false;
-    }
-      this.isWorking = false;
-    });
-    
+
+
   }
 
   ngOnInit() {
+    this.isWorking = true;
+    this.isMoreCoutries = false;
+    this.hrCountries$ = this.countryService.getCountries(this.region, this.language, this.population);
+    this.hrCountries$.subscribe(data => {
+      this.countriesCount = data.length.toString();
+      this.hrAllCountries = data;
+      if (data.length > 21) {
+        this.hrCountriesDisplayed = data.slice(0, 20);
+        this.isMoreCoutries = true;
+      } else {
+        this.hrCountriesDisplayed = data;
+        this.isMoreCoutries = false;
+      }
+      this.isWorking = false;
+    });    
   }
   onResize(event: any): void {
     if (event.target.innerWidth <= 801) {
@@ -79,6 +80,7 @@ export class FlagsListComponent implements OnInit {
   onRegionChanged(regionEvent: Region) {
     this.isWorking = true;
     this.region = regionEvent;
+    this.language = null; //!TODO : bad must be set to filter to be synchro or get from filter ...
     this.hrCountriesDisplayed = null;
     this.hrCountries$ = this.countryService.getCountries(this.region, this.language, this.population);
   }
@@ -92,7 +94,7 @@ export class FlagsListComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
     });
   }
-  onDisplayMore() : void{
+  onDisplayMore(): void {
     this.hrCountriesDisplayed = this.hrAllCountries;
     this.isMoreCoutries = false;
   }

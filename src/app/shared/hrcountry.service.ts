@@ -17,6 +17,13 @@ export class HRCountryService {
   constructor(private http: HttpClient) { }
 
   getCountries(region: Region, language: Language, population: PopulationFilterModel): Observable<HRCountry[]> {
+    console.log('Region : ' + region.toString());
+    if (language) {
+      console.log('Language : ' + language.name);
+    }
+    if (population) {
+      console.log('Population : ' + population.amount + '/' + population.over);
+    }
     const urlToQuery = this.getURL(region, language, population);
     if (population && population.amount > 0) {
       if (population.over) {

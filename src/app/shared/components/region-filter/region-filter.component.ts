@@ -17,24 +17,20 @@ export class RegionFilterComponent implements OnInit {
   isWorking: boolean;
 
   constructor(private regionService: RegionService) {
-    //!TODO Revoir on fait appel a 2 fois le service ...
-    this.isWorking = true;
-    this.regions$ = regionService.getRegions();
-    
-    this.regions$.subscribe(data => {
-      this.isWorking = false;
-
-    }
-    );
   }
 
   ngOnInit() {
+    this.isWorking = true;
+    this.regions$ = this.regionService.getRegions();
+    this.regions$.subscribe(data => {
+      this.isWorking = false;
+    }
+    );    
   }
 
   onSelection(regionEvent) {
-    console.log("Changement de Region");
     const region = regionEvent.value;
-    this.regionSelected.emit(region);
     this.selectedRegion = region;
+    this.regionSelected.emit(region);
   }
 }
