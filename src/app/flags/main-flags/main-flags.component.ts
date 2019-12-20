@@ -18,11 +18,19 @@ export class MainFlagsComponent implements OnInit {
 
   isHandset: Observable<BreakpointState> = this.breakpointObserver.observe(Breakpoints.Handset);
   breakpoint = 1;
+  hrCountryFilterCtrl : FormControl;
 
   constructor(private breakpointObserver: BreakpointObserver) {
+    this.hrCountryFilterCtrl = new FormControl({
+      disabled: false
+    });
   }
 
   ngOnInit() {
+    this.hrCountryFilterCtrl.valueChanges.subscribe(filterValue => {
+      console.log('MAIN FLAGS A L EVENEMENT');
+       });
+
     if (window.innerWidth <= 400) {
       this.breakpoint = 1;
     } else if (window.innerWidth <= 600) {

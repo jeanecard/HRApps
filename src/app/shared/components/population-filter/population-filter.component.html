@@ -1,10 +1,13 @@
-<mat-card>
-    <mat-form-field>
-        <mat-select placeholder="Population" [formControl]="amountCtrl" (selectionChange)="onSelection($event)">
-            <mat-option *ngFor="let option of populationsFilter" value="{{ option.value }}">
-                {{ option.name }}
-            </mat-option>
-        </mat-select>
-    </mat-form-field>
-    <p>Less &nbsp;<mat-slide-toggle [formControl]="overCtrl" (change)="onToggle($event)">Over</mat-slide-toggle>
-</mat-card>
+<!-- <button type="button" (click)="onclick()">set 5M / true</button> -->
+<form [formGroup]="populationFilterForm">
+    <mat-card>
+        <mat-form-field>
+            <mat-select placeholder="Population" formControlName="amountCtrl">
+                <mat-option *ngFor="let option of populationsFilter | async" value="{{ option.value }}">
+                    {{ option.name }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <p>Less &nbsp;<mat-slide-toggle formControlName="overCtrl">Over</mat-slide-toggle>
+    </mat-card>
+</form>

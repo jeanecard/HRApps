@@ -1,7 +1,7 @@
+<!-- <button type="button" (click)="onclick()">set Africa</button> -->
 <mat-card>
-
     <mat-form-field>
-        <mat-select placeholder="Region" [(value)]="selectedRegion" (selectionChange)="onSelection($event)">
+        <mat-select placeholder="Region" [formControl]="regionCtrl">
             <mat-option *ngFor="let region of regions$ |async" [value]="region">
                 {{region}}
             </mat-option>
@@ -12,5 +12,20 @@
         </mat-label>
         <mat-spinner [diameter]='20' *ngIf="isWorking"></mat-spinner>
     </mat-form-field>
-
 </mat-card>
+<form [formGroup]="languageFilterForm">
+    <mat-card>
+        <mat-form-field>
+            <mat-select placeholder="Language" formControlName="languageCtrl">
+                <mat-option *ngFor="let language of languages$ | async" value={{language.iso639_1}}>
+                    {{language.name}}
+                </mat-option>
+            </mat-select>
+            <mat-label>
+                Language
+            </mat-label>
+            <mat-spinner [diameter]='20' *ngIf="isWorking"></mat-spinner>
+            <span matBadge="{{languagesCount}}" matBadgeOverlap="false" matBadgeColor="accent" *ngIf="!isWorking"></span>
+        </mat-form-field>
+    </mat-card>
+    </form>

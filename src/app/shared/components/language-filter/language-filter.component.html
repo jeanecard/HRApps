@@ -1,7 +1,9 @@
+<!-- <button type="button" (click)="onclick()">set French</button> -->
+<form [formGroup]="languageFilterForm">
 <mat-card>
     <mat-form-field>
-        <mat-select placeholder="Language" (selectionChange)="onSelectionChange($event)">
-            <mat-option *ngFor="let language of languages$ | async" [value]="language">
+        <mat-select placeholder="Language" formControlName="languageCtrl">
+            <mat-option *ngFor="let language of languages$ | async" value={{language.iso639_1}}>
                 {{language.name}}
             </mat-option>
         </mat-select>
@@ -12,3 +14,4 @@
         <span matBadge="{{languagesCount}}" matBadgeOverlap="false" matBadgeColor="accent" *ngIf="!isWorking"></span>
     </mat-form-field>
 </mat-card>
+</form>

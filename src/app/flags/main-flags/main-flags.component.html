@@ -8,7 +8,8 @@
                 Flags</span>
         </mat-toolbar>
         <form>
-            <app-region-filter
+            <app-hrcountry-filter [formControl]="hrCountryFilterCtrl" ></app-hrcountry-filter>
+            <!-- <app-region-filter
                 (regionSelected)="languageFilterer.onRegionChange($event);flagsList.onRegionChanged($event)">
 
             </app-region-filter>
@@ -16,7 +17,7 @@
             <app-language-filter #languageFilterer (languageChanged)="flagsList.onLanguageChanged($event)">
             </app-language-filter>
             <app-population-filter (populationChanged)="flagsList.onPopulationChanged($event)">
-            </app-population-filter>
+            </app-population-filter> -->
         </form>
         <!-- </div> -->
     </mat-sidenav>

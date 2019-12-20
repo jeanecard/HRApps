@@ -18,6 +18,10 @@ export class RegionService {
   constructor(private http: HttpClient) {
   }
 
+  getDefaultRegionFilterValue(): Region{
+    return Region.Europe;
+  }
+
   getRegions(): Observable<Region[]> {
     this.http.get<Region[]>(this.ServiceURL).subscribe(data => {
       this.regions$.next(data);

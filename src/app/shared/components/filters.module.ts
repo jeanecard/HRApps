@@ -4,6 +4,7 @@ import { LanguageFilterComponent } from './language-filter/language-filter.compo
 import { PopulationFilterComponent } from './population-filter/population-filter.component';
 import { RegionFilterComponent } from './region-filter/region-filter.component';
 import { AngularMaterialBasicModule } from '../angular-material-basic/angular-material-basic.module';
+import { HRCountryFilterComponent } from './hrcountry-filter/hrcountry-filter.component';
 
 
 
@@ -11,7 +12,8 @@ import { AngularMaterialBasicModule } from '../angular-material-basic/angular-ma
   declarations: [
     LanguageFilterComponent,
     PopulationFilterComponent,
-    RegionFilterComponent
+    RegionFilterComponent,
+    HRCountryFilterComponent
   ],
   imports: [
     CommonModule,
@@ -20,7 +22,8 @@ import { AngularMaterialBasicModule } from '../angular-material-basic/angular-ma
   exports: [
     LanguageFilterComponent,
     PopulationFilterComponent,
-    RegionFilterComponent
+    RegionFilterComponent,
+    HRCountryFilterComponent
   ]
 })
 export class FiltersModule { }
