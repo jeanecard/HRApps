@@ -3,8 +3,10 @@ import { EventEmitter, Input, Output } from '@angular/core';
 import { Region } from 'src/app/model/region';
 import { Observable, from } from 'rxjs';
 import { RegionService } from 'src/app/shared/region.service';
-import { FormControl, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { FormControl, NG_VALUE_ACCESSOR, FormGroup } from '@angular/forms';
 import { ControlValueAccessor } from '@angular/forms';
+import { Language } from 'src/app/model/language';
+import { LanguageService } from '../../language.service';
 
 
 @Component({
@@ -23,19 +25,28 @@ export class RegionFilterComponent implements ControlValueAccessor, OnInit  {
   regions$: Observable<Region[]>;
   isWorking: boolean;
   regionCtrl : FormControl;
+  languages$: Observable<Language[]>;
+  isLanguageWorking: boolean;
+  languagesCount: number;
+  languageFilterForm: FormGroup;
 
   propagateChange = (_: any) => {};
   propagateTouch  = (_: any) => {};
 
 
-  constructor(private regionService: RegionService) {
+  constructor(private regionService: RegionService, private languageService: LanguageService) {
     //1-
     let regionFilterModel = regionService.getDefaultRegionFilterValue();
     //2-
     this.regionCtrl = new FormControl({
       value: regionFilterModel,
       disabled: false
-    })
+    });
+    this.languageFilterForm = new FormGroup({
+      languageCtrl: new FormControl({
+        disabled: false
+      })
+    });
   }
 
   ngOnInit() {
@@ -51,15 +62,43 @@ export class RegionFilterComponent implements ControlValueAccessor, OnInit  {
     this.regionCtrl.valueChanges.subscribe(filterValue => {
       console.log('Region change');
       console.log(filterValue);
-      this.propagateChange(filterValue);
-      this.propagateTouch(filterValue);
+      //test to reset value
+      this.languageFilterForm.patchValue({
+        languageCtrl:  "fr",
+      }, {emitEvent: false});
+      let extEvt = {
+        region:filterValue,
+        language: ""
+
+      }
+
+       this.propagateChange(extEvt);
+       this.propagateTouch(extEvt);
        });
+
+      //1-
+      this.isLanguageWorking = true;
+      this.languages$ = this.languageService.getLanguagesByContinent(null);
+      this.languages$.subscribe(data => {
+        this.isLanguageWorking = false;
+        if (data) {
+          this.languagesCount = data.length;
+        }
+      });
+      //2-
+      this.languageFilterForm.valueChanges.subscribe(filterValue => {
+        console.log('language in regionFilter change');
+        console.log(filterValue);  
+          this.propagateChange(filterValue);
+          this.propagateTouch(filterValue);
+      });
+  
   }
 
   // Takes a new value from the form model and writes it into the view. 
   // Use Model driven to set Value
-  writeValue(region: Region): void {
-    console.log('Region write');
+  writeValue(region: any): void {
+    console.log('Region and Langauge write');
     console.log(region);
 
     if (region !== undefined){
@@ -78,5 +117,8 @@ export class RegionFilterComponent implements ControlValueAccessor, OnInit  {
   }
   onclick(){
     this.regionCtrl.setValue(Region.Africa);
+    this.languageFilterForm.patchValue({
+      languageCtrl:  "fr",
+    });
   }
 }

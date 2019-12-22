@@ -52,12 +52,13 @@ export class HRCountryFilterComponent implements OnInit, ControlValueAccessor {
     console.log('HRCountryFilterComponent change');
     console.log(value);
    
-    this.writeValue('toto');
+    this.writeValue(value);
   }
 
   writeValue(value: any): void {
     console.log('HRCountryFilterComponent writeValue');
     console.log(value);
+    console.log('-------------------------');
 
   }
 
