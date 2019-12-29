@@ -60,22 +60,17 @@ export class MainCountriesComponent implements OnInit, AfterViewInit {
 
   onLanguageChanged(languageEvent: Language) {
     this.language = languageEvent;
-    console.log('Je suis notifié sur langage');
-    console.log(languageEvent);
     // this.populateCards(this.region, this.language, this.population);
   }
 
   onPopulationChanged(populationEvent: PopulationFilterModel) {
     this.population = populationEvent;
-    console.log('Je suis notifié sur population');
-    console.log(populationEvent);
     // this.populateCards(this.region, this.language, this.population);
   }
 
   onRegionChanged(regionEvent: Region) {
     this.region = regionEvent;
-    console.log('Je suis notifié sur region');
-    console.log(regionEvent);
+
     // this.populateCards(this.region, this.language, this.population);
   }
 }

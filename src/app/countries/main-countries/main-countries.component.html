@@ -7,10 +7,8 @@
             <span matBadge="{{countriesList?.length}}" matBadgeOverlap="false" matBadgeColor="warn">HR Map</span>
         </mat-toolbar>
         <form>
-            <app-region-filter (regionSelected)="languageFilterer.onRegionChange($event);onRegionChanged($event)">
+            <app-region-filter>
             </app-region-filter>
-            <app-language-filter #languageFilterer (languageChanged)="onLanguageChanged($event)">
-            </app-language-filter>
             <app-population-filter (populationChanged)="onPopulationChanged($event)">
             </app-population-filter>
         </form>

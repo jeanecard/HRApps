@@ -20,22 +20,13 @@ export class HRCountryService {
     const urlToQuery = this.getURL(region, language, population);
     if (population && population.amount > 0) {
       if (population.over) {
-        this.http.get<HRCountry[]>(urlToQuery)
-          .subscribe(data => {
-            this.countries$.next(data.filter(item => item.population > population.amount));
-          });
+        return this.http.get<HRCountry[]>(urlToQuery);
       } else {
-        this.http.get<HRCountry[]>(urlToQuery).subscribe(data => {
-          this.countries$.next(data.filter(item => item.population < population.amount));
-        });
+        return this.http.get<HRCountry[]>(urlToQuery);
       }
     } else {
-      this.http.get<HRCountry[]>(urlToQuery)
-        .subscribe(data => {
-          this.countries$.next(data);
-        });
+      return this.http.get<HRCountry[]>(urlToQuery);
     }
-    return this.countries$.asObservable();
   }
 
   /// Process WebService URL

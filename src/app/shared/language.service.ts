@@ -17,13 +17,20 @@ export class LanguageService {
     if (continent && continent !== Region.All) {
       urlToQuery += '/' + continent.toString();
     }
-    this.http.get<Language[]>(urlToQuery)
-      .subscribe(data => {
-        const emptyLanguage = new Language();
-        emptyLanguage.name = '';
-        data.push(emptyLanguage);
-        this.languages$.next(data);
-      });
-    return this.languages$.asObservable();
+    return this.http.get<Language[]>(urlToQuery);
+    // this.http.get<Language[]>(urlToQuery)
+    //   .subscribe(data => {
+    //     this.languages$.next(data);
+    //   });
+    // return this.languages$.asObservable();
+  }
+
+  getDefaultLanguageFilterValue(): Language {
+    return {
+      iso639_1: 'fr',
+      iso639_2: 'fra',
+      name: 'France',
+      nativeName: 'France'
+    };
   }
 }

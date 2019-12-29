@@ -1,7 +1,5 @@
-<button type="button" (click)="onclick()">set defaults values </button>
+<!-- <button type="button" (click)="onclick()">set defaults values </button> -->
 <form [formGroup]="countriesFilterForm">
-  <!-- <app-region-filter  (regionSelected)="onRegionChanged($event)"></app-region-filter> -->
   <app-region-filter formControlName="regionFilterCtrl"></app-region-filter>
-  <!-- <app-language-filter formControlName="languageFilterCtrl"></app-language-filter> -->
   <app-population-filter formControlName="populationFilterCtrl"></app-population-filter>
 </form>

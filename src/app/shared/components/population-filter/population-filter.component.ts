@@ -5,6 +5,7 @@ import { HRPopulationValuesService } from '../../hrpopulation-values.service';
 import { Observable } from 'rxjs';
 import { IValueName } from 'src/app/model/value-name';
 import { stringToKeyValue } from '@angular/flex-layout/extended/typings/style/style-transforms';
+import { take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-population-filter',
@@ -61,20 +62,16 @@ export class PopulationFilterComponent implements OnInit, ControlValueAccessor {
     //1-
     this.populationsFilter = this.populationService.getPopulationsValues();
     //2-
-    this.populationsFilter.subscribe(data => {
+    this.populationsFilter.pipe(take(1)).subscribe(data => {
     });
     //3-
     this.populationFilterForm.valueChanges.subscribe(filterValue => {
-      console.log('population change');
-      console.log(filterValue);    
       this.propagateChange(filterValue);
       this.propagateTouch(filterValue);
     });
   }
 
   writeValue(obj: any): void {
-    console.log('population write');
-    console.log(obj);
     if (obj != undefined) {
       this.populationFilterForm.patchValue({
         amountCtrl: String(obj.amount),

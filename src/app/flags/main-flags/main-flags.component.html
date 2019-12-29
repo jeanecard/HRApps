@@ -1,35 +1,26 @@
-<mat-sidenav-container class="sidenav-container">
-    <!-- LEFT SIDE NAV -->
-    <mat-sidenav #leftDrawer class="left-sidenav" position="start" fixedInViewport="true"
-        [attr.role]="isHandset ? 'dialog' : 'navigation'" [mode]="(isHandset | async)!.matches ? 'over' : 'side'"
-        [opened]="!(isHandset | async)!.matches">
-        <mat-toolbar color="primary">
-            <span matBadge="{{flagsList.countriesCount}}" matBadgeOverlap="false" matBadgeColor="accent">HR
-                Flags</span>
-        </mat-toolbar>
-        <form>
-            <app-hrcountry-filter [formControl]="hrCountryFilterCtrl" ></app-hrcountry-filter>
-            <!-- <app-region-filter
-                (regionSelected)="languageFilterer.onRegionChange($event);flagsList.onRegionChanged($event)">
+<form [formGroup]="mainFlagForm">
+    <mat-sidenav-container class="sidenav-container">
+        <!-- LEFT SIDE NAV -->
+        <mat-sidenav #leftDrawer class="left-sidenav" position="start" fixedInViewport="true"
+            [attr.role]="isHandset ? 'dialog' : 'navigation'" [mode]="(isHandset | async)!.matches ? 'over' : 'side'"
+            [opened]="!(isHandset | async)!.matches">
+            <mat-toolbar color="primary">
+                <span matBadge="{{countriesCount}}" matBadgeOverlap="false" matBadgeColor="accent">HR
+                    Flags</span>
+            </mat-toolbar>
 
-            </app-region-filter>
-
-            <app-language-filter #languageFilterer (languageChanged)="flagsList.onLanguageChanged($event)">
-            </app-language-filter>
-            <app-population-filter (populationChanged)="flagsList.onPopulationChanged($event)">
-            </app-population-filter> -->
-        </form>
-        <!-- </div> -->
-    </mat-sidenav>
-    <!-- Main Tool Bar -->
-    <mat-sidenav-content class="saucisse">
-        <mat-toolbar color="primary">
-            <button type="button" aria-label="Toggle sidenav" mat-icon-button (click)="leftDrawer.toggle()">
-                <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
-            </button>
-        </mat-toolbar>
-        <!-- MAIN CONTENT -->
-        <app-flags-list #flagsList></app-flags-list>
-    </mat-sidenav-content>
-
-</mat-sidenav-container>
+            <app-hrcountry-filter formControlName="hrCountryFilterCtrl" ></app-hrcountry-filter>
+            <!-- </div> -->
+        </mat-sidenav>
+        <!-- Main Tool Bar -->
+        <mat-sidenav-content class="saucisse">
+            <mat-toolbar color="primary">
+                <button type="button" aria-label="Toggle sidenav" mat-icon-button (click)="leftDrawer.toggle()">
+                    <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+                </button>
+            </mat-toolbar>
+            <!-- MAIN CONTENT -->
+            <app-flags-list formControlName="flagListCtrl"></app-flags-list>
+        </mat-sidenav-content>
+    </mat-sidenav-container>
+</form>

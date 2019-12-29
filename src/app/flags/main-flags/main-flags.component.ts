@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 
 // Menage
-import { FormControl } from '@angular/forms';
+import { FormControl, FormGroup } from '@angular/forms';
 
 
 @Component({
@@ -14,22 +14,33 @@ import { FormControl } from '@angular/forms';
 })
 export class MainFlagsComponent implements OnInit {
 
+  mainFlagForm = new FormGroup({
+    hrCountryFilterCtrl: new FormControl(),
+    flagListCtrl: new FormControl()
+  });
+
   myControl = new FormControl();
+  countriesCount : number = 0;
 
   isHandset: Observable<BreakpointState> = this.breakpointObserver.observe(Breakpoints.Handset);
   breakpoint = 1;
-  hrCountryFilterCtrl : FormControl;
 
   constructor(private breakpointObserver: BreakpointObserver) {
-    this.hrCountryFilterCtrl = new FormControl({
-      disabled: false
-    });
   }
 
   ngOnInit() {
-    this.hrCountryFilterCtrl.valueChanges.subscribe(filterValue => {
-      console.log('MAIN FLAGS A L EVENEMENT');
+    this.mainFlagForm.controls['hrCountryFilterCtrl'].valueChanges.subscribe(filterValue => {
+      this.mainFlagForm.controls['flagListCtrl'].setValue(filterValue);
        });
+
+       this.mainFlagForm.controls['flagListCtrl'].valueChanges.subscribe(filterValue => {
+        //  console.log('ooooooooooooooooooooooooooooooooooooooooooooooooo');
+        //  console.log(this.mainFlagForm.controls['flagListCtrl'].value);
+        //  console.log('----------------------------------------------');
+        //  console.log(filterValue);
+        //  console.log('oooooooooooooooooooooooooooooooooooooooooooooooooo');
+        this.countriesCount = this.mainFlagForm.controls['flagListCtrl'].value.countriesCount;
+         });
 
     if (window.innerWidth <= 400) {
       this.breakpoint = 1;
@@ -55,6 +66,9 @@ export class MainFlagsComponent implements OnInit {
     } else {
       this.breakpoint = 6;
     }
+  }
+
+  onHRCountryFilterChange(value: any): void{
   }
 }
 

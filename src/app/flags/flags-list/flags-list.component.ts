@@ -1,4 +1,4 @@
-import { Component, OnInit, ɵConsole } from '@angular/core';
+import { Component, OnInit, ɵConsole, forwardRef } from '@angular/core';
 import { Language } from 'src/app/model/language';
 import { PopulationFilterModel } from 'src/app/model/population-filter-model';
 import { Region } from 'src/app/model/region';
@@ -7,14 +7,28 @@ import { HRCountry } from 'src/app/model/hrcountry';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FlagDetailComponent } from '../flag-detail/flag-detail.component';
 import { Observable } from 'rxjs';
+import { NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
+import { take } from 'rxjs/operators';
 
 
 @Component({
   selector: 'app-flags-list',
   templateUrl: './flags-list.component.html',
-  styleUrls: ['./flags-list.component.scss']
+  styleUrls: ['./flags-list.component.scss'],
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => FlagsListComponent),
+      multi: true
+    }
+  ]
 })
-export class FlagsListComponent implements OnInit {
+export class FlagsListComponent implements OnInit, ControlValueAccessor {
+
+  propagateChange = (_: any) => {};
+  propagateTouch = (_: any) => { };
+
+
   columnCount = 3;
   language: Language = null;
   region: Region = Region.All;
@@ -35,21 +49,7 @@ export class FlagsListComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.isWorking = true;
-    this.isMoreCoutries = false;
-    this.hrCountries$ = this.countryService.getCountries(this.region, this.language, this.population);
-    this.hrCountries$.subscribe(data => {
-      this.countriesCount = data.length.toString();
-      this.hrAllCountries = data;
-      if (data.length > 21) {
-        this.hrCountriesDisplayed = data.slice(0, 20);
-        this.isMoreCoutries = true;
-      } else {
-        this.hrCountriesDisplayed = data;
-        this.isMoreCoutries = false;
-      }
-      this.isWorking = false;
-    });    
+
   }
   onResize(event: any): void {
     if (event.target.innerWidth <= 801) {
@@ -61,28 +61,6 @@ export class FlagsListComponent implements OnInit {
     } else {
       this.columnCount = 4;
     }
-  }
-
-  onLanguageChanged(languageEvent: Language) {
-    this.isWorking = true;
-    this.language = languageEvent;
-    this.hrCountriesDisplayed = null;
-    this.hrCountries$ = this.countryService.getCountries(this.region, this.language, this.population);
-  }
-
-  onPopulationChanged(populationEvent: PopulationFilterModel) {
-    this.isWorking = true;
-    this.population = populationEvent;
-    this.hrCountriesDisplayed = null;
-    this.hrCountries$ = this.countryService.getCountries(this.region, this.language, this.population);
-  }
-
-  onRegionChanged(regionEvent: Region) {
-    this.isWorking = true;
-    this.region = regionEvent;
-    this.language = null; //!TODO : bad must be set to filter to be synchro or get from filter ...
-    this.hrCountriesDisplayed = null;
-    this.hrCountries$ = this.countryService.getCountries(this.region, this.language, this.population);
   }
 
   openDialog(country: HRCountry): void {
@@ -98,4 +76,45 @@ export class FlagsListComponent implements OnInit {
     this.hrCountriesDisplayed = this.hrAllCountries;
     this.isMoreCoutries = false;
   }
+
+  writeValue(value: any): void {
+    this.isWorking = true;
+    this.isMoreCoutries = false;
+    this.hrCountriesDisplayed = null;
+    if (value) {
+      let lang: Language = {
+        iso639_1: value.language,
+        iso639_2: '',
+        name: '',
+        nativeName: ''
+      };
+      this.hrCountries$ = this.countryService.getCountries(value.region, lang, value.population);
+      this.hrCountries$.pipe(take(1)).subscribe(data => {
+        this.countriesCount = data.length.toString();
+        this.hrAllCountries = data;
+        if (data.length > 21) {
+          this.hrCountriesDisplayed = data.slice(0, 20);
+          this.isMoreCoutries = true;
+        } else {
+          this.hrCountriesDisplayed = data;
+          this.isMoreCoutries = false;
+        }
+        this.isWorking = false;
+        this.propagateChange({countriesCount: data.length});
+      });
+
+    }
+  }
+
+
+  registerOnChange(fn: any): void {
+    this.propagateChange = fn;
+
+  }
+  registerOnTouched(fn: any): void {
+    this.propagateTouch = fn;
+  }
+  setDisabledState?(isDisabled: boolean): void {
+  }
+
 }

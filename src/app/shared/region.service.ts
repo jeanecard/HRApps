@@ -23,10 +23,12 @@ export class RegionService {
   }
 
   getRegions(): Observable<Region[]> {
-    this.http.get<Region[]>(this.ServiceURL).subscribe(data => {
-      this.regions$.next(data);
-    });
 
-    return this.regions$.asObservable();
+    return this.http.get<Region[]>(this.ServiceURL);
+    // this.http.get<Region[]>(this.ServiceURL).subscribe(data => {
+    //   this.regions$.next(data);
+    // });
+
+    // return this.regions$.asObservable();
   }
 }

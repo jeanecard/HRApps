@@ -5,11 +5,10 @@ import { Directive, HostListener } from '@angular/core';
 })
 export class FormatNumberDirective {
 
-  constructor() { console.log('Construction directive'); }
+  constructor() {}
 
   @HostListener('keydown', ['$event'])
   onKeyDown(e: KeyboardEvent) {
-    console.log('yess');
     if (
       // Allow: Delete, Backspace, Tab, Escape, Enter
       [46, 8, 9, 27, 13].indexOf(e.keyCode) !== -1 ||

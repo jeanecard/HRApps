@@ -19,8 +19,6 @@ import { FormControl, FormGroup, ControlValueAccessor, NG_VALUE_ACCESSOR } from 
   ]  
 })
 export class HRCountryFilterComponent implements OnInit, ControlValueAccessor {
-
-
   propagateChange = (_: any) => {};
   propagateTouch  = (_: any) => {};
 
@@ -31,17 +29,14 @@ export class HRCountryFilterComponent implements OnInit, ControlValueAccessor {
     // languageFilterCtrl: new FormControl({
     //   disabled: false
     // }),
-    populationFilterCtrl:new FormControl({
-      disabled: false
-    })
+    populationFilterCtrl:new FormControl()
   });
 
   constructor() {
    }
 
   ngOnInit() {
-    this.countriesFilterForm.valueChanges.subscribe(filterValue => {
-      //Attendre avant de propager ?
+    this.countriesFilterForm.controls['regionFilterCtrl'].valueChanges.subscribe(filterValue => {
       this.onChange(filterValue);      
       this.propagateChange(filterValue);
       this.propagateTouch(filterValue);      
@@ -49,17 +44,12 @@ export class HRCountryFilterComponent implements OnInit, ControlValueAccessor {
   }
 
   onChange(value : any){
-    console.log('HRCountryFilterComponent change');
+    console.log('HRCountry recoit');
     console.log(value);
-   
-    this.writeValue(value);
+    //this.writeValue(value);
   }
 
   writeValue(value: any): void {
-    console.log('HRCountryFilterComponent writeValue');
-    console.log(value);
-    console.log('-------------------------');
-
   }
 
   registerOnChange(fn: any): void {
@@ -70,7 +60,6 @@ export class HRCountryFilterComponent implements OnInit, ControlValueAccessor {
     this.propagateTouch = fn;
   }
   setDisabledState?(isDisabled: boolean): void {
-    console.log('setDisabledState');
   }
 
   onclick(){
