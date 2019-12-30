@@ -1,9 +1,5 @@
-import { Component, OnInit, Output, EventEmitter, forwardRef } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, forwardRef, AfterViewInit } from '@angular/core';
 import { Region } from 'src/app/model/region';
-import { Language } from 'src/app/model/language';
-import { PopulationFilterModel } from 'src/app/model/population-filter-model';
-import { HRCountryFilterModel } from 'src/app/model/hrcountry-filter-model';
-import { ThrowStmt } from '@angular/compiler';
 import { FormControl, FormGroup, ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 @Component({
@@ -18,38 +14,60 @@ import { FormControl, FormGroup, ControlValueAccessor, NG_VALUE_ACCESSOR } from 
     }
   ]  
 })
-export class HRCountryFilterComponent implements OnInit, ControlValueAccessor {
+export class HRCountryFilterComponent implements OnInit, ControlValueAccessor, AfterViewInit {
+
   propagateChange = (_: any) => {};
   propagateTouch  = (_: any) => {};
-
-  countriesFilterForm = new FormGroup({
-    regionFilterCtrl: new FormControl({
-      disabled: false
-    }),
-    // languageFilterCtrl: new FormControl({
-    //   disabled: false
-    // }),
-    populationFilterCtrl:new FormControl()
-  });
+  countriesFilterForm : FormGroup;
 
   constructor() {
+ 
    }
 
   ngOnInit() {
-    this.countriesFilterForm.controls['regionFilterCtrl'].valueChanges.subscribe(filterValue => {
-      this.onChange(filterValue);      
+   //No initialisation in this Control. Region and Population can init by themselves.
+   this.countriesFilterForm = new FormGroup({
+    regionAndLanguage: new FormControl(),
+    population:new FormControl()
+  });
+ 
+    this.countriesFilterForm.valueChanges.subscribe(filterValue => {
       this.propagateChange(filterValue);
       this.propagateTouch(filterValue);      
        });
+
   }
 
-  onChange(value : any){
-    console.log('HRCountry recoit');
-    console.log(value);
-    //this.writeValue(value);
+  ngAfterViewInit(): void {
+    console.log('BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB');
+    //! Pas catholique ...
+    let extEvt = {
+      regionAndLanguage :{
+        region: this.countriesFilterForm.controls['regionAndLanguage'].value.region,
+        language: this.countriesFilterForm.controls['regionAndLanguage'].value.language
+      },
+      population :{
+        amount:this.countriesFilterForm.controls['population'].value.amount,
+        over: this.countriesFilterForm.controls['population'].value.over
+
+      }
+    };
+    this.propagateChange(extEvt);
+    this.propagateTouch(extEvt);
   }
 
   writeValue(value: any): void {
+    console.log('AAAAAAAAAAAAAAAAAAAAAAA');
+    console.log(value);
+    this.countriesFilterForm.patchValue({
+      regionAndLanguage :{
+      region: value.regionAndLanguage.region,
+      language: value.regionAndLanguage.language
+      },
+      population:{
+        amount: value.population.amount,
+        over:value.population.over
+      }}, {emitEvent: false});
   }
 
   registerOnChange(fn: any): void {
@@ -63,12 +81,16 @@ export class HRCountryFilterComponent implements OnInit, ControlValueAccessor {
   }
 
   onclick(){
+
+    // this.countriesFilterForm.controls['regionFilterCtrl'].setValue({region: Region.Africa});
+    // this.countriesFilterForm.controls['population'].setValue({amount: '5000000',over:true, saucisse:'cocktail'});
     this.countriesFilterForm.patchValue({
-      regionFilterCtrl: Region.Africa,
-      languageFilterCtrl:{iso639_1: "fr", iso639_2: "fra", name: "French", nativeName: "français"},
-       populationFilterCtrl:{
-         amount: '5000000'
-       }
+      regionAndLanguage: {language:'fr', region: Region.Asia },
+      population:{
+          amount: '5000000',
+          over:true,
+          saucisse:'cocktail'
+        }
     });
   }
 }

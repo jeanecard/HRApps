@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { LanguageFilterComponent } from './language-filter/language-filter.component';
+//import { LanguageFilterComponent } from './language-filter/language-filter.component';
 import { PopulationFilterComponent } from './population-filter/population-filter.component';
 import { RegionFilterComponent } from './region-filter/region-filter.component';
 import { AngularMaterialBasicModule } from '../angular-material-basic/angular-material-basic.module';
@@ -10,7 +10,7 @@ import { HRCountryFilterComponent } from './hrcountry-filter/hrcountry-filter.co
 
 @NgModule({
   declarations: [
-    LanguageFilterComponent,
+  //  LanguageFilterComponent,
     PopulationFilterComponent,
     RegionFilterComponent,
     HRCountryFilterComponent
@@ -20,7 +20,7 @@ import { HRCountryFilterComponent } from './hrcountry-filter/hrcountry-filter.co
     AngularMaterialBasicModule
   ],
   exports: [
-    LanguageFilterComponent,
+    //LanguageFilterComponent,
     PopulationFilterComponent,
     RegionFilterComponent,
     HRCountryFilterComponent

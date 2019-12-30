@@ -19,7 +19,7 @@ export class RegionService {
   }
 
   getDefaultRegionFilterValue(): Region{
-    return Region.Europe;
+    return Region.All;
   }
 
   getRegions(): Observable<Region[]> {

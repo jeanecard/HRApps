@@ -23,17 +23,14 @@ export class HRPopulationValuesService {
     retour.push({ value: 1000000000, name: '1 Billion' });
     //Convert Array to sequence of IValueName for an observable.
     return Observable.create(function (observer) {
-   
       observer.next(retour);
       observer.complete();
     });
-    //return  Observable.from(retour);
-
   }
 
   //Get default value from local storage
   public getDefaultPopulationFilterValue(): PopulationFilterModel{
     //!TODO
-    return {amount:20000000, over:true }; 
+    return {amount:100000, over:true }; 
   }
 }

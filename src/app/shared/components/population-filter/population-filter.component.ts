@@ -21,44 +21,26 @@ import { take } from 'rxjs/operators';
 })
 export class PopulationFilterComponent implements OnInit, ControlValueAccessor {
 
-  propagateChange = (_: any) => {};
-  propagateTouch  = (_: any) => {};
-  
+  propagateChange = (_: any) => { };
+  propagateTouch = (_: any) => { };
+
   populationFilterForm: FormGroup;
   populationsFilter: Observable<Array<IValueName>>;
 
-  //1- Get default values from service
-  //2- Create FormGroup and FormControls
   constructor(private populationService: HRPopulationValuesService) {
-    //1-
-    // let populationFilterModel = populationService.getDefaultPopulationFilterValue();
-    // //2-
-    // this.populationFilterForm = new FormGroup({
-    //   amountCtrl: new FormControl({
-    //     value: String(populationFilterModel.amount),
-    //     disabled: false
-    //   }),
-    //   overCtrl: new FormControl({
-    //     value: populationFilterModel.over,
-    //     disabled: false
-    //   })
-    // });
-    let populationFilterModel = populationService.getDefaultPopulationFilterValue();
-    //2-
-    this.populationFilterForm = new FormGroup({
-      amountCtrl: new FormControl({
-        disabled: false
-      }),
-      overCtrl: new FormControl({
-        disabled: false
-      })
-    });
 
   }
   //1- Get Observable Populations from service
   //2- Susbcribe to populate FromControls
   //3- Subscribe to FormGroup change
   ngOnInit() {
+
+    let populationFilterModel = this.populationService.getDefaultPopulationFilterValue();
+    //2-
+    this.populationFilterForm = new FormGroup({
+      amount: new FormControl(String(populationFilterModel.amount)),
+      over: new FormControl(populationFilterModel.over)
+    });
     //1-
     this.populationsFilter = this.populationService.getPopulationsValues();
     //2-
@@ -70,35 +52,58 @@ export class PopulationFilterComponent implements OnInit, ControlValueAccessor {
       this.propagateTouch(filterValue);
     });
   }
-
+  /**
+   * @description
+   * Writes a new value to the element.
+   *
+   * This method is called by the forms API to write to the view when programmatic
+   * changes from model to view are requested. For exemple 
+   *  - on the new Form(obj)
+   *  - on set / patch value on this FormController. (generally called by parents containing this control)
+   *
+   * @usageNotes
+   * ### Write a value to the element
+   * ### after method, value property of the form will return {amountCtrl : a_value, over : other_value}
+   *
+   * @param obj The new value for the element. Model expected : {amount: number or String, over : boolean)
+   */
   writeValue(obj: any): void {
-    if (obj != undefined) {
-      this.populationFilterForm.patchValue({
-        amountCtrl: String(obj.amount),
-        overCtrl: obj.over
-      });
+    if (obj && obj != undefined) {
+      if (obj.amount != undefined) {
+        if (obj.over != undefined) {
+          this.populationFilterForm.patchValue({
+            amount: String(obj.amount),
+            over: obj.over
+          },  { emitEvent: false });
+        } else {
+          this.populationFilterForm.patchValue({
+            amount: String(obj.amount)
+          },  { emitEvent: false });
+        }
+      }
+      else if (obj.over != undefined) {
+        this.populationFilterForm.patchValue({
+          over: obj.over
+        },  { emitEvent: false });
+      }
     }
   }
   registerOnChange(fn: any): void {
     this.propagateChange = fn;
-    
+
   }
   registerOnTouched(fn: any): void {
     this.propagateTouch = fn;
   }
 
   setDisabledState?(isDisabled: boolean): void {
-    console.log('PopulationFilterComponent setDisabledState');
   }
   onclick() {
-    // this.writeValue({
+    this.writeValue({ amount: 5000000, over: true });
+    // this.populationFilterForm.patchValue({
     //   amount: '5000000',
     //   over: true
     // });
-    this.populationFilterForm.patchValue({
-      amountCtrl: '5000000',
-      overCtrl: true
-    });
   }
 }
 

@@ -25,7 +25,7 @@ import { take } from 'rxjs/operators';
 })
 export class FlagsListComponent implements OnInit, ControlValueAccessor {
 
-  propagateChange = (_: any) => {};
+  propagateChange = (_: any) => { };
   propagateTouch = (_: any) => { };
 
 
@@ -45,11 +45,10 @@ export class FlagsListComponent implements OnInit, ControlValueAccessor {
     private countryService: HRCountryService,
     public dialog: MatDialog) {
 
-
   }
 
   ngOnInit() {
-
+    this.isWorking = false;
   }
   onResize(event: any): void {
     if (event.target.innerWidth <= 801) {
@@ -82,27 +81,46 @@ export class FlagsListComponent implements OnInit, ControlValueAccessor {
     this.isMoreCoutries = false;
     this.hrCountriesDisplayed = null;
     if (value) {
-      let lang: Language = {
-        iso639_1: value.language,
-        iso639_2: '',
-        name: '',
-        nativeName: ''
-      };
-      this.hrCountries$ = this.countryService.getCountries(value.region, lang, value.population);
-      this.hrCountries$.pipe(take(1)).subscribe(data => {
-        this.countriesCount = data.length.toString();
-        this.hrAllCountries = data;
-        if (data.length > 21) {
-          this.hrCountriesDisplayed = data.slice(0, 20);
-          this.isMoreCoutries = true;
-        } else {
-          this.hrCountriesDisplayed = data;
-          this.isMoreCoutries = false;
+      let lang: Language;
+      if (value.regionAndLanguage) {
+        lang = {
+          iso639_1: value.regionAndLanguage.language,
+          iso639_2: '',
+          name: '',
+          nativeName: ''
+        };
+      }
+      let region: any;
+      if (value.regionAndLanguage) {
+        region = value.regionAndLanguage.region;
+      }
+      let pop: PopulationFilterModel;
+      if (value.population) {
+        pop = {
+          amount: value.population.amount,
+          over: value.population.over
         }
-        this.isWorking = false;
-        this.propagateChange({countriesCount: data.length});
-      });
-
+      }
+      this.hrCountries$ = this.countryService.getCountries(region, lang, pop);
+      if (this.hrCountries$) {
+        this.hrCountries$.pipe(take(1)).subscribe(data => {
+          this.countriesCount = data.length.toString();
+          this.hrAllCountries = data;
+          if (data.length > 21) {
+            this.hrCountriesDisplayed = data.slice(0, 20);
+            this.isMoreCoutries = true;
+          } else {
+            this.hrCountriesDisplayed = data;
+            this.isMoreCoutries = false;
+          }
+          this.isWorking = false;
+          this.propagateChange({ countriesCount: data.length });
+        });
+      } else{
+        this.isWorking = false;  
+      }
+    } else{
+      this.isWorking = false;
     }
   }
 

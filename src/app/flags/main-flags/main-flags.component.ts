@@ -5,6 +5,8 @@ import { map, startWith } from 'rxjs/operators';
 
 // Menage
 import { FormControl, FormGroup } from '@angular/forms';
+import { Region } from 'src/app/model/region';
+import { HRCountryFilterPreferencesService } from 'src/app/shared/hrcountry-filter-preferences.service';
 
 
 @Component({
@@ -14,32 +16,27 @@ import { FormControl, FormGroup } from '@angular/forms';
 })
 export class MainFlagsComponent implements OnInit {
 
-  mainFlagForm = new FormGroup({
-    hrCountryFilterCtrl: new FormControl(),
-    flagListCtrl: new FormControl()
-  });
-
-  myControl = new FormControl();
+  mainFlagForm : FormGroup;
   countriesCount : number = 0;
-
   isHandset: Observable<BreakpointState> = this.breakpointObserver.observe(Breakpoints.Handset);
   breakpoint = 1;
 
-  constructor(private breakpointObserver: BreakpointObserver) {
+  constructor(private breakpointObserver: BreakpointObserver, private prefService : HRCountryFilterPreferencesService) {
+ 
   }
 
   ngOnInit() {
-    this.mainFlagForm.controls['hrCountryFilterCtrl'].valueChanges.subscribe(filterValue => {
-      this.mainFlagForm.controls['flagListCtrl'].setValue(filterValue);
+
+    this.mainFlagForm = new FormGroup({
+      hrCountryFilter: new FormControl(this.prefService.getDefaultValue()),
+      flagList: new FormControl()
+    });
+    this.mainFlagForm.controls['hrCountryFilter'].valueChanges.subscribe(filterValue => {
+      this.mainFlagForm.controls['flagList'].setValue(filterValue);
        });
 
-       this.mainFlagForm.controls['flagListCtrl'].valueChanges.subscribe(filterValue => {
-        //  console.log('ooooooooooooooooooooooooooooooooooooooooooooooooo');
-        //  console.log(this.mainFlagForm.controls['flagListCtrl'].value);
-        //  console.log('----------------------------------------------');
-        //  console.log(filterValue);
-        //  console.log('oooooooooooooooooooooooooooooooooooooooooooooooooo');
-        this.countriesCount = this.mainFlagForm.controls['flagListCtrl'].value.countriesCount;
+       this.mainFlagForm.controls['flagList'].valueChanges.subscribe(filterValue => {
+        this.countriesCount = this.mainFlagForm.controls['flagList'].value.countriesCount;
          });
 
     if (window.innerWidth <= 400) {
@@ -66,9 +63,6 @@ export class MainFlagsComponent implements OnInit {
     } else {
       this.breakpoint = 6;
     }
-  }
-
-  onHRCountryFilterChange(value: any): void{
   }
 }
 

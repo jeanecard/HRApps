@@ -5,6 +5,7 @@ import { Observable, Subject } from 'rxjs';
 import { Region } from '../model/region';
 import { Language } from '../model/language';
 import { PopulationFilterModel } from '../model/population-filter-model';
+import { filter, map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -14,20 +15,30 @@ export class HRCountryService {
   private countries$ = new Subject<HRCountry[]>();
   private ServiceURL = 'https://fullcoreservices-ci.azurewebsites.net/api/v1.0/';
 
+
   constructor(private http: HttpClient) { }
 
   getCountries(region: Region, language: Language, population: PopulationFilterModel): Observable<HRCountry[]> {
+    if(region){
     const urlToQuery = this.getURL(region, language, population);
     if (population && population.amount > 0) {
-      if (population.over) {
-        return this.http.get<HRCountry[]>(urlToQuery);
-      } else {
-        return this.http.get<HRCountry[]>(urlToQuery);
-      }
+      return this.http.get<HRCountry[]>(urlToQuery).pipe(map(data => data.filter((element, index, array) => {
+        if (population.over) {
+          return (element.population >= population.amount);
+        }
+        else {
+          return (element.population < population.amount);
+        }
+
+      })));
     } else {
       return this.http.get<HRCountry[]>(urlToQuery);
     }
+    }
+    return null;
   }
+
+
 
   /// Process WebService URL
   getURL(region: Region, language: Language, population: PopulationFilterModel): string {

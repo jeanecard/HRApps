@@ -7,6 +7,7 @@ import { ControlValueAccessor } from '@angular/forms';
 import { Language } from 'src/app/model/language';
 import { LanguageService } from '../../language.service';
 import { take } from 'rxjs/operators';
+import { RegionControlObserver } from './region-control-observer';
 
 @Component({
   selector: 'app-region-filter',
@@ -23,7 +24,7 @@ import { take } from 'rxjs/operators';
 export class RegionFilterComponent implements ControlValueAccessor, OnInit, OnDestroy {
   regions$: Observable<Region[]>;
   isRegionWorking: boolean;
-  regionCtrl: FormControl;
+
   languages$: Observable<Language[]>;
   isLanguageWorking: boolean;
   languagesCount: number;
@@ -50,8 +51,8 @@ export class RegionFilterComponent implements ControlValueAccessor, OnInit, OnDe
     let languageFilterModel = this.languageService.getDefaultLanguageFilterValue();
     //2-
     this.languageFilterForm = new FormGroup({
-      regionCtrl: new FormControl(regionFilterModel),
-      languageCtrl: new FormControl(languageFilterModel.iso639_1)
+      region: new FormControl(regionFilterModel),
+      language: new FormControl(languageFilterModel.iso639_1)
     });
     //3-
     this.initRegion(regionFilterModel);
@@ -91,8 +92,11 @@ export class RegionFilterComponent implements ControlValueAccessor, OnInit, OnDe
       }
     ));
     //3-
-    this._subscription.add(this.languageFilterForm.controls['regionCtrl'].valueChanges.subscribe(
+   
+    
+    this._subscription.add(this.languageFilterForm.controls['region'].valueChanges.subscribe(
       {
+        
         next: filterValue => {
           //3.1-
           let extEvt = {
@@ -101,21 +105,8 @@ export class RegionFilterComponent implements ControlValueAccessor, OnInit, OnDe
           };
           this.propagateChange(extEvt);
           this.propagateTouch(extEvt);
-          if (filterValue) {
-            this.isLanguageWorking = true;
-            this.languages$ = this.languageService.getLanguagesByContinent(filterValue);
-            //3.2-
-            this.languages$.pipe(take(1)).subscribe(data => {
-              this.isLanguageWorking = false;
-              if (data) {
-                this.languagesCount = data.length;
-              }
-              //3.3-
-              this.languageFilterForm.patchValue({
-                languageCtrl: '',
-              }, { emitEvent: false });
-            });
-          }
+
+          this.changeRegionLanguages(filterValue);
         },
         error: (data) => {
           console.log('ERREUR DETECTEE');
@@ -125,6 +116,29 @@ export class RegionFilterComponent implements ControlValueAccessor, OnInit, OnDe
           console.log('COMPLETE REALISE');
         }
       }));
+  }
+
+  private changeRegionLanguages(region : Region, languageSelected? : Language) : void {
+    if (region) {
+      this.isLanguageWorking = true;
+      this.languages$ = this.languageService.getLanguagesByContinent(region);
+      //3.2-
+      this.languages$.pipe(take(1)).subscribe(data => {
+        this.isLanguageWorking = false;
+        if (data) {
+          this.languagesCount = data.length;
+        }
+        //3.3-
+        let language_to_set = '';
+        if(languageSelected){
+          language_to_set = languageSelected.iso639_1;
+        }
+        //Que faire si ce language n'existe pas .. le modele va faire croire qu'il est setté mais en fait non ...
+        this.languageFilterForm.patchValue({
+          language: language_to_set,
+        }, { emitEvent: false });
+      });
+    }
   }
 
   /**
@@ -142,11 +156,12 @@ export class RegionFilterComponent implements ControlValueAccessor, OnInit, OnDe
  * 3- Subscribe to languageCtrl changes to re-emit event to Observers
  */
   initLanguage(region: Region, lang: Language): void {
+    //! TODO mieux comme ça !! => this.changeRegionLanguages(region, lang);
     //1-
     this.isLanguageWorking = true;
     //2-
     this.languages$ = this.languageService.getLanguagesByContinent(region);
-    let subscribResult = this.languages$.pipe(take(1)).subscribe(data => {
+    this.languages$.pipe(take(1)).subscribe(data => {
       //2.1-
       this.isLanguageWorking = false;
       //2.2-
@@ -158,14 +173,14 @@ export class RegionFilterComponent implements ControlValueAccessor, OnInit, OnDe
         region: region,
         language: lang.iso639_1
       };
-      this.propagateChange(extEvt);
-      this.propagateTouch(extEvt);
+      //this.propagateChange(extEvt);
+      //this.propagateTouch(extEvt);
 
     });
     //3-
-    this._subscription.add(this.languageFilterForm.controls['languageCtrl'].valueChanges.subscribe(filterValue => {
+    this._subscription.add(this.languageFilterForm.controls['language'].valueChanges.subscribe(filterValue => {
       let extEvt = {
-        region: this.languageFilterForm.controls['regionCtrl'].value,
+        region: this.languageFilterForm.controls['region'].value,
         language: filterValue
       };
       this.propagateChange(extEvt);
@@ -173,10 +188,46 @@ export class RegionFilterComponent implements ControlValueAccessor, OnInit, OnDe
     }));
   }
 
-  // Takes a new value from the form model and writes it into the view. 
-  // Use Model driven to set Value
-  writeValue(value: any): void {
-    console.log('Region and Language write');
+  /**
+   * @description
+   * Writes a new value to the element.
+   *
+   * This method is called by the forms API to write to the view when programmatic
+   * changes from model to view are requested. For exemple 
+   *  - on the new Form(obj)
+   *  - on set / patch value on this FormController. (generally called by parents containing this control)
+   *
+   * @usageNotes
+   * ### Write a value to the element
+   * ### after method, value property of the form will return {amount : a_value, over : other_value}
+   *
+   * @param obj The new value for the element. Model expected : {region: enum, language : string)
+   */
+  writeValue(obj: any): void {
+    let language = new Language();
+    if (obj && obj != undefined) {
+      if (obj.region != undefined) {
+        if (obj.language != undefined) {
+          language.iso639_1 = obj.language;
+          this.languageFilterForm.patchValue({
+            region: obj.region
+          }, { emitEvent: false });
+          this.changeRegionLanguages(obj.region, language);
+        } else {
+          this.languageFilterForm.patchValue({
+            region: obj.region
+          }, { emitEvent: false });
+        }
+      }
+      else if (obj.language != undefined) {
+        language.iso639_1 = obj.language;
+        let region = this.languageFilterForm.controls['region'].value;
+        this.changeRegionLanguages(region, language);
+        this.languageFilterForm.patchValue({
+          language: obj.language
+        }, { emitEvent: false });
+      }
+    }
   }
   registerOnChange(fn: any): void {
     this.propagateChange = fn;
@@ -186,30 +237,12 @@ export class RegionFilterComponent implements ControlValueAccessor, OnInit, OnDe
     this.propagateTouch = fn;
   }
   setDisabledState?(isDisabled: boolean): void {
-    console.log('setDisabledState');
   }
-  // onclick() {
 
-  //   let extEvt = {
-  //     region: Region.Africa,
-  //     language: 'fr'
-  //     //Et propagation
-  //   };
-  //   this.propagateChange(extEvt);
-  //   this.propagateTouch(extEvt);
-
-  //   // this.languageFilterForm.patchValue({
-  //   //   languageCtrl: null,
-  //   //   regionCtrl: String(Region.Africa)
-  //   // }, { emitEvent: false });
-
-  //   // let languageFilterModel = this.languageService.getDefaultLanguageFilterValue();
-  //   // this.languageFilterForm.controls['languageCtrl'].setValue('fr');
-  //   //this.languageFilterForm.controls['regionCtrl'].setValue(Region.Africa);
-
-
-  //   // this.languageFilterForm.patchValue({
-  //   //   regionCtrl: String(Region.Africa),
-  //   // });
-  // }
+  onClick(){
+    this.languageFilterForm.patchValue({
+      region: Region.Africa,
+      language: 'fr'
+    });
+  }
 }
