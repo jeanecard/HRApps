@@ -15,15 +15,15 @@ export class HRCountryFilterPreferencesService {
     private populationService: HRPopulationValuesService) { }
 
   public getDefaultValue(): HRCountryFilterModel {
-
+    let population =  this.populationService.getDefaultPopulationFilterValue();
     return {
       regionAndLanguage: {
-        region: Region.All,
-        language: 'fr'
+        region: this.regionService.getDefaultRegionFilterValue(),
+        language: this.langService.getDefaultLanguageFilterValue().iso639_1
       },
       population: {
-        amount: 100000,
-        over: true
+        amount: population.amount,
+        over: population.over
       }
     };
   }
