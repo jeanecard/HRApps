@@ -8,13 +8,15 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { NotFoundComponent } from './not-found/not-found.component';
 import { SaucisseComponent } from './saucisse/saucisse.component';
 
+
 @NgModule({
   declarations: [HRNavigationComponent, HRDashBoardComponent, NotFoundComponent, SaucisseComponent],
   imports: [
     CommonModule,
     LayoutModule,
     AngularMaterialBasicModule,
-    FlexLayoutModule
+    FlexLayoutModule,
+    
   ],
   exports: [
     HRNavigationComponent,

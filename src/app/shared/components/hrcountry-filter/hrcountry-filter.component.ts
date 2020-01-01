@@ -14,51 +14,36 @@ import { FormControl, FormGroup, ControlValueAccessor, NG_VALUE_ACCESSOR } from 
     }
   ]  
 })
-export class HRCountryFilterComponent implements OnInit, ControlValueAccessor, AfterViewInit {
+export class HRCountryFilterComponent implements OnInit, ControlValueAccessor {
 
   propagateChange = (_: any) => {};
   propagateTouch  = (_: any) => {};
   countriesFilterForm : FormGroup;
+  regionAndLanguage : FormControl;
+  population : FormControl;
 
   constructor() {
- 
-   }
+    //Dummy.
+    }
 
   ngOnInit() {
-   //No initialisation in this Control. Region and Population can init by themselves.
+    this.regionAndLanguage = new FormControl();
+    this.population = new FormControl();
    this.countriesFilterForm = new FormGroup({
-    regionAndLanguage: new FormControl(),
-    population:new FormControl()
+    regionAndLanguage: this.regionAndLanguage,
+    population: this.population
   });
  
     this.countriesFilterForm.valueChanges.subscribe(filterValue => {
+      console.log('HRCountryFilterComponent RECOIT UN EVENEMNT');
+      console.log(filterValue);
       this.propagateChange(filterValue);
       this.propagateTouch(filterValue);      
        });
 
   }
 
-  ngAfterViewInit(): void {
-    console.log('BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB');
-    //! Pas catholique ...
-    let extEvt = {
-      regionAndLanguage :{
-        region: this.countriesFilterForm.controls['regionAndLanguage'].value.region,
-        language: this.countriesFilterForm.controls['regionAndLanguage'].value.language
-      },
-      population :{
-        amount:this.countriesFilterForm.controls['population'].value.amount,
-        over: this.countriesFilterForm.controls['population'].value.over
-
-      }
-    };
-    this.propagateChange(extEvt);
-    this.propagateTouch(extEvt);
-  }
-
   writeValue(value: any): void {
-    console.log('AAAAAAAAAAAAAAAAAAAAAAA');
-    console.log(value);
     this.countriesFilterForm.patchValue({
       regionAndLanguage :{
       region: value.regionAndLanguage.region,
@@ -66,8 +51,9 @@ export class HRCountryFilterComponent implements OnInit, ControlValueAccessor, A
       },
       population:{
         amount: value.population.amount,
-        over:value.population.over
+        over:value.population.over,
       }}, {emitEvent: false});
+
   }
 
   registerOnChange(fn: any): void {
@@ -81,16 +67,10 @@ export class HRCountryFilterComponent implements OnInit, ControlValueAccessor, A
   }
 
   onclick(){
-
-    // this.countriesFilterForm.controls['regionFilterCtrl'].setValue({region: Region.Africa});
-    // this.countriesFilterForm.controls['population'].setValue({amount: '5000000',over:true, saucisse:'cocktail'});
-    this.countriesFilterForm.patchValue({
-      regionAndLanguage: {language:'fr', region: Region.Asia },
-      population:{
-          amount: '5000000',
-          over:true,
-          saucisse:'cocktail'
-        }
-    });
+    console.log(this.population.value);
+    let initialState = this.population.value;
+    initialState.amount = undefined;
+    this.population.setValue(initialState, {emitViewToModelChange:true});
+    console.log(this.population.value);
   }
 }

@@ -2,8 +2,7 @@ import { Injectable } from '@angular/core';
 import { LanguageService } from './language.service';
 import { RegionService } from './region.service';
 import { HRPopulationValuesService } from './hrpopulation-values.service';
-import { Region } from '../model/region';
-import { HRCountryFilterModel } from './components/hrcountry-filter/hrcountry-filter-model';
+import { IHRCountryFilterModel } from './components/hrcountry-filter/ihrcountry-filter-model';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +13,7 @@ export class HRCountryFilterPreferencesService {
     private regionService: RegionService,
     private populationService: HRPopulationValuesService) { }
 
-  public getDefaultValue(): HRCountryFilterModel {
+  public getDefaultValue(): IHRCountryFilterModel {
     let population =  this.populationService.getDefaultPopulationFilterValue();
     return {
       regionAndLanguage: {

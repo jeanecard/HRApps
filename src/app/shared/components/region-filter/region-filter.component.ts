@@ -7,7 +7,6 @@ import { ControlValueAccessor } from '@angular/forms';
 import { Language } from 'src/app/model/language';
 import { LanguageService } from '../../language.service';
 import { take } from 'rxjs/operators';
-import { RegionControlObserver } from './region-control-observer';
 
 @Component({
   selector: 'app-region-filter',
@@ -29,10 +28,14 @@ export class RegionFilterComponent implements ControlValueAccessor, OnInit, OnDe
   isLanguageWorking: boolean;
   languagesCount: number;
   languageFilterForm: FormGroup;
+  region : FormControl;
+  language : FormControl;
   private _subscription: Subscription = new Subscription();
 
   propagateChange = (_: any) => { };
   propagateTouch = (_: any) => { };
+
+  
 
 
   constructor(private regionService: RegionService, private languageService: LanguageService) {
@@ -50,9 +53,12 @@ export class RegionFilterComponent implements ControlValueAccessor, OnInit, OnDe
     let regionFilterModel = this.regionService.getDefaultRegionFilterValue();
     let languageFilterModel = this.languageService.getDefaultLanguageFilterValue();
     //2-
+     this.region = new FormControl();
+     this.language = new FormControl();
+
     this.languageFilterForm = new FormGroup({
-      region: new FormControl(regionFilterModel),
-      language: new FormControl(languageFilterModel.iso639_1)
+      region: this.region,
+      language: this.language 
     });
     //3-
     this.initRegion(regionFilterModel);

@@ -1,11 +1,7 @@
 import { Component, OnInit, AfterContentInit } from '@angular/core';
 import { BreakpointObserver, Breakpoints, BreakpointState } from '@angular/cdk/layout';
 import { Observable } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
-
-// Menage
 import { FormControl, FormGroup } from '@angular/forms';
-import { Region } from 'src/app/model/region';
 import { HRCountryFilterPreferencesService } from 'src/app/shared/hrcountry-filter-preferences.service';
 
 
@@ -17,6 +13,9 @@ import { HRCountryFilterPreferencesService } from 'src/app/shared/hrcountry-filt
 export class MainFlagsComponent implements OnInit {
 
   mainFlagForm : FormGroup;
+  hrCountryFilter: FormControl;
+  flagList: FormControl;
+
   countriesCount : number = 0;
   isHandset: Observable<BreakpointState> = this.breakpointObserver.observe(Breakpoints.Handset);
   breakpoint = 1;
@@ -26,18 +25,21 @@ export class MainFlagsComponent implements OnInit {
   }
 
   ngOnInit() {
+    let prefs = this.prefService.getDefaultValue();
+    this.hrCountryFilter = new FormControl(prefs);
+    this.flagList = new FormControl(prefs);
 
     this.mainFlagForm = new FormGroup({
-      hrCountryFilter: new FormControl(this.prefService.getDefaultValue()),
-      flagList: new FormControl()
+      hrCountryFilter: this.hrCountryFilter,
+      flagList: this.flagList
     });
-    this.mainFlagForm.controls['hrCountryFilter'].valueChanges.subscribe(filterValue => {
-      this.mainFlagForm.controls['flagList'].setValue(filterValue);
-       });
+    this.hrCountryFilter.valueChanges.subscribe(filterValue => {
+      this.flagList.setValue(filterValue);
+    });
 
-       this.mainFlagForm.controls['flagList'].valueChanges.subscribe(filterValue => {
-        this.countriesCount = this.mainFlagForm.controls['flagList'].value.countriesCount;
-         });
+    this.flagList.valueChanges.subscribe(filterValue => {
+        this.countriesCount = this.flagList.value.countriesCount;
+   });
 
     if (window.innerWidth <= 400) {
       this.breakpoint = 1;

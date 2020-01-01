@@ -1,11 +1,10 @@
-import { Component, OnInit, Output, EventEmitter, forwardRef } from '@angular/core';
-import { PopulationFilterModel } from 'src/app/model/population-filter-model';
-import { FormControl, FormGroup, ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { Component, OnInit, forwardRef } from '@angular/core';
+import { FormControl, FormGroup, ControlValueAccessor, NG_VALUE_ACCESSOR, Validators } from '@angular/forms';
 import { HRPopulationValuesService } from '../../hrpopulation-values.service';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { IValueName } from 'src/app/model/value-name';
-import { stringToKeyValue } from '@angular/flex-layout/extended/typings/style/style-transforms';
 import { take } from 'rxjs/operators';
+import { IPopulation } from 'src/app/shared/components/hrcountry-filter/ipopulation'
 
 @Component({
   selector: 'app-population-filter',
@@ -20,74 +19,97 @@ import { take } from 'rxjs/operators';
   ]
 })
 export class PopulationFilterComponent implements OnInit, ControlValueAccessor {
-
   propagateChange = (_: any) => { };
   propagateTouch = (_: any) => { };
-
   populationFilterForm: FormGroup;
+  amount: FormControl;
+  over: FormControl;
   populationsFilter: Observable<Array<IValueName>>;
+  private _subscription: Subscription = new Subscription();
 
+  /**
+   * Constructor
+   * @description 
+   * Constructor.
+   * @param populationService : The service to get all abvailable population amount.
+   */
   constructor(private populationService: HRPopulationValuesService) {
-
+    //Dummy.
   }
-  //1- Get Observable Populations from service
-  //2- Susbcribe to populate FromControls
-  //3- Subscribe to FormGroup change
-  ngOnInit() {
 
-    let populationFilterModel = this.populationService.getDefaultPopulationFilterValue();
-    //2-
-    this.populationFilterForm = new FormGroup({
-      amount: new FormControl(String(populationFilterModel.amount)),
-      over: new FormControl(populationFilterModel.over)
-    });
+  /**
+  * Destroy all subscription
+  * 
+  */
+ ngOnDestroy(): void {
+  this._subscription.unsubscribe();
+}
+
+  /**
+   * @description 
+   * Init component
+   *  1- Instanciate Model
+   *  2- Get an observable on available population and unsuscribe automatically as none update is expected.
+   *  3- Suscribe on all model changes to propagate to parent.
+   */
+  ngOnInit() {
     //1-
-    this.populationsFilter = this.populationService.getPopulationsValues();
+    this.amount = new FormControl();
+    this.over = new FormControl();
+    this.populationFilterForm = new FormGroup({
+      amount: this.amount,
+      over: this.over
+    });
     //2-
+    this.populationsFilter = this.populationService.getPopulationsValues();
     this.populationsFilter.pipe(take(1)).subscribe(data => {
+      //Dummy.
     });
     //3-
-    this.populationFilterForm.valueChanges.subscribe(filterValue => {
+    this._subscription.add(this.populationFilterForm.valueChanges.subscribe(filterValue => {
       this.propagateChange(filterValue);
       this.propagateTouch(filterValue);
-    });
+    }));
   }
   /**
    * @description
-   * Writes a new value to the element.
+   * Writes a new value in the view.
    *
    * This method is called by the forms API to write to the view when programmatic
-   * changes from model to view are requested. For exemple 
+   * changes from model to view are requested. For example 
    *  - on the new Form(obj)
    *  - on set / patch value on this FormController. (generally called by parents containing this control)
    *
    * @usageNotes
    * ### Write a value to the element
-   * ### after method, value property of the form will return {amountCtrl : a_value, over : other_value}
+   *  1- check obj validity
+   *  2- setValue to populationFilterForm without emmiting event as we just need to update view.
+   *  
    *
-   * @param obj The new value for the element. Model expected : {amount: number or String, over : boolean)
+   * @param obj The new value for the element. Model expected : {amount: number or String, over : boolean) otherwise TypeError is thrown.
    */
   writeValue(obj: any): void {
-    if (obj && obj != undefined) {
-      if (obj.amount != undefined) {
-        if (obj.over != undefined) {
-          this.populationFilterForm.patchValue({
-            amount: String(obj.amount),
-            over: obj.over
-          },  { emitEvent: false });
-        } else {
-          this.populationFilterForm.patchValue({
-            amount: String(obj.amount)
-          },  { emitEvent: false });
-        }
+    //1-
+    if(obj == null 
+      || obj == undefined 
+      || (obj.amount == undefined ) 
+      || (obj.over == undefined) ){
+        let flattenObject = 'null or undefined';
+        if(obj && obj != undefined){
+        for (let propNamei in obj){
+          flattenObject = flattenObject + '-' + obj[propNamei];
       }
-      else if (obj.over != undefined) {
-        this.populationFilterForm.patchValue({
+        }
+        throw TypeError('Can not set ' + flattenObject + ' in view because argument is null, undefined or does not contain amount or over property. Use FormControl.value before SetValue / PatchValue.');
+      }else{
+        //2-
+        this.populationFilterForm.setValue({
+          amount: String(obj.amount),
           over: obj.over
-        },  { emitEvent: false });
+        },{emitEvent: false});
       }
     }
-  }
+  
   registerOnChange(fn: any): void {
     this.propagateChange = fn;
 
@@ -97,13 +119,7 @@ export class PopulationFilterComponent implements OnInit, ControlValueAccessor {
   }
 
   setDisabledState?(isDisabled: boolean): void {
-  }
-  onclick() {
-    this.writeValue({ amount: 5000000, over: true });
-    // this.populationFilterForm.patchValue({
-    //   amount: '5000000',
-    //   over: true
-    // });
+    //Not impplmented in this version.
   }
 }
 
