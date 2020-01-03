@@ -69,8 +69,7 @@ export class HRCountryFilterComponent implements OnInit, ControlValueAccessor {
   onclick(){
     console.log(this.population.value);
     let initialState = this.population.value;
-    initialState.amount = undefined;
-    this.population.setValue(initialState, {emitViewToModelChange:true});
+    this.population.setValue({amount: 100000, over : true});
     console.log(this.population.value);
   }
 }

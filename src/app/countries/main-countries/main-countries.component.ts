@@ -8,9 +8,8 @@ import OlView from 'ol/View';
 import { fromLonLat } from 'ol/proj';
 import { Observable } from 'rxjs';
 import { BreakpointState, BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { Language } from 'src/app/model/language';
-import { Region } from 'src/app/model/region';
-import { PopulationFilterModel } from 'src/app/model/population-filter-model';
+import { FormGroup, FormControl } from '@angular/forms';
+import { HRCountryFilterPreferencesService } from 'src/app/shared/hrcountry-filter-preferences.service';
 
 @Component({
   selector: 'app-main-countries',
@@ -18,6 +17,9 @@ import { PopulationFilterModel } from 'src/app/model/population-filter-model';
   styleUrls: ['./main-countries.component.scss']
 })
 export class MainCountriesComponent implements OnInit, AfterViewInit {
+  
+  mainBorderForm : FormGroup;
+  hrCountryFilter: FormControl;
 
   map: OlMap;
   source: OlXYZ;
@@ -25,15 +27,25 @@ export class MainCountriesComponent implements OnInit, AfterViewInit {
   view: OlView;
   isHandset: Observable<BreakpointState> = this.breakpointObserver.observe(Breakpoints.Handset);
   breakpoint = 1;
-
-  language: Language = null;
-  region: Region = Region.All;
-  population: PopulationFilterModel = null;
-  countriesList: Array<any>[] = new Array<any>();
-
-  constructor(private breakpointObserver: BreakpointObserver) { }
+  constructor(private breakpointObserver: BreakpointObserver,
+    private prefService : HRCountryFilterPreferencesService) { }
 
   ngOnInit() {
+    //1- CountryFilter
+    let prefs = this.prefService.getDefaultValue();
+    this.hrCountryFilter = new FormControl(prefs);
+
+    this.mainBorderForm = new FormGroup({
+      hrCountryFilter: this.hrCountryFilter
+    });
+    this.hrCountryFilter.valueChanges.subscribe(filterValue => {
+
+      //Test to save prefs.
+      if(filterValue && filterValue.population && filterValue.regionAndLanguage){
+        this.prefService.setValue(filterValue);
+      }
+    });
+    //2- OpenLayer
     this.source = new OlXYZ({
       url: 'http://tile.osm.org/{z}/{x}/{y}.png'
     });
@@ -56,21 +68,5 @@ export class MainCountriesComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     this.map.setTarget('map');
-  }
-
-  onLanguageChanged(languageEvent: Language) {
-    this.language = languageEvent;
-    // this.populateCards(this.region, this.language, this.population);
-  }
-
-  onPopulationChanged(populationEvent: PopulationFilterModel) {
-    this.population = populationEvent;
-    // this.populateCards(this.region, this.language, this.population);
-  }
-
-  onRegionChanged(regionEvent: Region) {
-    this.region = regionEvent;
-
-    // this.populateCards(this.region, this.language, this.population);
   }
 }

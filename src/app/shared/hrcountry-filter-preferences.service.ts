@@ -14,7 +14,7 @@ export class HRCountryFilterPreferencesService {
     private populationService: HRPopulationValuesService) { }
 
   public getDefaultValue(): IHRCountryFilterModel {
-    let population =  this.populationService.getDefaultPopulationFilterValue();
+    let population = this.populationService.getDefaultPopulationFilterValue();
     return {
       regionAndLanguage: {
         region: this.regionService.getDefaultRegionFilterValue(),
@@ -26,4 +26,16 @@ export class HRCountryFilterPreferencesService {
       }
     };
   }
+  public setValue(val: IHRCountryFilterModel) {
+    if (val) {
+      if (val.population) {
+        this.populationService.SetDefaultPopulationFilterValue(val.population);
+      }
+      if (val.regionAndLanguage){
+        this.regionService.setDefaultRegionFilterValue(val.regionAndLanguage.region);
+        this.langService.setDefaultLanguageFilterValue(val.regionAndLanguage.language);
+      }
+    }
+  }
+
 }

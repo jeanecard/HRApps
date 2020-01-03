@@ -19,9 +19,19 @@ export class RegionService {
   }
 
   getDefaultRegionFilterValue(): Region{
+    let lsRegionValue = localStorage.getItem('region');
+    if(lsRegionValue){
+      console.log('------------------------------------------------------');
+      console.log(Region[lsRegionValue]);
+      return Region[lsRegionValue];
+    }
     return Region.All;
   }
 
+  setDefaultRegionFilterValue(val : Region): void{
+    localStorage.setItem('region', val.toString());
+  }
+  
   getRegions(): Observable<Region[]> {
 
     return this.http.get<Region[]>(this.ServiceURL);

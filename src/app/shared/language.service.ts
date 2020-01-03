@@ -26,6 +26,15 @@ export class LanguageService {
   }
 
   getDefaultLanguageFilterValue(): Language {
+    let lsOverValue = localStorage.getItem('iso639_1');
+    if(lsOverValue){
+      return {
+        iso639_1: lsOverValue,
+        iso639_2: 'AFAIRE',
+        name: 'AFAIRE',
+        nativeName: 'AFAIRE'
+      };
+    }
     return {
       iso639_1: 'fr',
       iso639_2: 'fra',
@@ -33,4 +42,9 @@ export class LanguageService {
       nativeName: 'France'
     };
   }
+
+  setDefaultLanguageFilterValue(isoCode : string): void {
+    localStorage.setItem('iso639_1', isoCode);
+  }
+
 }

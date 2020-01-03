@@ -4,7 +4,7 @@ import { HRPopulationValuesService } from '../../hrpopulation-values.service';
 import { Observable, Subscription } from 'rxjs';
 import { IValueName } from 'src/app/model/value-name';
 import { take } from 'rxjs/operators';
-import { IPopulation } from 'src/app/shared/components/hrcountry-filter/ipopulation'
+import { JsonLogger } from 'src/app/utils/json-logger';
 
 @Component({
   selector: 'app-population-filter',
@@ -41,9 +41,9 @@ export class PopulationFilterComponent implements OnInit, ControlValueAccessor {
   * Destroy all subscription
   * 
   */
- ngOnDestroy(): void {
-  this._subscription.unsubscribe();
-}
+  ngOnDestroy(): void {
+    this._subscription.unsubscribe();
+  }
 
   /**
    * @description 
@@ -70,6 +70,7 @@ export class PopulationFilterComponent implements OnInit, ControlValueAccessor {
       this.propagateChange(filterValue);
       this.propagateTouch(filterValue);
     }));
+
   }
   /**
    * @description
@@ -90,26 +91,29 @@ export class PopulationFilterComponent implements OnInit, ControlValueAccessor {
    */
   writeValue(obj: any): void {
     //1-
-    if(obj == null 
-      || obj == undefined 
-      || (obj.amount == undefined ) 
-      || (obj.over == undefined) ){
-        let flattenObject = 'null or undefined';
-        if(obj && obj != undefined){
-        for (let propNamei in obj){
-          flattenObject = flattenObject + '-' + obj[propNamei];
-      }
-        }
-        throw TypeError('Can not set ' + flattenObject + ' in view because argument is null, undefined or does not contain amount or over property. Use FormControl.value before SetValue / PatchValue.');
-      }else{
-        //2-
-        this.populationFilterForm.setValue({
-          amount: String(obj.amount),
-          over: obj.over
-        },{emitEvent: false});
-      }
+        if (obj != null
+      && obj != undefined
+      && (obj.amount == undefined || obj.amount == null || obj.over == undefined || obj.over == null)) {
+      let logger = new JsonLogger();
+      throw TypeError('Can not set ' + logger.flattenObject(obj) + ' in view because all properties are not set. Expected : amount and over. Use FormControl.value before SetValue / PatchValue.');
     }
-  
+    //2-    else {
+    if (obj == null || obj == undefined) {
+      let defaultValue = this.populationService.getNullValue();
+      this.populationFilterForm.setValue({
+        amount: String(defaultValue.amount),
+        over: defaultValue.over
+      }, { emitEvent: false });
+    } else {
+      //2-
+      this.populationFilterForm.setValue({
+        amount: String(obj.amount),
+        over: obj.over
+      }, { emitEvent: false });
+    }
+  }
+
+
   registerOnChange(fn: any): void {
     this.propagateChange = fn;
 

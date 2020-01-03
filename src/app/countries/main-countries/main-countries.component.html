@@ -1,28 +1,23 @@
-<mat-sidenav-container class="sidenav-container">
-    <!-- LEFT SIDE NAV -->
-    <mat-sidenav #leftDrawer class="left-sidenav" position="start" fixedInViewport="true"
-        [attr.role]="isHandset ? 'dialog' : 'navigation'" [mode]="(isHandset | async)!.matches ? 'over' : 'side'"
-        [opened]="!(isHandset | async)!.matches">
-        <mat-toolbar color="primary">
-            <span matBadge="{{countriesList?.length}}" matBadgeOverlap="false" matBadgeColor="warn">HR Map</span>
-        </mat-toolbar>
-        <form>
-            <app-region-filter>
-            </app-region-filter>
-            <app-population-filter (populationChanged)="onPopulationChanged($event)">
-            </app-population-filter>
-        </form>
-        <!-- </div> -->
-    </mat-sidenav>
-    <!-- Main Tool Bar -->
-    <mat-sidenav-content class="saucisse">
-        <mat-toolbar color="primary">
-            <button type="button" aria-label="Toggle sidenav" mat-icon-button (click)="leftDrawer.toggle()">
-                <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
-            </button>
-        </mat-toolbar>
-        <!-- MAIN CONTENT -->
-        <div id="map" class="map"></div>
-    </mat-sidenav-content>
-
-</mat-sidenav-container>
+<form [formGroup]="mainBorderForm">
+    <mat-sidenav-container class="sidenav-container">
+        <!-- LEFT SIDE NAV -->
+        <mat-sidenav #leftDrawer class="left-sidenav" position="start" fixedInViewport="true"
+            [attr.role]="isHandset ? 'dialog' : 'navigation'" [mode]="(isHandset | async)!.matches ? 'over' : 'side'"
+            [opened]="!(isHandset | async)!.matches">
+            <mat-toolbar color="primary">
+                <span matBadge="{{countriesList?.length}}" matBadgeOverlap="false" matBadgeColor="warn">HR Map</span>
+            </mat-toolbar>
+            <app-hrcountry-filter formControlName="hrCountryFilter"></app-hrcountry-filter>
+        </mat-sidenav>
+        <!-- Main Tool Bar -->
+        <mat-sidenav-content class="saucisse">
+            <mat-toolbar color="primary">
+                <button type="button" aria-label="Toggle sidenav" mat-icon-button (click)="leftDrawer.toggle()">
+                    <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+                </button>
+            </mat-toolbar>
+            <!-- MAIN CONTENT -->
+            <div id="map" class="map"></div>
+        </mat-sidenav-content>
+    </mat-sidenav-container>
+</form>

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject } from '@angular/core';
 import { IValueName } from '../model/value-name';
 import { Observable, from } from 'rxjs';
 import { PopulationFilterModel } from '../model/population-filter-model';
@@ -8,7 +8,11 @@ import { PopulationFilterModel } from '../model/population-filter-model';
 })
 export class HRPopulationValuesService {
 
-  constructor() { }
+  private readonly _keyAmountStorage = 'amount';
+  private readonly _keyOverStorage = 'over';
+
+  constructor() {
+  }
 
   //Return an observable on availables values.
   public getPopulationsValues(): Observable<Array<IValueName>> {
@@ -28,9 +32,68 @@ export class HRPopulationValuesService {
     });
   }
 
-  //Get default value from local storage
-  public getDefaultPopulationFilterValue(): PopulationFilterModel{
-    //!TODO
-    return {amount:100000, over:true }; 
+  /**
+ * Get the default value from local storage
+ *  1- Check context
+ *  2- If Local Storage is available and consistant, return value from it
+ *  3- Else return this.getNullValue
+ * @method getDefaultPopulationFilterValue
+ * @return {PopulationFilterModel} a populationModel from local storage or the default value if localstorage is not set.
+ */
+  public getDefaultPopulationFilterValue(): PopulationFilterModel {
+    //1-
+    if (localStorage == null || localStorage == undefined) {
+      throw Error('Local Storage service is not available');
+    }
+    //2-
+    let lsAmountValue = localStorage.getItem(this._keyAmountStorage);
+    let lsOverValue = localStorage.getItem(this._keyOverStorage);
+    if (lsAmountValue && lsOverValue) {
+      //2-
+       let retour = {
+          amount: parseInt(lsAmountValue),
+          over:  lsOverValue == 'true'
+        };
+        if(isNaN(retour.amount)){
+          retour = this.getNullValue();
+        }
+      return retour;
+
+    } else {
+      //3-
+      return this.getNullValue();
+    }
   }
+
+  public SetDefaultPopulationFilterValue(val : PopulationFilterModel) : void {
+    let amount : string;
+    let over : string;
+    if(val == null || val == undefined || val.amount == undefined){
+      let nullval = this.getNullValue();
+      amount = nullval.amount.toString();
+      if(nullval.over){
+        over = 'true';
+      } else{
+        over = 'false';
+      }
+    } else{
+      amount = val.amount.toString();
+      if(val.over){
+        over = 'true';
+      } else{
+        over = 'false';
+      }
+
+    }
+    //Don't catch exception
+    localStorage.setItem(this._keyAmountStorage,amount);
+    localStorage.setItem(this._keyOverStorage,over);
+
+  }
+
+  public getNullValue(): PopulationFilterModel {
+    return { amount: 0, over: false };
+  }
+
+
 }

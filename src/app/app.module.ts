@@ -4,6 +4,7 @@ import { ServiceWorkerModule } from '@angular/service-worker';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { environment } from '../environments/environment';
 import { HttpClientModule } from '@angular/common/http';
+import { StorageServiceModule } from 'angular-webstorage-service';
 
 
 import { AppComponent } from './app.component';
@@ -28,6 +29,7 @@ import { HRErrorHandler } from './hrerror-handler';
     RootModule,
     AppRoutingModule,
     HttpClientModule,
+    StorageServiceModule
   ],
   providers: [{provide: ErrorHandler, useClass: HRErrorHandler}],
   bootstrap: [AppComponent]

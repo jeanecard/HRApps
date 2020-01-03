@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterContentInit } from '@angular/core';
+import { Component, OnInit, AfterContentInit, OnDestroy } from '@angular/core';
 import { BreakpointObserver, Breakpoints, BreakpointState } from '@angular/cdk/layout';
 import { Observable } from 'rxjs';
 import { FormControl, FormGroup } from '@angular/forms';
@@ -10,8 +10,7 @@ import { HRCountryFilterPreferencesService } from 'src/app/shared/hrcountry-filt
   templateUrl: './main-flags.component.html',
   styleUrls: ['./main-flags.component.scss']
 })
-export class MainFlagsComponent implements OnInit {
-
+export class MainFlagsComponent implements OnInit, OnDestroy {
   mainFlagForm : FormGroup;
   hrCountryFilter: FormControl;
   flagList: FormControl;
@@ -35,6 +34,10 @@ export class MainFlagsComponent implements OnInit {
     });
     this.hrCountryFilter.valueChanges.subscribe(filterValue => {
       this.flagList.setValue(filterValue);
+      //Test to save prefs.
+      if(filterValue && filterValue.population && filterValue.regionAndLanguage){
+        this.prefService.setValue(filterValue);
+      }
     });
 
     this.flagList.valueChanges.subscribe(filterValue => {
@@ -53,6 +56,13 @@ export class MainFlagsComponent implements OnInit {
       this.breakpoint = 6;
     }
   }
+
+  ngOnDestroy(): void {
+    //Dummy. Why not set default value only on Destroy ??
+    console.log('Why not set default value only on Destroy ??');
+  }
+
+
   onResize(event: any): void {
     if (event.target.innerWidth <= 400) {
       this.breakpoint = 1;
