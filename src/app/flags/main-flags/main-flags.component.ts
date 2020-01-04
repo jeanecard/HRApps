@@ -25,8 +25,6 @@ export class MainFlagsComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     let prefs = this.prefService.getDefaultValue();
-    console.log('coktail');
-    console.log(prefs);
     this.hrCountryFilter = new FormControl(prefs);
     this.flagList = new FormControl(prefs);
 

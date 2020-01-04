@@ -19,10 +19,6 @@ export class HRCountryService {
   constructor(private http: HttpClient) { }
 
   getCountries(region: Region, language: Language, population: PopulationFilterModel): Observable<HRCountry[]> {
-    console.log('appel');
-    console.log(region);
-    console.log(language);
-    console.log(population);
     let regionProcessed = region;
     if(region == null || region == undefined){
       regionProcessed = Region.All;
