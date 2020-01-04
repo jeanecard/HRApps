@@ -20,6 +20,7 @@ export class MainCountriesComponent implements OnInit, AfterViewInit {
   
   mainBorderForm : FormGroup;
   hrCountryFilter: FormControl;
+  countriesList : any; //!todo
 
   map: OlMap;
   source: OlXYZ;

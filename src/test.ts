@@ -15,6 +15,6 @@ getTestBed().initTestEnvironment(
   platformBrowserDynamicTesting()
 );
 // Then we find all the tests.
-const context = require.context('./', true, /hrpopulation-values.service\.spec\.ts$/);
+const context = require.context('./', true, /region.service\.spec\.ts$/);
 // And load the modules.
 context.keys().map(context);

@@ -36,10 +36,10 @@ export class LanguageService {
       };
     }
     return {
-      iso639_1: 'fr',
-      iso639_2: 'fra',
-      name: 'France',
-      nativeName: 'France'
+      iso639_1: '',
+      iso639_2: '',
+      name: '',
+      nativeName: ''
     };
   }
 
