@@ -7,7 +7,7 @@ import { LanguageService } from './language.service';
 import { RegionService } from './region.service';
 import { HRPopulationValuesService } from './hrpopulation-values.service';
 import { PopulationFilterModel } from '../model/population-filter-model';
-import {LOCAL_STORAGE, WebStorageService} from 'angular-webstorage-service';
+// import {LOCAL_STORAGE, WebStorageService} from 'angular-webstorage-service';
 
 describe('HRCountryFilterPreferencesService', () => {
   beforeEach(() =>
