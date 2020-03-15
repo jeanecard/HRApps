@@ -7,10 +7,13 @@ import { LayoutModule } from '@angular/cdk/layout';
 import { AngularMaterialBasicModule } from '../shared/angular-material-basic/angular-material-basic.module';
 import { RootModule } from '../root/root.module';
 import { FiltersModule } from '../shared/components/filters.module';
+import { HRCountryOpenLayerMapComponent } from './hrcountry-open-layer-map/hrcountry-open-layer-map.component';
 
 
 @NgModule({
-  declarations: [MainCountriesComponent],
+  declarations: [
+    MainCountriesComponent, 
+    HRCountryOpenLayerMapComponent],
   imports: [
     CountriesRoutingModule,
     CommonModule,

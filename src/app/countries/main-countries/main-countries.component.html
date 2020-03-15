@@ -10,14 +10,14 @@
             <app-hrcountry-filter formControlName="hrCountryFilter"></app-hrcountry-filter>
         </mat-sidenav>
         <!-- Main Tool Bar -->
-        <mat-sidenav-content class="saucisse">
+        <mat-sidenav-content>
             <mat-toolbar color="primary">
                 <button type="button" aria-label="Toggle sidenav" mat-icon-button (click)="leftDrawer.toggle()">
                     <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
                 </button>
             </mat-toolbar>
             <!-- MAIN CONTENT -->
-            <div id="map" class="map"></div>
+            <app-hrcountry-open-layer-map></app-hrcountry-open-layer-map>
         </mat-sidenav-content>
     </mat-sidenav-container>
 </form>

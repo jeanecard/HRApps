@@ -4,12 +4,22 @@ import OlMap from 'ol/Map';
 import OlXYZ from 'ol/source/XYZ';
 import OlTileLayer from 'ol/layer/Tile';
 import OlView from 'ol/View';
+import 'ol/ol.css';
+import Feature from 'ol/Feature';
+import Map from 'ol/Map';
+import View from 'ol/View';
+import WKT from 'ol/format/WKT';
+import GeoJSON from 'ol/format/GeoJSON';
+import Circle from 'ol/geom/Circle';
+import { Tile as TileLayer, Vector as VectorLayer } from 'ol/layer';
+import { OSM, Vector as VectorSource } from 'ol/source';
 
 import { fromLonLat } from 'ol/proj';
 import { Observable } from 'rxjs';
 import { BreakpointState, BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { FormGroup, FormControl } from '@angular/forms';
 import { HRCountryFilterPreferencesService } from 'src/app/shared/hrcountry-filter-preferences.service';
+import { HrBorderService } from 'src/app/shared/hr-border.service';
 
 @Component({
   selector: 'app-main-countries',
@@ -17,21 +27,21 @@ import { HRCountryFilterPreferencesService } from 'src/app/shared/hrcountry-filt
   styleUrls: ['./main-countries.component.scss']
 })
 export class MainCountriesComponent implements OnInit, AfterViewInit {
-  
-  mainBorderForm : FormGroup;
-  hrCountryFilter: FormControl;
-  countriesList : any; //!todo
 
-  map: OlMap;
-  source: OlXYZ;
-  layer: OlTileLayer;
-  view: OlView;
+  mainBorderForm: FormGroup;
+  hrCountryFilter: FormControl;
+  countriesList: any; //!todo
+
   isHandset: Observable<BreakpointState> = this.breakpointObserver.observe(Breakpoints.Handset);
   breakpoint = 1;
+
+
   constructor(private breakpointObserver: BreakpointObserver,
-    private prefService : HRCountryFilterPreferencesService) { }
+    private prefService: HRCountryFilterPreferencesService,
+) { }
 
   ngOnInit() {
+
     //1- CountryFilter
     let prefs = this.prefService.getDefaultValue();
     this.hrCountryFilter = new FormControl(prefs);
@@ -42,32 +52,17 @@ export class MainCountriesComponent implements OnInit, AfterViewInit {
     this.hrCountryFilter.valueChanges.subscribe(filterValue => {
 
       //Test to save prefs.
-      if(filterValue && filterValue.population && filterValue.regionAndLanguage){
+      if (filterValue && filterValue.population && filterValue.regionAndLanguage) {
         this.prefService.setValue(filterValue);
       }
     });
-    //2- OpenLayer
-    this.source = new OlXYZ({
-      url: 'http://tile.osm.org/{z}/{x}/{y}.png'
-    });
 
-    this.layer = new OlTileLayer({
-      source: this.source
-    });
-
-    this.view = new OlView({
-      center: fromLonLat([6.661594, 50.433237]),
-      zoom: 3
-    });
-
-    this.map = new OlMap({
-      target: 'map',
-      layers: [this.layer],
-      view: this.view
-    });
   }
 
   ngAfterViewInit() {
-    this.map.setTarget('map');
   }
 }
+
+
+
+
