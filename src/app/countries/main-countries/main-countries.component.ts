@@ -30,7 +30,10 @@ export class MainCountriesComponent implements OnInit, AfterViewInit {
 
   mainBorderForm: FormGroup;
   hrCountryFilter: FormControl;
+  bordersMap: FormControl;
+
   countriesList: any; //!todo
+
 
   isHandset: Observable<BreakpointState> = this.breakpointObserver.observe(Breakpoints.Handset);
   breakpoint = 1;
@@ -42,21 +45,24 @@ export class MainCountriesComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
 
+
     //1- CountryFilter
     let prefs = this.prefService.getDefaultValue();
     this.hrCountryFilter = new FormControl(prefs);
+    //2- Map
+    this.bordersMap = new FormControl(prefs);
 
     this.mainBorderForm = new FormGroup({
-      hrCountryFilter: this.hrCountryFilter
+      hrCountryFilter: this.hrCountryFilter,
+      bordersMap : this.bordersMap
     });
     this.hrCountryFilter.valueChanges.subscribe(filterValue => {
-
+      this.bordersMap.setValue(filterValue);
       //Test to save prefs.
       if (filterValue && filterValue.population && filterValue.regionAndLanguage) {
         this.prefService.setValue(filterValue);
       }
     });
-
   }
 
   ngAfterViewInit() {
