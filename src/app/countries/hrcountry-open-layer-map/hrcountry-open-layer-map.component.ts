@@ -183,17 +183,24 @@ export class HRCountryOpenLayerMapComponent implements ControlValueAccessor,  On
     };
     
     this.map.on('pointermove', function(evt) {
-      console.log('Saucisse');
-      if (evt.dragging) {
-        return;
-      }
-      console.log('Morto');
+      // if (evt.dragging) {
+      //   return;
+      // }
       var pixel = evt.map.getEventPixel(evt.originalEvent);
       displayFeatureInfo(pixel, evt.map);
     });
     
+
+    this.map.on('drag', function() {
+      console.log('Dragging...');
+    });
+    
+    this.map.on('dragend', function() {
+      console.log('Dragging ended.');
+    });
+
     this.map.on('click', function(evt) {
-      console.log(evt);
+      console.log('je clique');
       displayFeatureInfo(evt.pixel, evt.map);
     });
     //--------------
