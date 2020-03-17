@@ -128,7 +128,7 @@ export class OpenLayerStylesService {
       }
       case Region.Americas: {
         if (!isForFill) {
-          return 'rgb(180,0,0)';
+          return 'rgb(50,50,50)';
         }
         else {
           return 'rgba(10, 10, 10, 0.1)';
@@ -137,7 +137,7 @@ export class OpenLayerStylesService {
       }
       case Region.Asia: {
         if (!isForFill) {
-          return 'rgb(210,210,0)';
+          return 'rgb(50,50,50)';
         }
         else {
           return 'rgba(10, 10, 10, 0.1)';
@@ -145,7 +145,7 @@ export class OpenLayerStylesService {
       }
       case Region.Europe: {
         if (!isForFill) {
-          return 'rgb(0,0,200)';
+          return 'rgb(50,50,50)';
         }
         else {
           return 'rgba(10, 10, 10, 0.1)';
@@ -153,7 +153,7 @@ export class OpenLayerStylesService {
       }
       case Region.Oceania: {
         if (!isForFill) {
-          return 'rgb(0,200,0)';
+          return 'rgb(50,50,50)';
         } else {
           return 'rgba(10, 10, 10, 0.1)';
         }
