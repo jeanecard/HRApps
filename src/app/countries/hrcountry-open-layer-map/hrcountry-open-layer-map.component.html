@@ -1,4 +1,5 @@
 <div id="map" class="map" tabindex="1"></div>
 <div id="scale-line" class="scale-line"></div>
 <div id="mouse-pointer" class="scale-line"></div>
-<div id="info" class="info">&nbsp;</div>
+<div *ngIf="isFeatureInfoDisplayed()" id="info" class="info">{{map?.selectedFeatureName}}</div>
+<mat-spinner *ngIf="isWorking" [diameter]='200' class="spinner"></mat-spinner>

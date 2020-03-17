@@ -1,3 +1,5 @@
+import { Region } from './region';
+
 export class HrBorder {
   public wkT_GEOMETRY : string;
   public fips : string;
@@ -11,4 +13,5 @@ export class HrBorder {
   public  subregion : string;
   public  lon: number;
   public lat: number;
+  public borderRegion : string;
 }

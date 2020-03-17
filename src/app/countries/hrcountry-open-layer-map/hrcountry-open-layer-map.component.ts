@@ -26,6 +26,8 @@ import { Region } from 'src/app/model/region';
 import { PopulationFilterModel } from 'src/app/model/population-filter-model';
 import { Observable } from 'rxjs';
 import { HrBorder } from 'src/app/model/hr-border';
+import { FlagDetailComponent } from 'src/app/flags/flag-detail/flag-detail.component';
+import { HRCountry } from 'src/app/model/hrcountry';
 
 
 @Component({
@@ -56,8 +58,6 @@ export class HRCountryOpenLayerMapComponent implements ControlValueAccessor,  On
 
 
   ngOnInit(): void {
-    
-    this.geometryStyles = this.layerStylesService.geometryStyles();
 
     //1- Préparation de la source des Features Geo et du Layer d'affichage
     this.baseGeojsonObject = {
@@ -83,7 +83,7 @@ export class HRCountryOpenLayerMapComponent implements ControlValueAccessor,  On
     this.vectorLayer = new VectorLayer({
       source: this.vectorSource,
       style: (feature : any) : any => {
-        let correspondingStyle = this.geometryStyles[feature.getGeometry().getType()];
+        let correspondingStyle = this.layerStylesService.getGeometryStyles(feature.getGeometry().getType(), feature.borderRegion);
         correspondingStyle.getText().setText(feature.name);
         return correspondingStyle;
       }
@@ -116,6 +116,8 @@ export class HRCountryOpenLayerMapComponent implements ControlValueAccessor,  On
       }),
     });
 
+    this.map.selectedFeatureName = 'saucisse';
+
     //5- Ajout des controls
     //5.1- Ajout d'une ScaleLine en haut à gauche
     this.map.controls.push(new ScaleLine({className: 'ol-scale-line', target: document.getElementById('scale-line')}));
@@ -129,8 +131,8 @@ export class HRCountryOpenLayerMapComponent implements ControlValueAccessor,  On
     
     var highlightStyle = new Style({
       stroke: new Stroke({
-        color: '#f00',
-        width: 1
+        color: 'white',//'#f00',
+        width: 3
       }),
       fill: new Fill({
         color: 'rgba(255,0,0,0.1)'
@@ -165,9 +167,11 @@ export class HRCountryOpenLayerMapComponent implements ControlValueAccessor,  On
     
       var info = document.getElementById('info');
       if (feature) {
-        info.innerHTML = feature.name;
+        map.selectedFeatureName = feature.name;
+        //info.innerHTML = feature.name;
       } else {
-        info.innerHTML = '&nbsp;';
+        //info.innerHTML = '&nbsp;';
+        map.selectedFeatureName = '';
       }
     
       if (feature !== highlight) {
@@ -183,25 +187,19 @@ export class HRCountryOpenLayerMapComponent implements ControlValueAccessor,  On
     };
     
     this.map.on('pointermove', function(evt) {
-      // if (evt.dragging) {
-      //   return;
-      // }
+      if (evt.dragging) {
+        return;
+      }
       var pixel = evt.map.getEventPixel(evt.originalEvent);
       displayFeatureInfo(pixel, evt.map);
     });
     
 
-    this.map.on('drag', function() {
-      console.log('Dragging...');
-    });
     
-    this.map.on('dragend', function() {
-      console.log('Dragging ended.');
-    });
 
     this.map.on('click', function(evt) {
-      console.log('je clique');
-      displayFeatureInfo(evt.pixel, evt.map);
+      // console.log(evt);
+      // evt.map.openDialog('fr');
     });
     //--------------
   }
@@ -238,7 +236,7 @@ export class HRCountryOpenLayerMapComponent implements ControlValueAccessor,  On
       
       this.borders = this.borderService.getBorders(region, lang, pop);
 
-  
+      this.isWorking = true;
       this.borders.pipe(take(1)).subscribe(data => {
         this.vectorSource.clear();
         //2- OpenLayer
@@ -249,15 +247,20 @@ export class HRCountryOpenLayerMapComponent implements ControlValueAccessor,  On
             dataProjection: 'EPSG:4326',
             featureProjection: 'EPSG:3857'
           });
+          //!Cheat
           feature.name = element.name;
+          feature.borderRegion = Region[element.borderRegion];
           features.push(feature);
         });
         this.vectorSource.addFeatures(features);
         this.map.getLayerGroup().getLayers().item(1).setSource(this.vectorSource);
-        console.log(this.map.getLayerGroup().getLayers().item(1));
         this.map.changed();
         this.isWorking = false;
         this.propagateChange({ countriesCount: data.length });
+      }, error => {
+        this.isWorking = false;
+      }, () => {
+        this.isWorking = false;
       });
     }
   }
@@ -272,4 +275,7 @@ export class HRCountryOpenLayerMapComponent implements ControlValueAccessor,  On
     //Dummy.
   }
 
+  public isFeatureInfoDisplayed () : boolean {
+    return this.map.selectedFeatureName !== '';
+  }
 }

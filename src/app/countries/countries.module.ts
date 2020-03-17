@@ -20,7 +20,7 @@ import { HRCountryOpenLayerMapComponent } from './hrcountry-open-layer-map/hrcou
     LayoutModule,
     AngularMaterialBasicModule,
     RootModule,
-    FiltersModule
+    FiltersModule,
   ],
   exports: [
     MainCountriesComponent
