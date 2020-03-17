@@ -230,12 +230,12 @@ export class HRCountryOpenLayerMapComponent implements ControlValueAccessor,  On
       }
       
       this.borders = this.borderService.getBorders(region, lang, pop);
-      this.vectorSource = new VectorSource({
-        features: (new GeoJSON()).readFeatures(this.baseGeojsonObject)
-      });
+
   
       this.borders.pipe(take(1)).subscribe(data => {
+        this.vectorSource.clear();
         //2- OpenLayer
+        let features = [];
         data.forEach(element => {
           var format = new WKT();
           var feature = format.readFeature(element.wkT_GEOMETRY, {
@@ -243,9 +243,11 @@ export class HRCountryOpenLayerMapComponent implements ControlValueAccessor,  On
             featureProjection: 'EPSG:3857'
           });
           feature.name = element.name;
-          this.vectorSource.addFeature(feature);
+          features.push(feature);
         });
+        this.vectorSource.addFeatures(features);
         this.map.getLayerGroup().getLayers().item(1).setSource(this.vectorSource);
+        console.log(this.map.getLayerGroup().getLayers().item(1));
         this.map.changed();
         this.isWorking = false;
         this.propagateChange({ countriesCount: data.length });
