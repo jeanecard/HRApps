@@ -1,0 +1,8 @@
+<mat-card class="example-card">
+    <mat-card-subtitle>Sources</mat-card-subtitle>
+  <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group">
+    <mat-radio-button class="example-radio-button" *ngFor="let source of sources" [value]="source" [checked]="true">
+      {{source}}
+    </mat-radio-button>
+  </mat-radio-group>
+</mat-card>
