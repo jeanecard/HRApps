@@ -10,6 +10,8 @@ import XYZ from 'ol/source/XYZ';
 import WKT from 'ol/format/WKT';
 import { OSM, Vector as VectorSource } from 'ol/source';
 import { defaults as defaultControls, ZoomToExtent , ScaleLine} from 'ol/control';
+import {defaults, DragPan, MouseWheelZoom} from 'ol/interaction';
+import {platformModifierKeyOnly} from 'ol/events/condition';
 
 import MousePosition from 'ol/control/MousePosition';
 import {toStringXY} from 'ol/coordinate';
@@ -28,6 +30,7 @@ import { Observable } from 'rxjs';
 import { HrBorder } from 'src/app/model/hr-border';
 import { FlagDetailComponent } from 'src/app/flags/flag-detail/flag-detail.component';
 import { HRCountry } from 'src/app/model/hrcountry';
+import { Variable } from '@angular/compiler/src/render3/r3_ast';
 
 
 @Component({
@@ -49,8 +52,9 @@ export class HRCountryOpenLayerMapComponent implements ControlValueAccessor,  On
   baseGeojsonObject : any;
   vectorSource : VectorSource;
   vectorLayer : VectorLayer;
-  cartogrphyLayer : TileLayer;
+  cartographyLayer : TileLayer;
   borders :  Observable<HrBorder[]>;
+  sourceTiler : any;
 
 
   constructor(private borderService: HrBorderService,
@@ -95,18 +99,30 @@ export class HRCountryOpenLayerMapComponent implements ControlValueAccessor,  On
     //Mais il manque la region.
 
     //3- Construction du Layer cartographique et fourniture de sa source (ici maptiler)
-    this.cartogrphyLayer = new TileLayer({
-      source: new XYZ({
-        attributions: '',
-        url: 'https://api.maptiler.com/maps/topographique/{z}/{x}/{y}.png?key=0U9Dg5h9puL9z2B1TmCu',
-        maxZoom: 24
-      })
+    this.sourceTiler = new XYZ({
+      attributions: '',
+      url: 'https://api.maptiler.com/maps/topographique/{z}/{x}/{y}.png?key=0U9Dg5h9puL9z2B1TmCu',
+      maxZoom: 24
+    });
+
+    this.cartographyLayer = new TileLayer({
+      source: this.sourceTiler
     });
 
     //4- Construction de la map avec les deux layers précedents et une vue centrée en 0.0
     this.map = new Map({
+      interactions: defaults({dragPan: false, mouseWheelZoom: false}).extend([
+        new DragPan({
+          condition: function(event) {
+            return this.getPointerCount() === 2 || platformModifierKeyOnly(event);
+          }
+        }),
+        new MouseWheelZoom({
+          condition: platformModifierKeyOnly
+        })
+      ]),
       layers: [
-        this.cartogrphyLayer,
+        this.cartographyLayer,
         this.vectorLayer,
       ],
       target: 'map',
@@ -116,11 +132,12 @@ export class HRCountryOpenLayerMapComponent implements ControlValueAccessor,  On
       }),
     });
 
-    this.map.selectedFeatureName = 'saucisse';
+    this.map.selectedFeatureName = '';
 
     //5- Ajout des controls
     //5.1- Ajout d'une ScaleLine en haut à gauche
     this.map.controls.push(new ScaleLine({className: 'ol-scale-line', target: document.getElementById('scale-line')}));
+
     //5.2 Ajout des corrdinates en visu.
     // this.map.controls.push(new MousePosition({
     //   className: 'mouse-pointer', 
