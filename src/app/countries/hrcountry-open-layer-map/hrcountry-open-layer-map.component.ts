@@ -258,6 +258,7 @@ export class HRCountryOpenLayerMapComponent implements ControlValueAccessor, OnI
         this.isWorking = true;
         if (this.map) {
           this.theme = value.map.theme;
+          let layers = this.map.getLayers().clear();
           this.map.addLayer(value.map.layer);
           this.map.getLayers().push(this.vectorLayer);
           this.vectorLayer.setStyle((feature: any): any => {
@@ -265,6 +266,7 @@ export class HRCountryOpenLayerMapComponent implements ControlValueAccessor, OnI
             correspondingStyle.getText().setText(feature.name);
             return correspondingStyle;
           });
+
           this.map.changed();
         }
         this.isWorking = false;
