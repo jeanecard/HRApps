@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Circle as CircleStyle, Fill, Stroke, Style, Text } from 'ol/style';
 import { Region } from '../model/region';
+import { HrMapTheme } from '../model/hr-map-theme';
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +20,7 @@ export class OpenLayerStylesService {
     this.text = new Text({ font: '12px Calibri,sans-serif', fill: new Fill({ color: '#000' }), stroke: new Stroke({ color: '#fff', width: 3 }) });
   }
 
-  public getGeometryStyles(geometryType: string, region: Region): any {
+  public getGeometryStyles(geometryType: string, region: Region, theme : HrMapTheme): any {
     switch (geometryType) {
 
       case 'Point': {
@@ -31,7 +32,7 @@ export class OpenLayerStylesService {
       case 'LineString': {
         return new Style({
           stroke: new Stroke({
-            color: this.getColor(region, false),
+            color: this.getColor(region, false, theme),
             width: 1,
           }),
           text: this.text
@@ -40,7 +41,7 @@ export class OpenLayerStylesService {
       case 'MultiLineString': {
         return new Style({
           stroke: new Stroke({
-            color: this.getColor(region, false),
+            color: this.getColor(region, false, theme),
             width: 1,
             text: this.text
           }),
@@ -56,11 +57,11 @@ export class OpenLayerStylesService {
       case 'MultiPolygon': {
         return new Style({
           stroke: new Stroke({
-            color: this.getColor(region, false),
-            width: 1
+            color: this.getColor(region, false, theme),
+            width: 2
           }),
           fill: new Fill({
-            color: this.getColor(region, true),
+            color: this.getColor(region, true, theme),
           }),
           text: this.text
         })
@@ -68,7 +69,7 @@ export class OpenLayerStylesService {
       case 'Polygon': {
         return new Style({
           stroke: new Stroke({
-            color: this.getColor(region, false),
+            color: this.getColor(region, false, theme),
             lineDash: [4],
             width: 3
           }),
@@ -81,17 +82,17 @@ export class OpenLayerStylesService {
       case 'GeometryCollection': {
         return new Style({
           stroke: new Stroke({
-            color: this.getColor(region, false),
+            color: this.getColor(region, false, theme),
             width: 2
           }),
           fill: new Fill({
-            color: this.getColor(region, false)
+            color: this.getColor(region, false, theme)
           }),
           image: new CircleStyle({
             radius: 10,
             fill: null,
             stroke: new Stroke({
-              color: this.getColor(region, false)
+              color: this.getColor(region, false, theme)
             })
           }),
           text: this.text
@@ -100,7 +101,7 @@ export class OpenLayerStylesService {
       case 'Circle': {
         return new Style({
           stroke: new Stroke({
-            color: this.getColor(region, false),
+            color: this.getColor(region, false, theme),
             width: 2
           }),
           fill: new Fill({
@@ -116,53 +117,59 @@ export class OpenLayerStylesService {
 
   }
 
-  private getColor(region: Region, isForFill: boolean): string {
+  private getColor(region: Region, isForFill: boolean, theme : HrMapTheme): string {
+    let defaultColor = 'rgba(0, 0, 210, 0.3)';
+    let borderDefaultColor = 'rgb(210,210,210)';
+    if(theme === HrMapTheme.Light){
+      defaultColor = 'rgba(10, 10, 10, 0.1)';
+      borderDefaultColor = 'gray';//'rgb(0,0,180)';
+    }
     switch (region) {
       case Region.Africa: {
         if (!isForFill) {
-          return 'rgb(50,50,50)';
+          return borderDefaultColor;
         }
         else {
-          return 'rgba(10, 10, 10, 0.1)';
+          return defaultColor;
         }
       }
       case Region.Americas: {
         if (!isForFill) {
-          return 'rgb(50,50,50)';
+          return borderDefaultColor;
         }
         else {
-          return 'rgba(10, 10, 10, 0.1)';
+          return defaultColor;
         }
 
       }
       case Region.Asia: {
         if (!isForFill) {
-          return 'rgb(50,50,50)';
+          return borderDefaultColor;
         }
         else {
-          return 'rgba(10, 10, 10, 0.1)';
+          return defaultColor;
         }
       }
       case Region.Europe: {
         if (!isForFill) {
-          return 'rgb(50,50,50)';
+          return borderDefaultColor;
         }
         else {
-          return 'rgba(10, 10, 10, 0.1)';
+          return defaultColor;
         }
       }
       case Region.Oceania: {
         if (!isForFill) {
-          return 'rgb(50,50,50)';
+          return borderDefaultColor;
         } else {
-          return 'rgba(10, 10, 10, 0.1)';
+          return defaultColor;
         }
       }
       default: {
         if (!isForFill) {
           return 'purple'
         } else {
-          return 'rgba(10, 10, 10, 0.1)';
+          return defaultColor;
         }
 
       }

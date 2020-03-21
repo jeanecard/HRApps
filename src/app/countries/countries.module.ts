@@ -14,7 +14,8 @@ import { SourceselectorComponent } from './sourceselector/sourceselector.compone
 @NgModule({
   declarations: [
     MainCountriesComponent, 
-    HRCountryOpenLayerMapComponent, SourceselectorComponent],
+    HRCountryOpenLayerMapComponent, 
+    SourceselectorComponent],
   imports: [
     CountriesRoutingModule,
     CommonModule,

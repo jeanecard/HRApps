@@ -25,11 +25,9 @@ export class HrBorderService {
     if (lang == null || lang == undefined || (lang.iso639_1 == undefined || lang.iso639_1 == null  || lang.iso639_1 === '') ) {
       if (pop == null || pop == undefined) {
         urlToCall = this._bordersByContinentServiceURL + region;
-        console.log(urlToCall);
         return this.http.get<HrBorder[]>(urlToCall);
       } else {
         urlToCall = this._bordersByContinentServiceURL + region;
-        console.log(urlToCall);
         if (pop.amount > 0) {
           
           return this.http.get<HrBorder[]>(urlToCall).pipe(map(data => data.filter((element, index, array) => {

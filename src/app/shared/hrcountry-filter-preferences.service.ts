@@ -3,6 +3,8 @@ import { LanguageService } from './language.service';
 import { RegionService } from './region.service';
 import { HRPopulationValuesService } from './hrpopulation-values.service';
 import { IHRCountryFilterModel } from './components/hrcountry-filter/ihrcountry-filter-model';
+import { HrMapTheme } from '../model/hr-map-theme';
+import { MapLayerService } from './map-layer.service';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +13,8 @@ export class HRCountryFilterPreferencesService {
 
   constructor(private langService: LanguageService,
     private regionService: RegionService,
-    private populationService: HRPopulationValuesService) { }
+    private populationService: HRPopulationValuesService,
+    private mapService : MapLayerService) { }
 
   public getDefaultValue(): IHRCountryFilterModel {
     let population = this.populationService.getDefaultPopulationFilterValue();
@@ -23,7 +26,8 @@ export class HRCountryFilterPreferencesService {
       population: {
         amount: population.amount,
         over: population.over
-      }
+      },
+      map: this.mapService.getDefaultSource()
     };
   }
   public setValue(val: IHRCountryFilterModel) {

@@ -1,13 +1,14 @@
-import { Component, OnInit, forwardRef } from '@angular/core';
-import { FormArray, FormControl, ControlValueAccessor, FormGroup, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { SourceMapService } from '../source-map.service';
+import { Component, OnInit, forwardRef, OnDestroy } from '@angular/core';
+import { FormControl, ControlValueAccessor, FormGroup, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { SourceMapModel } from 'src/app/model/source-map-model';
+import { Subscription } from 'rxjs';
+import { MapLayerService } from 'src/app/shared/map-layer.service';
 
 @Component({
   selector: 'app-sourceselector',
   templateUrl: './sourceselector.component.html',
   styleUrls: ['./sourceselector.component.scss'],
-   providers: [
+  providers: [
     {
       provide: NG_VALUE_ACCESSOR,
       useExisting: forwardRef(() => SourceselectorComponent),
@@ -15,38 +16,78 @@ import { SourceMapModel } from 'src/app/model/source-map-model';
     }
   ]
 })
-export class SourceselectorComponent implements OnInit, ControlValueAccessor {
+export class SourceselectorComponent implements OnInit, ControlValueAccessor, OnDestroy {
+
+  propagateChange = (_: any) => { };
+  propagateTouch = (_: any) => { };
+  private _subscription: Subscription = new Subscription();
 
 
   sourcesData: SourceMapModel[] = null;
-  sourceSelectorForm : FormGroup = null;
-  sourcesGroup : FormControl = null;
-  
+  sourceSelectorForm: FormGroup = null;
+  sourcesGroup: FormControl = null;
 
-  constructor(private service : SourceMapService) { 
+  /**
+   * Constrctor of SourceselectorComponent
+   *
+   * @param SourceMapService,
+   */
+
+  constructor(private service: MapLayerService) {
     this.sourcesData = service.getSources();
   }
-  writeValue(obj: any): void {
-    console.log('TODO : writeValue');
-    console.log(obj);
-    this.sourcesGroup.setValue(obj);
-    
+
+  /**
+  * delete remainining observer link.
+  *
+  */
+  ngOnDestroy(): void {
+    this._subscription.unsubscribe();
   }
+  writeValue(obj: any): void {
+    this.sourcesGroup.setValue(obj);
+
+  }
+
   registerOnChange(fn: any): void {
-    console.log('TODO : registerOnChange');
-  
+    this.propagateChange = fn;
+
   }
   registerOnTouched(fn: any): void {
-    console.log('TODO : registerOnTouched');
+    this.propagateTouch = fn;
   }
+
   setDisabledState?(isDisabled: boolean): void {
-    console.log('TODO : setDisabledState');
+    //Dummy in this version.
   }
 
   ngOnInit() {
     this.sourcesGroup = new FormControl('');
     this.sourceSelectorForm = new FormGroup({
-      sourcesGroup : this.sourcesGroup,
+      sourcesGroup: this.sourcesGroup,
     });
+
+    this._subscription.add(this.sourceSelectorForm.valueChanges.subscribe(
+      {
+        next: data => {
+          let sourceLayer = this.service.getSource(data.sourcesGroup);
+          if(sourceLayer){
+            
+            let event = {
+              map : sourceLayer
+            }
+            this.propagateChange(event);
+            this.propagateTouch(event);
+            }
+        },
+        error: (data) => {
+          console.log('ERREUR DETECTEE');
+          console.log(data);
+        },
+        complete: () => {
+          //Dummy in this version.
+        }
+      })
+    );
   }
 }

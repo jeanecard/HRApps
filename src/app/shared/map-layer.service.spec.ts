@@ -1,12 +1,12 @@
 import { TestBed } from '@angular/core/testing';
 
-import { SourceMapService } from './source-map.service';
+import { MapLayerService } from './map-layer.service';
 
-describe('SourceMapService', () => {
+describe('MapLayerService', () => {
   beforeEach(() => TestBed.configureTestingModule({}));
 
   it('should be created', () => {
-    const service: SourceMapService = TestBed.get(SourceMapService);
+    const service: MapLayerService = TestBed.get(MapLayerService);
     expect(service).toBeTruthy();
   });
 });

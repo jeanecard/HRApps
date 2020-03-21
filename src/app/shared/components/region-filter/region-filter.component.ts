@@ -119,7 +119,7 @@ export class RegionFilterComponent implements ControlValueAccessor, OnInit, OnDe
           console.log(data);
         },
         complete: () => {
-          console.log('COMPLETE REALISE');
+          //Dummy in this version.
         }
       }));
   }

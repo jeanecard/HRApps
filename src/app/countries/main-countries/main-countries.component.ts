@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { BreakpointState, BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { FormGroup, FormControl } from '@angular/forms';
 import { HRCountryFilterPreferencesService } from 'src/app/shared/hrcountry-filter-preferences.service';
+import { CountriesRoutingModule } from '../countries-routing.module';
 
 @Component({
   selector: 'app-main-countries',
@@ -38,7 +39,7 @@ export class MainCountriesComponent implements OnInit, AfterViewInit {
     this.bordersMap = new FormControl(prefs);
     
     //3-Map selector
-    this.sourceSelector = new FormControl('Topography');//!TODO
+    this.sourceSelector = new FormControl(prefs.map.name);
 
     this.mainBorderForm = new FormGroup({
       hrCountryFilter: this.hrCountryFilter,
@@ -51,6 +52,9 @@ export class MainCountriesComponent implements OnInit, AfterViewInit {
       if (filterValue && filterValue.population && filterValue.regionAndLanguage) {
         this.prefService.setValue(filterValue);
       }
+    });
+    this.sourceSelector.valueChanges.subscribe(data => {
+      this.bordersMap.setValue(data);
     });
   }
 
