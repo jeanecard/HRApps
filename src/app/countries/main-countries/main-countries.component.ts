@@ -55,6 +55,8 @@ export class MainCountriesComponent implements OnInit, AfterViewInit {
     });
     this.sourceSelector.valueChanges.subscribe(data => {
       this.bordersMap.setValue(data);
+      this.prefService.setValue(data);
+
     });
   }
 

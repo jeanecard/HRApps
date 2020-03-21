@@ -39,6 +39,10 @@ export class HRCountryFilterPreferencesService {
         this.regionService.setDefaultRegionFilterValue(val.regionAndLanguage.region);
         this.langService.setDefaultLanguageFilterValue(val.regionAndLanguage.language);
       }
+      if(val.map)
+      {
+        this.mapService.setDefaultSource(val.map);
+      }
     }
   }
 

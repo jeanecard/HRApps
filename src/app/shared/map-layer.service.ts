@@ -14,6 +14,7 @@ export class MapLayerService {
 
   private readonly TOPO_LAYER_NAME = 'Topography';
   private readonly SAT_LAYER_NAME = 'Satellite';
+  private readonly _LOCALSTORAGE_LAYER_NAME = 'layerName';
 
   constructor() { }
 
@@ -25,8 +26,21 @@ export class MapLayerService {
     ]
   }
   getDefaultSource(): SourceMapModel {
-    return this.getSources()[0];
-  };
+
+    let lsLayerNameValue = localStorage.getItem(this._LOCALSTORAGE_LAYER_NAME);
+    
+    if (lsLayerNameValue === this.TOPO_LAYER_NAME) {
+      return this.getSources()[0]; //!Bad ass
+    } else{
+      return this.getSources()[1]; //!Bad ass
+    }
+  }
+
+  public setDefaultSource(val : SourceMapModel) : void {
+    if(val && val.name){
+      localStorage.setItem(this._LOCALSTORAGE_LAYER_NAME, val.name);
+    }
+  }
 
   getSource(name: string): SourceMapModel {
 

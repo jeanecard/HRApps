@@ -195,7 +195,7 @@ export class HRCountryOpenLayerMapComponent implements ControlValueAccessor, OnI
   isWorking: boolean;
 
   writeValue(value: any): void {
-    console.log('WRITE');
+
     let processBorders = false;
     let processMap = false;
     if (value) {
@@ -227,7 +227,7 @@ export class HRCountryOpenLayerMapComponent implements ControlValueAccessor, OnI
 
 
       if (processBorders) {
-        console.log('PROCESS BORDER');
+
         this.isWorking = true;
         this.borders = this.borderService.getBorders(region, lang, pop);
         this.borders.pipe(take(1)).subscribe(data => {
