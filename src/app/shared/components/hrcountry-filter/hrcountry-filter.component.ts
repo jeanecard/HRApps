@@ -1,5 +1,4 @@
 import { Component, OnInit, Output, EventEmitter, forwardRef, AfterViewInit } from '@angular/core';
-import { Region } from 'src/app/model/region';
 import { FormControl, FormGroup, ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 @Component({

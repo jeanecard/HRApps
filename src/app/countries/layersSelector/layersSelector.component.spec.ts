@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SourceselectorComponent } from './sourceselector.component';
+import { LayersSelectorComponent } from './layersSelector.component';
 
 describe('SourceselectorComponent', () => {
-  let component: SourceselectorComponent;
-  let fixture: ComponentFixture<SourceselectorComponent>;
+  let component: LayersSelectorComponent;
+  let fixture: ComponentFixture<LayersSelectorComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ SourceselectorComponent ]
+      declarations: [ LayersSelectorComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(SourceselectorComponent);
+    fixture = TestBed.createComponent(LayersSelectorComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

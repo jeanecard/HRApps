@@ -25,27 +25,23 @@ export class MapLayerService {
       //{name : 'IGN', url : '', maxZoom : 24, theme : HrMapTheme.Light} //Coming soon
     ]
   }
-  getDefaultSource(): SourceMapModel {
+  getDefaultSourceName(): string {
 
     let lsLayerNameValue = localStorage.getItem(this._LOCALSTORAGE_LAYER_NAME);
     
     if (lsLayerNameValue === this.TOPO_LAYER_NAME) {
-      return this.getSources()[0]; //!Bad ass
+      return this.getSources()[0].name; //!Bad ass
     } else{
-      return this.getSources()[1]; //!Bad ass
+      return this.getSources()[1].name; //!Bad ass
     }
   }
 
-  public setDefaultSource(val : SourceMapModel) : void {
-    if(val && val.name){
-      localStorage.setItem(this._LOCALSTORAGE_LAYER_NAME, val.name);
-    }
+  public setDefaultSource(val : string) : void {
+          localStorage.setItem(this._LOCALSTORAGE_LAYER_NAME, val);
   }
 
   getSource(name: string): SourceMapModel {
-
     let sources = this.getSources();
-
     if (sources) {
       let sourcesCount = sources.length;
       for (let i = 0; i < sourcesCount; i++) {

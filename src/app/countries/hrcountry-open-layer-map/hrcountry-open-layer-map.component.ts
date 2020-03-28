@@ -4,19 +4,13 @@ import 'ol/ol.css';
 import { Map, View } from 'ol/index';
 import GeoJSON from 'ol/format/GeoJSON';
 import { Tile as TileLayer, Vector as VectorLayer } from 'ol/layer';
-import TileJSON from 'ol/source/TileJSON';
 import OlMap from 'ol/Map';
 import 'ol/ol.css';
-import XYZ from 'ol/source/XYZ';
 import WKT from 'ol/format/WKT';
-import { OSM, Vector as VectorSource } from 'ol/source';
-import { defaults as defaultControls, ZoomToExtent, ScaleLine } from 'ol/control';
+import { Vector as VectorSource } from 'ol/source';
+import { defaults as defaultControls, ScaleLine } from 'ol/control';
 import { defaults, DragPan, MouseWheelZoom } from 'ol/interaction';
 import { platformModifierKeyOnly } from 'ol/events/condition';
-
-import MousePosition from 'ol/control/MousePosition';
-import { toStringXY } from 'ol/coordinate';
-
 import { Fill, Stroke, Style, Text } from 'ol/style';
 
 import { take } from 'rxjs/operators';
@@ -30,10 +24,8 @@ import { Region } from 'src/app/model/region';
 import { PopulationFilterModel } from 'src/app/model/population-filter-model';
 import { Observable } from 'rxjs';
 import { HrBorder } from 'src/app/model/hr-border';
-import { FlagDetailComponent } from 'src/app/flags/flag-detail/flag-detail.component';
-import { HRCountry } from 'src/app/model/hrcountry';
-import { Variable } from '@angular/compiler/src/render3/r3_ast';
 import { HrMapTheme } from 'src/app/model/hr-map-theme';
+import { MapLayerService } from 'src/app/shared/map-layer.service';
 
 
 @Component({
@@ -50,27 +42,24 @@ import { HrMapTheme } from 'src/app/model/hr-map-theme';
 })
 export class HRCountryOpenLayerMapComponent implements ControlValueAccessor, OnInit {
 
-  map: OlMap;
-  geometryStyles: any;
-  baseGeojsonObject: any;
-  vectorSource: VectorSource;
-  vectorLayer: VectorLayer;
-  cartographyLayer: TileLayer;
-  borders: Observable<HrBorder[]>;
-  sourceTiler: any;
-  satLayer: any;
-  theme = HrMapTheme.Dark ; //default.
-  
+  public map: OlMap;
+  public isWorking: boolean;
+  public propagateChange = (_: any) => { };
+  public propagateTouch = (_: any) => { };
 
 
-  constructor(private borderService: HrBorderService,
-    private layerStylesService: OpenLayerStylesService) { }
+  private readonly _baseGeojsonObject: any;
+  private _vectorSource: VectorSource;
+  private _vectorLayer: VectorLayer;
+  private _borders: Observable<HrBorder[]>;
+  private _theme = HrMapTheme.Dark; //default.
 
 
-  ngOnInit(): void {
-
+  constructor(private _borderService: HrBorderService,
+    private _layerStylesService: OpenLayerStylesService,
+    private _layerService: MapLayerService) {
     //1- Préparation de la source des Features Geo et du Layer d'affichage
-    this.baseGeojsonObject = {
+    this._baseGeojsonObject = {
       'type': 'FeatureCollection',
       'crs': {
         'type': 'name',
@@ -86,35 +75,220 @@ export class HRCountryOpenLayerMapComponent implements ControlValueAccessor, OnI
         }
       }]
     };
+  }
 
-    this.vectorSource = new VectorSource({
-      features: (new GeoJSON()).readFeatures(this.baseGeojsonObject)
+  /**
+   * @description
+   * Init the component.
+   * @returns void
+   * @usageNotes
+   */
+  ngOnInit(): void {
+    this._vectorSource = new VectorSource({
+      features: (new GeoJSON()).readFeatures(this._baseGeojsonObject)
     });
-    this.vectorLayer = new VectorLayer({
-      source: this.vectorSource,
+    this._vectorLayer = new VectorLayer({
+      source: this._vectorSource,
       style: (feature: any): any => {
-        let correspondingStyle = this.layerStylesService.getGeometryStyles(feature.getGeometry().getType(), feature.borderRegion, this.getTheme());
+        let correspondingStyle = this._layerStylesService.getGeometryStyles(feature.getGeometry().getType(), feature.borderRegion, this.getTheme());
         correspondingStyle.getText().setText(feature.name);
         return correspondingStyle;
       }
     });
-
-
-    //https://openlayers.org/en/latest/examples/vector-layer.html?q=geojson pour afficher le nom et faire le cliock...
-    //Mais il manque la region.
-
-
     //4- Construction de la map avec les deux layers précedents et une vue centrée en 0.0
     this.createMap();
     //6- Selection des Features
     this.addBordersFeatureOnMap();
-
-  }
-  getTheme(): HrMapTheme {
-    return this.theme;
   }
 
+  /**
+ * @description
+ * Get the Map Theme.
+ * @returns HrMapTheme
+ * @usageNotes
+ */
+  private getTheme(): HrMapTheme {
+    return this._theme;
+  }
 
+  /**
+   * @description
+   * Writes a new value to the element.
+   *
+   * This method is called by the forms API to write to the view when programmatic
+   * changes from model to view are requested.
+   *
+   * @param  value is a HRBorderFilterModel.
+   * @returns void
+   * @usageNotes
+   * writeValue(aHRBorderFilterModel);
+   * ### Write a value to the element
+   */
+  public writeValue(value: any): void {
+    let processBorders = false;
+    if (value) {
+      if (value.countryFilter) {
+        let lang: Language;
+        if (value.countryFilter.regionAndLanguage) {
+          processBorders = true;
+          lang = {
+            iso639_1: value.countryFilter.regionAndLanguage.language,
+            iso639_2: '',
+            name: '',
+            nativeName: ''
+          };
+        }
+        let region: any;
+        if (value.countryFilter.regionAndLanguage) {
+          region = value.countryFilter.regionAndLanguage.region;
+        }
+        let pop: PopulationFilterModel;
+        if (value.countryFilter.population) {
+          processBorders = true;
+          pop = {
+            amount: value.countryFilter.population.amount,
+            over: value.countryFilter.population.over
+          }
+        }
+        if (processBorders) {
+          this.writeBorder(region, lang, pop);
+        }
+      }
+      if (value.map) {
+        this.writeMap(value.map);
+      }
+    }
+  }
+
+  private writeBorder(region: any, lang: any, pop: any): void {
+    this.isWorking = true;
+    this._borders = this._borderService.getBorders(region, lang, pop);
+    this._borders.pipe(take(1)).subscribe(data => {
+      this._vectorSource.clear();
+      //2- OpenLayer
+      let features = [];
+      data.forEach(element => {
+        var format = new WKT();
+        var feature = format.readFeature(element.wkT_GEOMETRY, {
+          dataProjection: 'EPSG:4326',
+          featureProjection: 'EPSG:3857'
+        });
+        //!Cheat
+        feature.name = element.name;
+        feature.borderRegion = Region[element.borderRegion];
+        features.push(feature);
+      });
+      this._vectorSource.addFeatures(features);
+      this.isWorking = false;
+      this.propagateChange({ countriesCount: data.length });
+    }, error => {
+      this.isWorking = false;
+    }, () => {
+      this.isWorking = false;
+    });
+  }
+
+  private writeMap(value: any): void {
+    this.isWorking = true;
+    if (this.map && this._layerService) {
+      let querriedLayer = this._layerService.getSource(value);
+      if (querriedLayer && querriedLayer.layer && this._vectorLayer) {
+        this._theme = querriedLayer.theme;
+        let mapLayers = this.map.getLayers();
+        if (mapLayers) {
+          mapLayers.clear();
+          this.map.addLayer(querriedLayer.layer);
+          mapLayers.push(this._vectorLayer);
+          this._vectorLayer.setStyle((feature: any): any => {
+            if (feature) {
+              let correspondingStyle = this._layerStylesService.getGeometryStyles(feature.getGeometry().getType(), feature.borderRegion, this.getTheme());
+              if (correspondingStyle) {
+                correspondingStyle.getText().setText(feature.name);
+                return correspondingStyle;
+              }
+            }
+            return null;
+          });
+        }
+      }
+      this.map.changed();
+    }
+    this.isWorking = false;
+  }
+  /**
+ * @description
+ * Register the function to call when OnChange propagation is needed.
+ *
+ */
+  public registerOnChange(fn: any): void {
+    this.propagateChange = fn;
+  }
+  /**
+ * @description
+ * Register the function to call when OnTouched propagation is needed.
+ *
+ */
+  public registerOnTouched(fn: any): void {
+    this.propagateTouch = fn;
+  }
+  /**
+    * @description
+    * Function that is called by the forms API when the control status changes to
+    * or from 'DISABLED'. Depending on the status, it enables or disables the
+    * appropriate DOM element.
+    * @param isDisabled The disabled status to set on the element
+    */
+  setDisabledState?(isDisabled: boolean): void {
+    //Dummy.
+  }
+
+  /**
+ * @description
+ * Return true if a Feature is selected.
+ *
+ * This method is called by the view
+ *
+ * @returns boolean
+ */
+  public isFeatureInfoDisplayed(): boolean {
+    return this.map.selectedFeatureName !== '';
+  }
+
+  /**
+   * @description
+   * Create the OpenLayer map.
+   */
+  private createMap(): void {
+    this.map = new Map({
+      interactions: defaults({ dragPan: false, mouseWheelZoom: false }).extend([
+        new DragPan({
+          condition: function (event) {
+            return this.getPointerCount() === 2 || platformModifierKeyOnly(event);
+          }
+        }),
+        new MouseWheelZoom({
+          condition: platformModifierKeyOnly
+        })
+      ]),
+      layers: [],
+      target: 'map',
+      view: new View({
+        center: [0, 0],
+        zoom: 2
+      }),
+    });
+
+    this.map.selectedFeatureName = '';
+
+    //5- Ajout des controls
+    //5.1- Ajout d'une ScaleLine en haut à gauche
+    this.map.controls.push(new ScaleLine({ className: 'ol-scale-line', target: document.getElementById('scale-line') }));
+    this.map.changed();
+  }
+  /**
+   * @description
+   * This method instanciate aall openLayers Controls ans Interactions ... too big //!TODO factorise.
+   */
   private addBordersFeatureOnMap() {
     var highlightStyle = new Style({
       stroke: new Stroke({
@@ -187,132 +361,6 @@ export class HRCountryOpenLayerMapComponent implements ControlValueAccessor, OnI
       displayFeatureInfo(pixel, evt.map);
     });
   }
-
-  //Control value accessor
-
-  propagateChange = (_: any) => { };
-  propagateTouch = (_: any) => { };
-  isWorking: boolean;
-
-  writeValue(value: any): void {
-
-    let processBorders = false;
-    let processMap = false;
-    if (value) {
-      let lang: Language;
-      if (value.regionAndLanguage) {
-        processBorders = true;
-        lang = {
-          iso639_1: value.regionAndLanguage.language,
-          iso639_2: '',
-          name: '',
-          nativeName: ''
-        };
-      }
-      let region: any;
-      if (value.regionAndLanguage) {
-        region = value.regionAndLanguage.region;
-      }
-      let pop: PopulationFilterModel;
-      if (value.population) {
-        processBorders = true;
-        pop = {
-          amount: value.population.amount,
-          over: value.population.over
-        }
-      }
-      if (value.map) {
-        processMap = true;
-      }
-
-
-      if (processBorders) {
-
-        this.isWorking = true;
-        this.borders = this.borderService.getBorders(region, lang, pop);
-        this.borders.pipe(take(1)).subscribe(data => {
-          this.vectorSource.clear();
-          //2- OpenLayer
-          let features = [];
-          data.forEach(element => {
-            var format = new WKT();
-            var feature = format.readFeature(element.wkT_GEOMETRY, {
-              dataProjection: 'EPSG:4326',
-              featureProjection: 'EPSG:3857'
-            });
-            //!Cheat
-            feature.name = element.name;
-            feature.borderRegion = Region[element.borderRegion];
-            features.push(feature);
-          });
-          this.vectorSource.addFeatures(features);
-          this.isWorking = false;
-          this.propagateChange({ countriesCount: data.length });
-        }, error => {
-          this.isWorking = false;
-        }, () => {
-          this.isWorking = false;
-        });
-      }
-      if (processMap) {
-        this.isWorking = true;
-        if (this.map) {
-          this.theme = value.map.theme;
-          let layers = this.map.getLayers().clear();
-          this.map.addLayer(value.map.layer);
-          this.map.getLayers().push(this.vectorLayer);
-          this.vectorLayer.setStyle((feature: any): any => {
-            let correspondingStyle = this.layerStylesService.getGeometryStyles(feature.getGeometry().getType(), feature.borderRegion, this.getTheme());
-            correspondingStyle.getText().setText(feature.name);
-            return correspondingStyle;
-          });
-
-          this.map.changed();
-        }
-        this.isWorking = false;
-      }
-    }
-  }
-
-  registerOnChange(fn: any): void {
-    this.propagateChange = fn;
-  }
-  registerOnTouched(fn: any): void {
-    this.propagateTouch = fn;
-  }
-  setDisabledState?(isDisabled: boolean): void {
-    //Dummy.
-  }
-
-  public isFeatureInfoDisplayed(): boolean {
-    return this.map.selectedFeatureName !== '';
-  }
-
-  private createMap() {
-    this.map = new Map({
-      interactions: defaults({ dragPan: false, mouseWheelZoom: false }).extend([
-        new DragPan({
-          condition: function (event) {
-            return this.getPointerCount() === 2 || platformModifierKeyOnly(event);
-          }
-        }),
-        new MouseWheelZoom({
-          condition: platformModifierKeyOnly
-        })
-      ]),
-      layers: [],
-      target: 'map',
-      view: new View({
-        center: [0, 0],
-        zoom: 2
-      }),
-    });
-
-    this.map.selectedFeatureName = '';
-
-    //5- Ajout des controls
-    //5.1- Ajout d'une ScaleLine en haut à gauche
-    this.map.controls.push(new ScaleLine({ className: 'ol-scale-line', target: document.getElementById('scale-line') }));
-    this.map.changed();
-  }
 }
+    //https://openlayers.org/en/latest/examples/vector-layer.html?q=geojson pour afficher le nom et faire le cliock...
+    //Mais il manque la region.

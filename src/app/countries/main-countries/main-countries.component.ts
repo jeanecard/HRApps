@@ -1,22 +1,22 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import 'ol/ol.css';
 import { Observable } from 'rxjs';
 import { BreakpointState, BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { FormGroup, FormControl } from '@angular/forms';
-import { HRCountryFilterPreferencesService } from 'src/app/shared/hrcountry-filter-preferences.service';
-import { CountriesRoutingModule } from '../countries-routing.module';
+import { HRBorderFilterPreferencesService } from 'src/app/shared/hrborder-filter-preferences.service';
+import { HRBorderFilterModel } from 'src/app/model/hrborder-filter-model';
 
 @Component({
   selector: 'app-main-countries',
   templateUrl: './main-countries.component.html',
   styleUrls: ['./main-countries.component.scss']
 })
-export class MainCountriesComponent implements OnInit, AfterViewInit {
+export class MainCountriesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   mainBorderForm: FormGroup;
   hrCountryFilter: FormControl;
   bordersMap: FormControl;
-  sourceSelector : FormControl;
+  hrLayerSelector: FormControl;
 
   countriesList: any; //!todo
 
@@ -26,37 +26,50 @@ export class MainCountriesComponent implements OnInit, AfterViewInit {
 
 
   constructor(private breakpointObserver: BreakpointObserver,
-    private prefService: HRCountryFilterPreferencesService,
-) { }
+    private prefService: HRBorderFilterPreferencesService,
+  ) { }
+
+  ngOnDestroy(): void {
+    let countryFilterVal = this.hrCountryFilter.value;
+    let selectedLayerName = this.hrLayerSelector.value;
+    let reworkedFilter: HRBorderFilterModel = {
+      countryFilter: countryFilterVal,
+      map: selectedLayerName
+    };
+    this.prefService.setDefaultValue(reworkedFilter);
+
+  }
 
   ngOnInit() {
-
-
     //1- CountryFilter
     let prefs = this.prefService.getDefaultValue();
-    this.hrCountryFilter = new FormControl(prefs);
+    this.hrCountryFilter = new FormControl(prefs.countryFilter);
     //2- Map
     this.bordersMap = new FormControl(prefs);
-    
+
     //3-Map selector
-    this.sourceSelector = new FormControl(prefs.map.name);
+    this.hrLayerSelector = new FormControl(prefs.map);
 
     this.mainBorderForm = new FormGroup({
       hrCountryFilter: this.hrCountryFilter,
-      bordersMap : this.bordersMap,
-      hrSourceSelector : this.sourceSelector
+      bordersMap: this.bordersMap,
+      hrLayerSelector: this.hrLayerSelector
     });
-    this.hrCountryFilter.valueChanges.subscribe(filterValue => {
-      this.bordersMap.setValue(filterValue);
-      //Test to save prefs.
-      if (filterValue && filterValue.population && filterValue.regionAndLanguage) {
-        this.prefService.setValue(filterValue);
-      }
-    });
-    this.sourceSelector.valueChanges.subscribe(data => {
-      this.bordersMap.setValue(data);
-      this.prefService.setValue(data);
 
+    this.hrCountryFilter.valueChanges.subscribe(filterValue => {
+      let reworkedFilter: HRBorderFilterModel = {
+        countryFilter: filterValue,
+        map: null
+      }
+
+      this.bordersMap.setValue(reworkedFilter);
+    });
+    this.hrLayerSelector.valueChanges.subscribe(data => {
+      let reworkedEvent: HRBorderFilterModel = {
+        map : data,
+        countryFilter : null
+      }
+      this.bordersMap.setValue(reworkedEvent);
     });
   }
 

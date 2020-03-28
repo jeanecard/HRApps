@@ -7,6 +7,6 @@ import { SourceMapModel } from 'src/app/model/source-map-model';
 export class HRCountryFilterModel implements IHRCountryFilterModel{
   regionAndLanguage: IRegionAndLanguage;  
   population: IPopulation;
-  map : SourceMapModel;
+  //map : SourceMapModel;
 
 }

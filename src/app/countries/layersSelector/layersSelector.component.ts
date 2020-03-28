@@ -5,23 +5,24 @@ import { Subscription } from 'rxjs';
 import { MapLayerService } from 'src/app/shared/map-layer.service';
 
 @Component({
-  selector: 'app-sourceselector',
-  templateUrl: './sourceselector.component.html',
-  styleUrls: ['./sourceselector.component.scss'],
+  selector: 'app-layersSelector',
+  templateUrl: './layersSelector.component.html',
+  styleUrls: ['./layersSelector.component.scss'],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => SourceselectorComponent),
+      useExisting: forwardRef(() => LayersSelectorComponent),
       multi: true
     }
   ]
 })
 /**
  * ControlValueAccessor for select a single sourceName beyond sources by name.
- * Emitted event : { map : a-map-name-as-string)
+ * Emitted event : { a-map-name-as-string)
+ * SetValue .setValue('a-map-name-as-string');
  * }
 */
-export class SourceselectorComponent implements OnInit, ControlValueAccessor, OnDestroy {
+export class LayersSelectorComponent implements OnInit, ControlValueAccessor, OnDestroy {
   // A function to call when OnChange propagation is needed. Wiring with Angular Framework notification will be done when implementing ControlValueAccessor methods. 
   private _propagateChange = (_: any) => { };
   // A function to call when OnTouch propagation is needed. Wiring with Angular Framework notification will be done when implementing ControlValueAccessor methods. 
@@ -31,7 +32,7 @@ export class SourceselectorComponent implements OnInit, ControlValueAccessor, On
   private readonly _ERROR_MESSAGE = 'ERROR IN _sourceSelectorForm.valueChanges';
   public readonly sourcesData: SourceMapModel[] = null;
   public sourceSelectorForm: FormGroup = null;
-  public sourcesGroup: FormControl = null;
+  public mapName: FormControl = null;
   /**
   * Constructor of SourceselectorComponent
   * @param service : MapLayerService to get SourceMapModels
@@ -61,7 +62,7 @@ export class SourceselectorComponent implements OnInit, ControlValueAccessor, On
    * ### Write a value to the element
    */
   writeValue(obj: any): void {
-    this.sourcesGroup.setValue(obj);
+    this.mapName.setValue(obj);
   }
   /**
    * @description
@@ -93,29 +94,31 @@ export class SourceselectorComponent implements OnInit, ControlValueAccessor, On
   /**
    * @description
    * A lifecycle method called when the directive's inputs are initialized. For internal use only.
-   * 1- Create formControls
+   * 1- Create formControls (FormGroup use to catch all events in form and particullary radio changes. 
+   *  Cheat way to avoid ngModel or radiocontrolvalueaccessor :https://angular.io/api/forms/RadioControlValueAccessor#radiocontrolvalueaccessor)
    * 2- add Observer on radio changes to propagate changes
    *
    */
   ngOnInit() {
     //1-
-    this.sourcesGroup = new FormControl('');
+    this.mapName = new FormControl('');
     this.sourceSelectorForm = new FormGroup({
-      sourcesGroup: this.sourcesGroup,
+      mapName: this.mapName,
     });
     //2-
     this._subscription.add(this.sourceSelectorForm.valueChanges.subscribe(
       {
         next: data => {
-          try{
-          let sourceLayer = this.service.getSource(data.sourcesGroup);
-            let event = {map: sourceLayer};
-            this._propagateChange(event);
-            this._propagateTouch(event);
-          } catch(error){
-            console.log(error);
-          }
+            //!TODO est-ce cvraiment a lui de construire cet objet .... j'emet un ecvt quer je ne peux pas relire ...
+            //C'est a la carto d'avoir son Layer object ici on s'en fout.
+          // let sourceLayer = this.service.getSource(data.sourcesGroup);
+          //   let event = {map: sourceLayer};
+          //   this._propagateChange(event);
+          //   this._propagateTouch(event);
+            this._propagateChange(data.mapName);
+            this._propagateTouch(data.mapName);
         },
+       
         error: (data) => {
           console.log(this._ERROR_MESSAGE);
           console.log(data);
@@ -126,4 +129,8 @@ export class SourceselectorComponent implements OnInit, ControlValueAccessor, On
       })
     );
   }
+
+// private generateEventFromSourceMapModel(model : SourceMapModel) : SourceSelectorEvent{
+
+// }
 }
