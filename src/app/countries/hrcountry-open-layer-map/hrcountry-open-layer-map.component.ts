@@ -48,7 +48,6 @@ export class HRCountryOpenLayerMapComponent implements ControlValueAccessor, OnI
   public propagateTouch = (_: any) => { };
 
 
-  private readonly _baseGeojsonObject: any;
   private _vectorSource: VectorSource;
   private _vectorLayer: VectorLayer;
   private _borders: Observable<HrBorder[]>;
@@ -58,47 +57,48 @@ export class HRCountryOpenLayerMapComponent implements ControlValueAccessor, OnI
   constructor(private _borderService: HrBorderService,
     private _layerStylesService: OpenLayerStylesService,
     private _layerService: MapLayerService) {
-    //1- Préparation de la source des Features Geo et du Layer d'affichage
-    this._baseGeojsonObject = {
-      'type': 'FeatureCollection',
-      'crs': {
-        'type': 'name',
-        'properties': {
-          'name': 'EPSG:3857'
-        }
-      },
-      'features': [{
-        'type': 'Feature',
-        'geometry': {
-          'type': 'Point',
-          'coordinates': [0, 0]
-        }
-      }]
-    };
   }
 
   /**
    * @description
    * Init the component.
+   * 1- Init this._vectorSource
+   * 2- Init this._vectorLayer
+   *  2.1- Set source
+   *  2.2- Set Style from LayerStyleService.
+   * 3- Init this.map
    * @returns void
    * @usageNotes
    */
   ngOnInit(): void {
+    //1-
     this._vectorSource = new VectorSource({
-      features: (new GeoJSON()).readFeatures(this._baseGeojsonObject)
+      features: (new GeoJSON()).readFeatures(this.getBaseFeature())
     });
+    //2-
     this._vectorLayer = new VectorLayer({
+      //2.1-
       source: this._vectorSource,
+      //2.2-
       style: (feature: any): any => {
-        let correspondingStyle = this._layerStylesService.getGeometryStyles(feature.getGeometry().getType(), feature.borderRegion, this.getTheme());
-        correspondingStyle.getText().setText(feature.name);
-        return correspondingStyle;
+        if (this._layerStylesService && feature) {
+          let featGeom = feature.getGeometry();
+          if (featGeom) {
+            let correspondingStyle = this._layerStylesService.getGeometryStyles(featGeom.getType(), feature.borderRegion, this.getTheme());
+            if (correspondingStyle) {
+              let styleText = correspondingStyle.getText();
+              if (styleText) {
+                styleText.setText(feature.name);
+              }
+              return correspondingStyle;
+            }
+          }
+        }
+        return null;
       }
     });
-    //4- Construction de la map avec les deux layers précedents et une vue centrée en 0.0
-    this.createMap();
-    //6- Selection des Features
-    this.addBordersFeatureOnMap();
+    //3-
+    this.initMap();
   }
 
   /**
@@ -159,7 +159,15 @@ export class HRCountryOpenLayerMapComponent implements ControlValueAccessor, OnI
       }
     }
   }
-
+  /**
+   * @description
+   * set the correponding Features of inpuot Filter in the MAP.
+   *
+   * @param  region is a  enum Region.
+   * @param  lang is a class Language.
+   * @param  pop is a class PopulationFilterModel.
+   * @returns void
+   */
   private writeBorder(region: any, lang: any, pop: any): void {
     this.isWorking = true;
     this._borders = this._borderService.getBorders(region, lang, pop);
@@ -187,7 +195,13 @@ export class HRCountryOpenLayerMapComponent implements ControlValueAccessor, OnI
       this.isWorking = false;
     });
   }
-
+  /**
+   * @description
+   * set the correponding Layer on MAP.
+   *
+   * @param  value is the layer name.
+   * @returns void
+   */
   private writeMap(value: any): void {
     this.isWorking = true;
     if (this.map && this._layerService) {
@@ -258,7 +272,7 @@ export class HRCountryOpenLayerMapComponent implements ControlValueAccessor, OnI
    * @description
    * Create the OpenLayer map.
    */
-  private createMap(): void {
+  private initMap(): void {
     this.map = new Map({
       interactions: defaults({ dragPan: false, mouseWheelZoom: false }).extend([
         new DragPan({
@@ -277,19 +291,19 @@ export class HRCountryOpenLayerMapComponent implements ControlValueAccessor, OnI
         zoom: 2
       }),
     });
-
     this.map.selectedFeatureName = '';
+    this.addBordersFeatureOnMap();
 
-    //5- Ajout des controls
-    //5.1- Ajout d'une ScaleLine en haut à gauche
-    this.map.controls.push(new ScaleLine({ className: 'ol-scale-line', target: document.getElementById('scale-line') }));
-    this.map.changed();
   }
   /**
    * @description
    * This method instanciate aall openLayers Controls ans Interactions ... too big //!TODO factorise.
    */
   private addBordersFeatureOnMap() {
+    //5- Ajout des controls
+    //5.1- Ajout d'une ScaleLine en haut à gauche
+    this.map.controls.push(new ScaleLine({ className: 'ol-scale-line', target: document.getElementById('scale-line') }));
+    this.map.changed();
     var highlightStyle = new Style({
       stroke: new Stroke({
         color: 'white',//'#f00',
@@ -360,6 +374,31 @@ export class HRCountryOpenLayerMapComponent implements ControlValueAccessor, OnI
       var pixel = evt.map.getEventPixel(evt.originalEvent);
       displayFeatureInfo(pixel, evt.map);
     });
+  }
+  /**
+ * @description
+ * Define the single Feature available on first Load.
+ *
+ * @returns A circle in center of the world.
+ */
+  private getBaseFeature(): any {
+    return {
+      'type': 'FeatureCollection',
+      'crs': {
+        'type': 'name',
+        'properties': {
+          'name': 'EPSG:3857'
+        }
+      },
+      'features': [{
+        'type': 'Feature',
+        'geometry': {
+          'type': 'Point',
+          'coordinates': [0, 0]
+        }
+      }]
+    };
+
   }
 }
     //https://openlayers.org/en/latest/examples/vector-layer.html?q=geojson pour afficher le nom et faire le cliock...
