@@ -19,7 +19,7 @@ export class HRDashBoardComponent {
           tech: 'Full Angular Material',
           alt: 'Image of a Flag',
           //src: '../../../assets/icons/International2.png',
-          src: 'https://hrnithoonfirebase.firebaseapp.com/assets/icons/geoLocator11.svg',
+          src: 'https://hrnithoonfirebase.firebaseapp.com/assets/icons/International.png',
           caption: 'Search country flags',
           reDirect: '/flags',
           description: 'Look for a country Flag by Region, language and number of Inahbitants. To get information on a country, click on its flag in the result grid. Data available are capital city, area, currencies, languages spoken and much more ..'
