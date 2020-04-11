@@ -28,7 +28,7 @@ export class HRDashBoardComponent {
           title: 'HR Map',
           tech: 'OpenLayer 4',
           alt: 'Image of a Map',
-          src: '../../../assets/icons/map95.svg',
+          src: 'https://hrnithoonfirebase.firebaseapp.com/assets/icons/map95.svg',
           caption: 'Search country on map',
           reDirect: '/countries',
           description: "Look for country on a world map by Region, language and number of Inahbitants. Work in progress..."
@@ -37,7 +37,7 @@ export class HRDashBoardComponent {
           title: 'HR GeoLocation',
           tech: 'Rapid API',
           alt: 'Image of a map with a point of interest',
-          src: '../../../assets/icons/geoLocator12.svg',
+          src: 'https://hrnithoonfirebase.firebaseapp.com/assets/icons/geoLocator12.svg',
           caption: 'Search anything on map',
           reDirect: '/geolocator',
           description: 'Look for any place on a world map by its name. Work in progress...'
@@ -46,7 +46,7 @@ export class HRDashBoardComponent {
           title: 'HR Ornithology',
           tech: 'ML.NET',
           alt: 'Image of a Bird',
-          src: '../../../assets/icons/hrnithologie4.svg',
+          src: 'https://hrnithoonfirebase.firebaseapp.com/assets/icons/hrnithologie4.svg',
           caption: 'Birds sound recognition',
           reDirect: '/ornithology',
           description: 'Birds sounds recognition by Machine learning. Work in progress...'
