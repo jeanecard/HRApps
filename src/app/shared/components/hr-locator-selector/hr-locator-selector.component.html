@@ -1,0 +1,18 @@
+<form [formGroup]="selectorForm">
+<mat-card class="example-card">
+  <mat-form-field>
+    <input matInput
+           placeholder="Search"
+           aria-label="Search"
+           [matAutocomplete]="auto"
+           [formControl]="selector"
+           >
+    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onOptionSelected($event)">
+      <mat-option *ngIf="isLoading" class="is-loading"><mat-spinner diameter="20"></mat-spinner></mat-option>
+      <mat-option *ngFor="let item of results" [value]="item">
+        <span>{{item}}</span> 
+      </mat-option>
+    </mat-autocomplete>
+  </mat-form-field>
+</mat-card>
+</form>

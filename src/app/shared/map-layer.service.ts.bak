@@ -6,7 +6,6 @@ import XYZ from 'ol/source/XYZ';
 import Layer from 'ol/layer/Layer';
 import { Tile as TileLayer } from 'ol/layer';
 import TileJSON from 'ol/source/TileJSON';
-import {OSM} from 'ol/source';
 
 @Injectable({
   providedIn: 'root'
@@ -15,9 +14,6 @@ export class MapLayerService {
 
   private readonly TOPO_LAYER_NAME = 'Topography';
   private readonly SAT_LAYER_NAME = 'Satellite';
-  private readonly OSM_LAYER_NAME = 'Open Source';
-  private readonly SCHOOL_LAYER_NAME = 'Old School'
-
   private readonly _LOCALSTORAGE_LAYER_NAME = 'layerName';
 
   constructor() { }
@@ -26,9 +22,6 @@ export class MapLayerService {
     return [
       { name: this.TOPO_LAYER_NAME, layer: this.getLayer(this.TOPO_LAYER_NAME), theme: HrMapTheme.Light },
       { name: this.SAT_LAYER_NAME, layer: this.getLayer(this.SAT_LAYER_NAME), theme: HrMapTheme.Dark },
-      { name: this.OSM_LAYER_NAME, layer: this.getLayer(this.OSM_LAYER_NAME), theme: HrMapTheme.Light },
-      { name: this.SCHOOL_LAYER_NAME, layer: this.getLayer(this.SCHOOL_LAYER_NAME), theme: HrMapTheme.Opaque },
-
       //{name : 'IGN', url : '', maxZoom : 24, theme : HrMapTheme.Light} //Coming soon
     ]
   }
@@ -79,19 +72,7 @@ export class MapLayerService {
       return new TileLayer({
         source: sourceTiler
       });
-    } else if(name == this.OSM_LAYER_NAME){
-      return new TileLayer({
-        source: new OSM()
-      });
-    } else if(name == this.SCHOOL_LAYER_NAME){
-      return new TileLayer({
-        source: new TileJSON({
-          url: 'https://a.tiles.mapbox.com/v3/aj.1x1-degrees.json',
-          crossOrigin: ''
-        })
-      });
     }
-
     return null;
   }
 

@@ -22,7 +22,7 @@ import { HRCountryTranslationsInformationComponent } from './hrcountry-translati
     HRCountryGeneralInformationComponent,
     HRCountryCurrenciesInformationComponent,
     HRCountryLanguagesInformationComponent,
-    HRCountryTranslationsInformationComponent,
+    HRCountryTranslationsInformationComponent
   ]
 })
 export class HRPresentationModule { }

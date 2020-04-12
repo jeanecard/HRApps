@@ -1,6 +1,25 @@
-<div fxFlex fxLayout="column" fxLayoutGap="10px">
-    <div fxFlex="100" style="padding: 5px;">
-        <h1>GeoLocator under construction ....</h1>
-        <img class="sizedimg" src='./assets/icons/location-under-construction.svg' alt="barrier" />
-    </div>
-</div>
+<form [formGroup]="mainGeolocatorForm">
+    <mat-sidenav-container class="sidenav-container">
+        <!-- LEFT SIDE NAV -->
+        <mat-sidenav #leftDrawer class="left-sidenav" position="start" fixedInViewport="true"
+            [attr.role]="isHandset ? 'dialog' : 'navigation'" [mode]="(isHandset | async)!.matches ? 'over' : 'side'"
+            [opened]="!(isHandset | async)!.matches">
+            <mat-toolbar color="primary">
+                <span>HR GeoLocator</span>
+            </mat-toolbar>
+            <app-hr-locator-selector formControlName="hrLocatorSelector"></app-hr-locator-selector>
+            <app-layersSelector formControlName="hrLayerSelector"></app-layersSelector>
+        </mat-sidenav>
+        <!-- Main Tool Bar -->
+        <mat-sidenav-content>
+            <mat-toolbar color="primary">
+                <button type="button" aria-label="Toggle sidenav" mat-icon-button (click)="leftDrawer.toggle()">
+                    <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+                </button>
+            </mat-toolbar>
+            <!-- MAIN CONTENT -->
+            <app-hr-open-layer-map formControlName="locatorMap"></app-hr-open-layer-map>
+            <!-- <app-hrcountry-open-layer-map formControlName="bordersMap"></app-hrcountry-open-layer-map> -->
+        </mat-sidenav-content>
+    </mat-sidenav-container>
+</form>

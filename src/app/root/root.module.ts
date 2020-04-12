@@ -21,7 +21,7 @@ import { SaucisseComponent } from './saucisse/saucisse.component';
   exports: [
     HRNavigationComponent,
     HRDashBoardComponent,
-    NotFoundComponent,
+    NotFoundComponent
   ]
 })
 export class RootModule { }

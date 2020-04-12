@@ -8,14 +8,13 @@ import { AngularMaterialBasicModule } from '../shared/angular-material-basic/ang
 import { RootModule } from '../root/root.module';
 import { FiltersModule } from '../shared/components/filters.module';
 import { HRCountryOpenLayerMapComponent } from './hrcountry-open-layer-map/hrcountry-open-layer-map.component';
-import { LayersSelectorComponent } from './layersSelector/layersSelector.component';
 
 
 @NgModule({
   declarations: [
     MainCountriesComponent, 
-    HRCountryOpenLayerMapComponent, 
-    LayersSelectorComponent],
+    HRCountryOpenLayerMapComponent
+    ],
   imports: [
     CountriesRoutingModule,
     CommonModule,

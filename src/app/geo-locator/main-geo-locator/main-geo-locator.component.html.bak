@@ -1,0 +1,6 @@
+<div fxFlex fxLayout="column" fxLayoutGap="10px">
+    <div fxFlex="100" style="padding: 5px;">
+        <h1>GeoLocator under construction ....</h1>
+        <img class="sizedimg" src='./assets/icons/location-under-construction.svg' alt="barrier" />
+    </div>
+</div>

@@ -1,6 +1,6 @@
 import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import 'ol/ol.css';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { BreakpointState, BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { FormGroup, FormControl } from '@angular/forms';
 import { HRBorderFilterPreferencesService } from 'src/app/shared/hrborder-filter-preferences.service';
@@ -19,7 +19,7 @@ export class MainCountriesComponent implements OnInit, AfterViewInit, OnDestroy 
   hrLayerSelector: FormControl;
 
   countriesList: any; //!todo
-
+  private subscription : Subscription;
 
   isHandset: Observable<BreakpointState> = this.breakpointObserver.observe(Breakpoints.Handset);
   breakpoint = 1;
@@ -27,7 +27,9 @@ export class MainCountriesComponent implements OnInit, AfterViewInit, OnDestroy 
 
   constructor(private breakpointObserver: BreakpointObserver,
     private prefService: HRBorderFilterPreferencesService,
-  ) { }
+  ) { 
+    this.subscription = new Subscription();
+  }
 
   ngOnDestroy(): void {
     let countryFilterVal = this.hrCountryFilter.value;
@@ -37,6 +39,7 @@ export class MainCountriesComponent implements OnInit, AfterViewInit, OnDestroy 
       map: selectedLayerName
     };
     this.prefService.setDefaultValue(reworkedFilter);
+    this.subscription.unsubscribe();
 
   }
 
@@ -56,21 +59,21 @@ export class MainCountriesComponent implements OnInit, AfterViewInit, OnDestroy 
       hrLayerSelector: this.hrLayerSelector
     });
 
-    this.hrCountryFilter.valueChanges.subscribe(filterValue => {
+    this.subscription.add(this.hrCountryFilter.valueChanges.subscribe(filterValue => {
       let reworkedFilter: HRBorderFilterModel = {
         countryFilter: filterValue,
         map: null
       }
 
       this.bordersMap.setValue(reworkedFilter);
-    });
-    this.hrLayerSelector.valueChanges.subscribe(data => {
+    }));
+    this.subscription.add(this.hrLayerSelector.valueChanges.subscribe(data => {
       let reworkedEvent: HRBorderFilterModel = {
         map : data,
         countryFilter : null
       }
       this.bordersMap.setValue(reworkedEvent);
-    });
+    }));
   }
 
   ngAfterViewInit() {

@@ -123,9 +123,6 @@ export class OpenLayerStylesService {
     if(theme === HrMapTheme.Light){
       defaultColor = 'rgba(10, 10, 10, 0.1)';
       borderDefaultColor = 'gray';//'rgb(0,0,180)';
-    } else if(theme == HrMapTheme.Opaque){
-      defaultColor = 'rgba(0, 0, 210, 0.8)';
-      borderDefaultColor = 'gray';//'rgb(0,0,180)';
     }
     switch (region) {
       case Region.Africa: {

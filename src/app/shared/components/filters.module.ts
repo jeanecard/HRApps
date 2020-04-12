@@ -5,6 +5,9 @@ import { PopulationFilterComponent } from './population-filter/population-filter
 import { RegionFilterComponent } from './region-filter/region-filter.component';
 import { AngularMaterialBasicModule } from '../angular-material-basic/angular-material-basic.module';
 import { HRCountryFilterComponent } from './hrcountry-filter/hrcountry-filter.component';
+import { HrOpenLayerMapComponent } from './hr-open-layer-map/hr-open-layer-map.component';
+import { LayersSelectorComponent } from './layersSelector/layersSelector.component';
+import { HrLocatorSelectorComponent } from './hr-locator-selector/hr-locator-selector.component';
 
 
 
@@ -13,7 +16,10 @@ import { HRCountryFilterComponent } from './hrcountry-filter/hrcountry-filter.co
   //  LanguageFilterComponent,
     PopulationFilterComponent,
     RegionFilterComponent,
-    HRCountryFilterComponent
+    HRCountryFilterComponent,
+    HrOpenLayerMapComponent,
+    LayersSelectorComponent,
+    HrLocatorSelectorComponent
   ],
   imports: [
     CommonModule,
@@ -23,7 +29,10 @@ import { HRCountryFilterComponent } from './hrcountry-filter/hrcountry-filter.co
     //LanguageFilterComponent,
     PopulationFilterComponent,
     RegionFilterComponent,
-    HRCountryFilterComponent
+    HRCountryFilterComponent,
+    HrOpenLayerMapComponent,
+    LayersSelectorComponent,
+    HrLocatorSelectorComponent
   ]
 })
 export class FiltersModule { }
