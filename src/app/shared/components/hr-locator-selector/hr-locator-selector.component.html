@@ -1,16 +1,16 @@
 <form [formGroup]="selectorForm">
 <mat-card class="example-card">
-  <mat-form-field>
+  <mat-form-field class="example-full-width">
     <input matInput
            placeholder="Search"
            aria-label="Search"
            [matAutocomplete]="auto"
            [formControl]="selector"
            >
-    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onOptionSelected($event)">
+    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onOptionSelected($event)" [displayWith]="displayWith">
       <mat-option *ngIf="isLoading" class="is-loading"><mat-spinner diameter="20"></mat-spinner></mat-option>
-      <mat-option *ngFor="let item of results" [value]="item">
-        <span>{{item}}</span> 
+      <mat-option *ngFor="let item of results?.geonames" [value]="item" >
+        <span >{{item.name}} ({{item.countryName}})</span> 
       </mat-option>
     </mat-autocomplete>
   </mat-form-field>

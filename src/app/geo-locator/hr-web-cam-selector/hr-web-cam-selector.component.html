@@ -1,0 +1,10 @@
+<mat-card class="example-card">
+  <mat-card-subtitle>Web cams</mat-card-subtitle>
+  <mat-slide-toggle (change)="onSlide($event)">Show</mat-slide-toggle>
+  <br>
+  <mat-slider thumbLabel [displayWith]="formatLabel" [disabled]="disabled" tickInterval="1" min="1" max="50"
+    [(ngModel)]="value" [min]="min"></mat-slider>
+  <mat-label>
+    {{value}} km
+  </mat-label>
+</mat-card>

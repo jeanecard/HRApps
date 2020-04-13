@@ -45,6 +45,10 @@ export class MainGeoLocatorComponent implements OnInit, OnDestroy {
      this.subscription.add(this.hrLayerSelector.valueChanges.subscribe(data => {
        this.locatorMap.setValue(data);
      }));
+     this.subscription.add(this.hrLocatorSelector.valueChanges.subscribe(data => {
+      this.locatorMap.setValue(data);
+    }));
+
   }
 
 }
