@@ -9,6 +9,8 @@
            >
     <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onOptionSelected($event)" [displayWith]="displayWith">
       <mat-option *ngIf="isLoading" class="is-loading"><mat-spinner diameter="20"></mat-spinner></mat-option>
+      <mat-option *ngIf="isWaiting"><div class="is-waiting">Waiting before launch {{remaining}}</div></mat-option>
+      <mat-option *ngIf="isNoData" class="is-loading">No data found</mat-option>
       <mat-option *ngFor="let item of results?.geonames" [value]="item" >
         <span >{{item.name}} ({{item.countryName}})</span> 
       </mat-option>

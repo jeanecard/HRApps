@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { GeonameOutput } from '../model/geoname';
 import { HttpClient } from '@angular/common/http';
 

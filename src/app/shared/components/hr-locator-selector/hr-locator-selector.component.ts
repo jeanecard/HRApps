@@ -1,7 +1,7 @@
 import { Component, OnInit, forwardRef } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormControl, FormGroup } from '@angular/forms';
 import { Observable, of, Subscription, timer } from 'rxjs';
-import { delay } from 'rxjs/operators';
+import { delay, take } from 'rxjs/operators';
 import { GeonameService } from '../../geoname.service';
 import { GeonameOutput } from 'src/app/model/geoname';
 
@@ -28,7 +28,13 @@ export class HrLocatorSelectorComponent implements OnInit, ControlValueAccessor 
   public selectedOption: FormControl;
   public selectorForm: FormGroup;
   public isLoading = false;
+  public isWaiting = false;
+  public isNoData = false;
+  public remaining = 3;
   private serviceSubscription = new Subscription();
+  private timerSubscription = new Subscription();
+
+  private  everySecond: Observable<number> = timer(0, 1000);
 
   constructor(private geonamesService: GeonameService) { }
   writeValue(obj: any): void {
@@ -68,16 +74,34 @@ export class HrLocatorSelectorComponent implements OnInit, ControlValueAccessor 
       (
         {
           next: data => {
+
+            this.timerSubscription.unsubscribe();
+            this.remaining = 3;
+            this.timerSubscription = this.everySecond.pipe(take(3)).subscribe(data=>{
+              this.remaining --;
+            })
+        
+
+            this.isWaiting = true;
+            this.isNoData = false;
             this.serviceSubscription.unsubscribe();
             this.serviceSubscription = new Subscription();
-            this.isLoading = true;
+            this.isLoading = false;
             this.results = null;
-
-            this.serviceSubscription.add(this.geonamesService.getPlaces(data).pipe(delay(3000)).subscribe(val => {
-              this.results = val;
-              this.isLoading = false;
+            
+            this.serviceSubscription.add(timer(2000).pipe(take(1)).subscribe(val => {
+              this.isWaiting = false;
+              this.isLoading = true;
+              this.geonamesService.getPlaces(data).subscribe(val => {
+                this.isLoading = false;
+                this.results = val;
+                if(val && val.totalResultsCount > 0){
+                  this.isNoData = false;
+                }else{
+                  this.isNoData = true;
+                }
+              });
             }));
-
           },
 
           error: (data) => {
