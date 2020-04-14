@@ -8,12 +8,11 @@ import { HttpClient } from '@angular/common/http';
 })
 export class GeonameService {
 
-  private _geonameServiceURLStart = 'https://secure.geonames.org/searchJSON?q='
-  private _geonameServiceURLEnd = '&maxRows=5&username=jean.ecard';
-
+  private _geonameServiceURLStart = 'https://hrcorebordersservicesv-3-1.azurewebsites.net/api/HRGeoname/'
+  
 
   constructor(private http: HttpClient) { }
   public getPlaces(val: string): Observable<GeonameOutput> {
-    return this.http.get<GeonameOutput>(this._geonameServiceURLStart + val + this._geonameServiceURLEnd);
+    return this.http.get<GeonameOutput>(this._geonameServiceURLStart + val);
   }
 }

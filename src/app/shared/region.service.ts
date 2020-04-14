@@ -6,7 +6,7 @@ import { HrStorageService } from './hr-storage.service';
 
 
 export class RegionServiceConstants {
-  static readonly SERVICE_URL = 'https://fullcoreservices-ci.azurewebsites.net/api/v1.0/HRContinent';
+  static readonly SERVICE_URL = 'https://hrcorebordersservicesv-3-1.azurewebsites.net/api/v1.0/HRContinent';
   static readonly STORAGE_REGION_KEY = 'region';
   static readonly SERVICE_ERROR = 'HRStorage is null, RegionService is not avaialble.';
   //private SERVICE_URL = 'http://localhost:50147/api/v1.0/HRContinent';
