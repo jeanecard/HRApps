@@ -15,7 +15,10 @@ import { platformModifierKeyOnly } from 'ol/events/condition';
 import { Fill, Stroke, Style, Text } from 'ol/style';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MapLayerService } from '../../map-layer.service';
-
+import Feature from 'ol/Feature';
+import {Icon} from 'ol/style';
+import {easeIn, easeOut} from 'ol/easing';
+import Point from 'ol/geom/Point';
 
 @Component({
   selector: 'app-hr-open-layer-map',
@@ -36,10 +39,46 @@ export class HrOpenLayerMapComponent implements ControlValueAccessor, OnInit {
   public propagateTouch = (_: any) => { };
   private mapView : View;
 
+  private featureLocation = null;
+  private locatorLayer = null;
+  private locatorSource = null;
+
 
   constructor(private _layerService: MapLayerService) { }
 
+  private createLayerLocator(val1, val2){
+    this.featureLocation = new Feature({
+      geometry: new Point(fromLonLat([val1, val2]))
+    });
+    
+    
+    this.featureLocation.setStyle(new Style({
+      image: new Icon({
+        color: 'white',
+        crossOrigin: 'anonymous',
+        imgSize: [30, 30],
+        src: 'assets/icons/geolocator-icon.svg'
+      })
+    }));
+ 
+    
+    this.locatorSource = new VectorSource({
+      features: [this.featureLocation]
+    });
+    
+    this.locatorLayer = new VectorLayer({
+      source: this.locatorSource
+    });
+
+
+  }
+
   private initMap(): void {
+
+    this.createLayerLocator(0,0);
+
+
+
     this.mapView = new View({
       center: [0, 0],
       zoom: 2
@@ -55,7 +94,7 @@ export class HrOpenLayerMapComponent implements ControlValueAccessor, OnInit {
           condition: platformModifierKeyOnly
         })
       ]),
-      layers: [],
+      layers: [this.locatorLayer],
       target: 'map',
       view: this.mapView,
     });
@@ -73,20 +112,27 @@ export class HrOpenLayerMapComponent implements ControlValueAccessor, OnInit {
           if (mapLayers) {
             mapLayers.clear();
             this.map.addLayer(querriedLayer.layer);
+            this.map.addLayer(this.locatorLayer);
           }
         }
         this.map.changed();
       }
       if(value.center)
       {
+        this.map.removeLayer(this.locatorLayer);
+        this.createLayerLocator(value.center.lon, value.center.lat);
+        this.map.addLayer(this.locatorLayer);
+        this.map.changed();
+  
         let target = fromLonLat([value.center.lon, value.center.lat]);
-        this.flyTo(target, function() {});
-      //   this.mapView.animate({
-      //   center:  fromLonLat([value.center.lon, value.center.lat]),
-      //   duration: 2000
-      // });
+        //this.flyTo(target, function() {});
+        this.mapView.animate({
+        center:  fromLonLat([value.center.lon, value.center.lat]),
+        duration: 3000,
+      });
         }
       this.isWorking = false;
+      console.log(this.featureLocation);
     }
 
   }
@@ -123,10 +169,10 @@ export class HrOpenLayerMapComponent implements ControlValueAccessor, OnInit {
   }
   
   public  flyTo(location, done) : void {
-    var duration = 10000;
+    var duration = 4000;
     let view = this.mapView;
     var zoom = view.getZoom();
-    var parts = 5;
+    var parts = 4;
     var called = false;
     function callback(complete) {
       --parts;
@@ -144,19 +190,10 @@ export class HrOpenLayerMapComponent implements ControlValueAccessor, OnInit {
     }, callback);
     view.animate({
       zoom: zoom - 1,
-      duration: duration / 5
+      duration: duration /4
     }, {
       zoom: zoom,
-      duration: duration / 5
+      duration: duration / 4
     }, callback);
   }
-  public panto() : void{
-
-    this.mapView.animate({
-      center:  fromLonLat([2.68958, 43.5515]),
-      duration: 2000
-    });
-  
-  }
-//lat: "43.5515"lng: "2.68958" 
 }

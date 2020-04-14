@@ -8,7 +8,7 @@ import { HttpClient } from '@angular/common/http';
 })
 export class GeonameService {
 
-  private _geonameServiceURLStart = 'http://api.geonames.org/searchJSON?q='
+  private _geonameServiceURLStart = 'https://secure.geonames.org/searchJSON?q='
   private _geonameServiceURLEnd = '&maxRows=5&username=jean.ecard';
 
 
