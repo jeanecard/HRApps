@@ -33,6 +33,7 @@ export class HrLocatorSelectorComponent implements OnInit, ControlValueAccessor 
   public remaining = 3;
   private serviceSubscription = new Subscription();
   private timerSubscription = new Subscription();
+  private geoServiceSubscription = new Subscription();
 
   private  everySecond: Observable<number> = timer(0, 1000);
 
@@ -74,7 +75,7 @@ export class HrLocatorSelectorComponent implements OnInit, ControlValueAccessor 
       (
         {
           next: data => {
-
+            this.geoServiceSubscription.unsubscribe();
             this.timerSubscription.unsubscribe();
             this.remaining = 3;
             this.timerSubscription = this.everySecond.pipe(take(3)).subscribe(data=>{
@@ -92,6 +93,7 @@ export class HrLocatorSelectorComponent implements OnInit, ControlValueAccessor 
             this.serviceSubscription.add(timer(2000).pipe(take(1)).subscribe(val => {
               this.isWaiting = false;
               this.isLoading = true;
+              this.geoServiceSubscription = 
               this.geonamesService.getPlaces(data).subscribe(val => {
                 this.isLoading = false;
                 this.results = val;

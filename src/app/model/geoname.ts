@@ -12,13 +12,13 @@ export interface Geoname {
   population: number;
   countryCode: string;
   name: string;
-  fclName: string;
-  adminCodes1: AdminCodes1;
-  countryName: string;
-  fcodeName: string;
-  adminName1: string;
-  lat: string;
-  fcode: string;
+  fclName: string | null;
+  adminCodes1: AdminCodes1 | null;
+  countryName: string | null;
+  fcodeName: string | null;
+  adminName1: string | null;
+  lat: string | null;
+  fcode: string |null;
 }
 
 export interface GeonameOutput {
