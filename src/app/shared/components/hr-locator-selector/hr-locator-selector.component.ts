@@ -35,7 +35,7 @@ export class HrLocatorSelectorComponent implements OnInit, ControlValueAccessor 
   private timerSubscription = new Subscription();
   private geoServiceSubscription = new Subscription();
 
-  private  everySecond: Observable<number> = timer(0, 1000);
+  private everySecond: Observable<number> = timer(0, 1000);
 
   constructor(private geonamesService: GeonameService) { }
   writeValue(obj: any): void {
@@ -77,42 +77,62 @@ export class HrLocatorSelectorComponent implements OnInit, ControlValueAccessor 
           next: data => {
             this.geoServiceSubscription.unsubscribe();
             this.timerSubscription.unsubscribe();
-            this.remaining = 3;
-            this.timerSubscription = this.everySecond.pipe(take(3)).subscribe(data=>{
-              this.remaining --;
-            })
-        
-
-            this.isWaiting = true;
-            this.isNoData = false;
             this.serviceSubscription.unsubscribe();
-            this.serviceSubscription = new Subscription();
-            this.isLoading = false;
+            this.remaining = 3;
             this.results = null;
-            
-            this.serviceSubscription.add(timer(2000).pipe(take(1)).subscribe(val => {
-              this.isWaiting = false;
-              this.isLoading = true;
-              this.geoServiceSubscription = 
-              this.geonamesService.getPlaces(data).subscribe(val => {
-                this.isLoading = false;
-                this.results = val;
-                if(val && val.totalResultsCount > 0){
+            this.timerSubscription = this.everySecond.pipe(take(3)).subscribe(
+              {
+                next:
+                  dataTimer => {
+                    this.isWaiting = true;
+                    this.isLoading = false;
+                    this.remaining--;
+                    this.isNoData = false;
+                  },
+                error: (dataError) => {
+                  console.log(dataError);
+                  this.timerSubscription.unsubscribe();
+                },
+                complete: () => {
+                  this.timerSubscription.unsubscribe();
+                  this.serviceSubscription = new Subscription();
+                  this.results = null;
+                  this.isWaiting = false;
+                  this.isLoading = true;
                   this.isNoData = false;
-                }else{
-                  this.isNoData = true;
+                  this.geoServiceSubscription =
+                    this.geonamesService.getPlaces(data).subscribe({
+                      next: (val) => {
+                      this.isLoading = false;
+                      this.results = val;
+                      if (val && val.totalResultsCount > 0) {
+                        this.isNoData = false;
+                      } else {
+                        this.isNoData = true;
+                      }
+                    },
+                  error: (dataError) =>{
+                    this.serviceSubscription.unsubscribe();
+                  },
+                  complete: () =>{
+                    this.serviceSubscription.unsubscribe();
+                  }
+                });
                 }
               });
-            }));
           },
-
           error: (data) => {
+            this.geoServiceSubscription.unsubscribe();
+            this.timerSubscription.unsubscribe();
+            this.serviceSubscription.unsubscribe();            
             this.isLoading = false;
             this.results = null;
-            console.log("TODO");
             console.log(data);
           },
           complete: () => {
+            this.geoServiceSubscription.unsubscribe();
+            this.timerSubscription.unsubscribe();
+            this.serviceSubscription.unsubscribe();            
             this.isLoading = false;
             //Dummy in this version.
           }

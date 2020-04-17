@@ -132,7 +132,6 @@ export class HrOpenLayerMapComponent implements ControlValueAccessor, OnInit {
       });
         }
       this.isWorking = false;
-      console.log(this.featureLocation);
     }
 
   }

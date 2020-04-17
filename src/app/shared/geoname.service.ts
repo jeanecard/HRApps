@@ -69,7 +69,7 @@ export class GeonameService {
     //   this._passage = 2;
     //   return of(retour).pipe(delay(1000));
     // }
-
+    console.log('geoname service appelle');
 
 
     return this.http.get<GeonameOutput>(this._geonameServiceURLStart + val);
