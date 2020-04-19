@@ -9,7 +9,7 @@ import { delay } from 'rxjs/operators';
 })
 export class GeonameService {
 
-  private _geonameServiceURLStart = 'https://hrcorebordersservicesv-3-1.azurewebsites.net/api/v1.0/HRGeoname/HRGeoname/'
+  private _geonameServiceURLStart = 'https://hrcorebordersservicesv-3-1.azurewebsites.net/api/v1.0/HRGeoname/'
   private _passage = 1;
 
   constructor(private http: HttpClient) { }
