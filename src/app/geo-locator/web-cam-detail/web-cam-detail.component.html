@@ -1,0 +1,17 @@
+<mat-card class="example-card">
+  <mat-card-header>
+    <mat-card-title>{{data?.title}}</mat-card-title>
+    <mat-card-subtitle>{{data?.status}}
+      <img class="imageHeader" [src]="data?.image?.current?.thumbnail" alt="Thumbnail of camera at this moment">
+    </mat-card-subtitle>
+  </mat-card-header>
+</mat-card>
+<mat-tab-group>
+  <mat-tab label="Live" max-height="300px">
+    <iframe width="100%" height="400px" frameBorder="0" [src]="dayUrlSafe"></iframe>
+  </mat-tab>
+  <mat-tab label="Life Time" max-height="300px">
+    <iframe width="100%"  height="400px" frameBorder="0" [src]="lifeTimeUrlSafe"></iframe>
+  </mat-tab>
+</mat-tab-group>
+<!-- <button mat-button>CLOSE</button> -->

@@ -7,7 +7,7 @@ import { HttpClientModule } from '@angular/common/http';
 //import { StorageServiceModule } from 'angular-webstorage-service';
 
 
-import { AppComponent } from './app.component';
+import { AppComponent   } from './app.component';
 import { RootModule } from './root/root.module';
 
 import { build$ } from 'protractor/built/element';
@@ -17,10 +17,13 @@ import { FormatNumberDirective } from './shared/format-number.directive';
 import { HRErrorHandler } from './hrerror-handler';
 
 
+
+
 @NgModule({
   declarations: [
     AppComponent,
-    FormatNumberDirective
+    FormatNumberDirective,
+     
   ],
   imports: [
     BrowserModule,
