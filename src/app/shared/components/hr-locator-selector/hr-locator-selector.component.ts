@@ -39,7 +39,7 @@ export class HrLocatorSelectorComponent implements OnInit, ControlValueAccessor 
 
   constructor(private geonamesService: GeonameService) { }
   writeValue(obj: any): void {
-    console.log('TODO');
+    //TODO
   }
   /**
  * @description
@@ -149,10 +149,8 @@ export class HrLocatorSelectorComponent implements OnInit, ControlValueAccessor 
   }
   public onOptionSelected(data: any): void {
     let newEvent = {
-      "center": {
-        "lat": data.option.value.lat,
-        "lon": data.option.value.lng
-      }
+      mapCenterLat : data.option.value.lat,
+      mapCenterLon : data.option.value.lng      
     }
     this.propagateChange(newEvent);
     this.propagateTouch(newEvent);
