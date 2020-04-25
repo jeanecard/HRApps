@@ -36,8 +36,6 @@ export class MainGeoLocatorComponent implements OnInit, OnDestroy {
     this.subscription.unsubscribe();
     this.webCamDialog.unsubscribe();
     
-    console.log("MAP AVAIT COMME VALEUR");
-    console.log(this.locatorMap.value);
 
     //2- Enregistrement despréférences
     if(this.prefService){
@@ -72,13 +70,13 @@ export class MainGeoLocatorComponent implements OnInit, OnDestroy {
     });
 
     this.subscription.add(this.hrLayerSelector.valueChanges.subscribe(data => {
-      this.locatorMap.setValue({map : data});
+      this.locatorMap.patchValue({map : data});
     }));
     this.subscription.add(this.hrLocatorSelector.valueChanges.subscribe(data => {
-      this.locatorMap.setValue(data);
+      this.locatorMap.patchValue(data);
     }));
     this.subscription.add(this.hrwebCamRange.valueChanges.subscribe(data => {
-      this.locatorMap.setValue({range : data});
+      this.locatorMap.patchValue({range : data});
     }));
     this.webCamDialog = this.locatorMap.valueChanges.subscribe( data =>{
       if(data.webCam){

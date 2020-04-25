@@ -14,64 +14,6 @@ export class GeonameService {
 
   constructor(private http: HttpClient) { }
   public getPlaces(val: string): Observable<GeonameOutput> {
-    // let val1 = {
-    //   "adminCode1" : "",
-    //   "lng": "1",
-    //   "geonameId": 1,
-    //   "toponymName": "",
-    //   "countryId": "",
-    //   "fcl": "",
-    //   "population": 2,
-    //   "countryCode": "",
-    //   "name": "AA",
-    //   "fclName": "",
-    //   "adminCodes1": null,
-    //   "countryName": "",
-    //   "fcodeName": "",
-    //   "adminName1": "",
-    //   "lat": "",
-    //   "fcode": "",
-    // };
-    // let val2 = {
-    //   "adminCode1" : "",
-    //   "lng": "1",
-    //   "geonameId": 1,
-    //   "toponymName": "",
-    //   "countryId": "",
-    //   "fcl": "",
-    //   "population": 2,
-    //   "countryCode": "",
-    //   "name": "BB",
-    //   "fclName": "",
-    //   "adminCodes1": null,
-    //   "countryName": "",
-    //   "fcodeName": "",
-    //   "adminName1": "",
-    //   "lat": "",
-    //   "fcode": "",
-    // }
-
-    // if(this._passage == 1){
-    //   let retour =  {
-    //     "totalResultsCount" : 2,
-    //     "geonames" : [val1, val2]
-    //   };
-    //   this._passage = 2;
-    //   return of(retour).pipe(delay(5000));
-      
-    // } else{
-    //   val1.name = "CC";
-    //   val2.name = "DD";
-    //   let retour =  {
-    //     "totalResultsCount" : 2,
-    //     "geonames" : [val1, val2]
-    //   };
-    //   this._passage = 2;
-    //   return of(retour).pipe(delay(1000));
-    // }
-    console.log('geoname service appelle');
-
-
     return this.http.get<GeonameOutput>(this._geonameServiceURLStart + val);
   }
 }

@@ -2,37 +2,26 @@ import { Component, OnInit, forwardRef } from '@angular/core';
 
 import Circle from 'ol/geom/Circle';
 import 'ol/ol.css';
-import transform from 'ol/transform';
 import { Map, View } from 'ol/index';
-import GeoJSON from 'ol/format/GeoJSON';
-import { Tile as TileLayer, Vector as VectorLayer } from 'ol/layer';
+import {  Vector as VectorLayer } from 'ol/layer';
 import OlMap from 'ol/Map';
 import 'ol/ol.css';
-import WKT from 'ol/format/WKT';
 import { Vector as VectorSource } from 'ol/source';
-import { defaults as defaultControls, ScaleLine } from 'ol/control';
+import {ScaleLine } from 'ol/control';
 import { fromLonLat, toLonLat } from 'ol/proj';
-import { defaults, DragPan, MouseWheelZoom, Translate, Modify } from 'ol/interaction';
+import { defaults, DragPan, MouseWheelZoom, Translate } from 'ol/interaction';
 import { platformModifierKeyOnly } from 'ol/events/condition';
-import { Fill, Stroke, Style, Text } from 'ol/style';
+import { Style} from 'ol/style';
 import Select from 'ol/interaction/Select';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MapLayerService } from '../../map-layer.service';
 import Feature from 'ol/Feature';
 import { Icon } from 'ol/style';
-import { easeIn, easeOut } from 'ol/easing';
 import Point from 'ol/geom/Point';
-import * as olCoordinate from 'ol/coordinate';
 import { HRWebCamService } from '../../hrweb-cam.service';
 import { Subscription } from 'rxjs';
-import { WebCamItemModel } from 'src/app/model/web-cam-model';
 import { HRGeoLocatorOpenLayerModel } from 'src/app/model/hrgeo-locator-open-layer-model';
 import { RangeModel } from 'src/app/model/range-model';
-
-
-// Model {webCam : objet WebCam ,
-// range :}
-
 
 @Component({
   selector: 'app-hr-open-layer-map',
@@ -60,125 +49,124 @@ export class HrOpenLayerMapComponent implements ControlValueAccessor, OnInit {
   private locatorSource = null;
   private webCamSource = null;
   private areaWebCamSource = null;
-
   private webCamSubscription: Subscription;
   private selectSingleClick: Select;
-
   private model: HRGeoLocatorOpenLayerModel = null;
-
-
+  private static FEATURE_LOCATION_ID = "privateID";
+  private static ANIMATION_LOCATOR_DURATION = 2000;
+  private static LOCATOR_STYLE = new Style({
+    image: new Icon({
+      color: 'white',
+      crossOrigin: 'anonymous',
+      imgSize: [30, 30],
+      src: 'assets/icons//geoLocation.png'
+    })
+  });
+  private static WEBCAM_STYLE = new Style({
+    image: new Icon({
+      color: 'white',
+      crossOrigin: 'anonymous',
+      src: 'assets/icons/webcam.png'
+    })
+  });
+  private static LOCATOR_LAYER_INDEX = 10;
+  public static WEBCAM_FEATURE_PROPERTY_NAME = "WebCam";
 
   constructor(private _layerService: MapLayerService, private _webCamService: HRWebCamService) { }
 
+  private createLayeWebCam() {
+    //1- création du Layer Area.
+    this.createLayerArea(this.model.mapCenterLon, this.model.mapCenterLat);
+   if(this.webCamSubscription){
+     this.webCamSubscription.unsubscribe();
+   }
+   if (this.model.range.display) {
+    this.webCamSubscription = this._webCamService.getNearestWebcams(this.model.mapCenterLat, this.model.mapCenterLon, this.model.range.range).subscribe(data => {
+      
+      let webCamItems = null;
+      if(data && data.result){
+          webCamItems = data.result.webcams;
+      }
+      let webCamfeatures = [];
+      let latDelta = 0.001;
+      let lonDelta = 0.001;
+      if(webCamItems){
+        
+        webCamItems.forEach(element => {
+          console.log("WAHOU ");
 
-  private createLayeWebCam(val1, val2) {
+          let lonConverted = element.location.longitude;
+          let latConverted = element.location.latitude;
 
-    let areaFeatures = [];
-    if (this.model.range.display) {
-      let circleFeature = new Feature({
-        geometry: new Circle(fromLonLat([val1, val2]), 1100 * this.model.range.range, 'XY')
+          console.log(latConverted);
+          console.log(lonConverted);
+          let webCamFeaturei = new Feature({
+            geometry: new Point(fromLonLat([lonConverted, latConverted]))
+          });
+          webCamFeaturei.set(HrOpenLayerMapComponent.WEBCAM_FEATURE_PROPERTY_NAME, element, true);
+          webCamFeaturei.setStyle(HrOpenLayerMapComponent.WEBCAM_STYLE);
+          webCamfeatures.push(webCamFeaturei);
+        });
+    
+      }
+  
+      this.webCamSource = new VectorSource({
+        features: webCamfeatures
       });
-      areaFeatures.push(circleFeature);
-
-    }
-
-    this.areaWebCamSource = new VectorSource({
-      features: areaFeatures
-    });
-
-    this.areaWebCamLayer = new VectorLayer({
-      source: this.areaWebCamSource
-    });
-
-    let webCamfeatures = [];
-
-    if (this.model.range.display) {
-      let lonConverted = Number(val1);
-      let latConverted = Number(val2);
-      lonConverted = lonConverted + 0.001;
-      latConverted = latConverted + 0.001;
-
-      let webcams = this.getStubbedwebCams();
-      let webCamFeature1 = new Feature({
-        geometry: new Point(fromLonLat([lonConverted, latConverted]))
+  
+      this.webCamLayer = new VectorLayer({
+        source: this.webCamSource,
+        zIndex: 9
       });
-      webCamFeature1.set("WebCam", webcams[0], true);
-
-      webCamfeatures.push(webCamFeature1);
-
-      webCamFeature1.setStyle(new Style({
-        image: new Icon({
-          color: 'white',
-          crossOrigin: 'anonymous',
-          src: 'assets/icons/webcam.png'
-        })
-      }));
-
-      lonConverted = lonConverted - 0.002;
-      latConverted = latConverted + 0.001;
-      let webCamFeature2 = new Feature({
-        geometry: new Point(fromLonLat([lonConverted, latConverted]))
-      });
-      webCamFeature2.set("WebCam", webcams[1], true);
-
-      webCamfeatures.push(webCamFeature2);
-
-      webCamFeature2.setStyle(new Style({
-        image: new Icon({
-          color: 'white',
-          crossOrigin: 'anonymous',
-          src: 'assets/icons/webcam.png'
-        })
-      }));
-    }
-
+    })
+   } else{
     this.webCamSource = new VectorSource({
-      features: webCamfeatures
+      features: []
     });
 
     this.webCamLayer = new VectorLayer({
       source: this.webCamSource,
       zIndex: 9
     });
+   }
+    
+  
   }
 
-  private createLayerLocator(val1, val2) {
+  private createLayerArea(lon : number, lat : number) : void{
+    let areaFeatures = [];
+    if (this.model.range.display) {
+      let circleFeature = new Feature({
+        geometry: new Circle(fromLonLat([lon, lat]), 1100 * this.model.range.range, 'XY')
+      });
+      areaFeatures.push(circleFeature);
+    }
+    this.areaWebCamSource = new VectorSource({
+      features: areaFeatures
+    });
+    this.areaWebCamLayer = new VectorLayer({
+      source: this.areaWebCamSource
+    });
+  }
 
+  private createLayerLocator() {
     let features = [];
     this.featureLocation = new Feature({
-      geometry: new Point(fromLonLat([val1, val2])),
-
+      geometry: new Point(fromLonLat([this.model.mapCenterLon, this.model.mapCenterLat])),
     });
-    this.featureLocation.setId("privateID");
-
+    this.featureLocation.setId(HrOpenLayerMapComponent.FEATURE_LOCATION_ID);
     features.push(this.featureLocation);
-
-
-    this.featureLocation.setStyle(new Style({
-      image: new Icon({
-        color: 'white',
-        crossOrigin: 'anonymous',
-        imgSize: [30, 30],
-        src: 'assets/icons//geoLocation.png'
-      })
-    }));
-    // assets/icons//geolocator-icon.svg
-    // webcam.png
-
-
-
+    this.featureLocation.setStyle(HrOpenLayerMapComponent.LOCATOR_STYLE);
     this.locatorSource = new VectorSource({
       features: features
     });
-
     this.locatorLayer = new VectorLayer({
       source: this.locatorSource,
-      zIndex: 10
+      zIndex: HrOpenLayerMapComponent.LOCATOR_LAYER_INDEX
     });
   }
 
-
-  private initMap(): void {
+  private instanciateEmptyMap(): void {
 
     this.mapView = new View({
       center: [0, 0],
@@ -204,108 +192,128 @@ export class HrOpenLayerMapComponent implements ControlValueAccessor, OnInit {
     this.map.addControl(scaleline);
   }
 
-
   //ControlValueAccessor
-  writeValue(value: HRGeoLocatorOpenLayerModel): void {
+  public writeValue(value: HRGeoLocatorOpenLayerModel): void {
     if (value) {
-      //1- instanciation du model à partir de la valeur initiale
-      let isInitialisation = false;
       let updateMap = false;
+      //1- instanciation du model à partir de la valeur initiale si le model interne est null
       if (this.model === null) {
         this.initModelFrom(value);
-        isInitialisation = true;
+        this.intializeMap();
+        updateMap = true;
       }
-      if (isInitialisation) {
-        if (this.map) {
-          let querriedLayer = this._layerService.getSource(value.map);
-          if (querriedLayer && querriedLayer.layer) {
-            this.createLayerLocator(this.model.mapCenterLon, this.model.mapCenterLat);
-            this.createLayeWebCam(this.model.mapCenterLon, this.model.mapCenterLat);
-            this.map.addLayer(querriedLayer.layer);
-            this.map.addLayer(this.locatorLayer);
-            this.map.addLayer(this.webCamLayer);
-            this.map.addLayer(this.areaWebCamLayer);
-            updateMap = true;
-          }
+      //2- Sinon, il s'agit d'un patch value
+      else {
+        //2.1- mise à jour du fond de carte
+        if (value.map != undefined && value.map !== null
+          && this.model.map != value.map) {
+          this.changeMap(value.map);
+          updateMap = true;
         }
-      } else {
-        //2- mise en place de la carto
-        if (this.model.map != value.map) {
-          this.model.map = value.map;
-          if (this.map) {
-            let querriedLayer = this._layerService.getSource(value.map);
-            if (querriedLayer && querriedLayer.layer) {
-              let mapLayers = this.map.getLayers();
-              if (mapLayers) {
-                mapLayers.clear();
-              }
-              this.map.addLayer(querriedLayer.layer);
-              this.map.addLayer(this.locatorLayer);
-              this.map.addLayer(this.webCamLayer);
-              this.map.addLayer(this.areaWebCamLayer);
-              updateMap = true;
-            }
-          }
-        }
-        if (value.mapCenterLat != undefined && value.mapCenterLat !== NaN
+        //2.2- Mise à jour du locator
+        else if (value.mapCenterLat != undefined && value.mapCenterLat !== NaN
           && value.mapCenterLon != undefined && value.mapCenterLon !== NaN
           && value.mapCenterLat !== this.model.mapCenterLat
           && value.mapCenterLon !== this.model.mapCenterLon) {
-          this.isWorking = true;
-          this.model.mapCenterLat = value.mapCenterLat;
-          this.model.mapCenterLon = value.mapCenterLon;
-          this.map.removeLayer(this.locatorLayer);
-          this.map.removeLayer(this.webCamLayer);
-          this.map.removeLayer(this.areaWebCamLayer);
-          if (this.webCamSubscription) {
-            this.webCamSubscription.unsubscribe();
-          }
-          this.webCamSubscription = this._webCamService.getNearestWebcams(this.model.mapCenterLat, this.model.mapCenterLon, 10000).subscribe(data => {
-            this.createLayerLocator(this.model.mapCenterLon, this.model.mapCenterLat);
-            this.createLayeWebCam(this.model.mapCenterLon, this.model.mapCenterLat);
-            this.map.addLayer(this.locatorLayer);
-            this.map.addLayer(this.webCamLayer);
-            this.map.addLayer(this.areaWebCamLayer);
-            this.isWorking = false;
-            updateMap = true;
-
-            let target = fromLonLat([this.model.mapCenterLon, this.model.mapCenterLat]);
-            this.mapView.animate({
-              center: fromLonLat([this.model.mapCenterLon, this.model.mapCenterLat]),
-              duration: 3000,
-            });
-          });
+          this.changeLocator(value.mapCenterLon, value.mapCenterLat);
+          updateMap = true;
         }
-        if (value.range) {
-          if (value.range.display) {
-            if (this.model.range.display !== value.range.display
-              || this.model.range.range !== value.range.range) {
-              this.model.range.display = true;
-              this.model.range.range = value.range.range;
-              this.map.removeLayer(this.webCamLayer);
-              this.map.removeLayer(this.areaWebCamLayer);
-              this.createLayeWebCam(this.model.mapCenterLon, this.model.mapCenterLat);
-              this.map.addLayer(this.webCamLayer);
-              this.map.addLayer(this.areaWebCamLayer);
-              updateMap = true;
-            }
-          } else {
-            if (this.model.range.display !== value.range.display) {
-              this.model.range.display = false;
-              this.map.removeLayer(this.webCamLayer);
-              this.map.removeLayer(this.areaWebCamLayer);
-              updateMap = true;
-            }
-          }
+        //2.3- Mise à jour du Range des webCams
+        else if (value.range != undefined && value.range != null) {
+          updateMap = this.changeRange(value.range);
         }
       }
+      //3- Refresh of carto.
       if (updateMap) {
-        this.propagateChange(value);
         this.map.changed();
       }
     }
   }
 
+  private intializeMap(): void {
+    if (this.map) {
+      let querriedLayer = this._layerService.getSource(this.model.map);
+      if (querriedLayer && querriedLayer.layer) {
+        this.createLayerLocator();
+        this.createLayeWebCam();
+        this.map.addLayer(querriedLayer.layer);
+        this.map.addLayer(this.locatorLayer);
+        this.map.addLayer(this.webCamLayer);
+        this.map.addLayer(this.areaWebCamLayer);
+      }
+    }
+  }
+
+  private changeMap(mapName: string): void {
+    this.model.map = mapName;
+    if (this.map) {
+      let querriedLayer = this._layerService.getSource(mapName);
+      if (querriedLayer && querriedLayer.layer) {
+        let mapLayers = this.map.getLayers();
+        if (mapLayers) {
+          mapLayers.clear();
+        }
+        this.map.addLayer(querriedLayer.layer);
+        this.map.addLayer(this.locatorLayer);
+        this.map.addLayer(this.webCamLayer);
+        this.map.addLayer(this.areaWebCamLayer);
+      }
+    }
+  }
+
+  private changeLocator(lon: number, lat: number): void {
+    this.isWorking = true;
+    this.model.mapCenterLat = lat;
+    this.model.mapCenterLon = lon;
+    this.map.removeLayer(this.locatorLayer);
+    this.map.removeLayer(this.webCamLayer);
+    this.map.removeLayer(this.areaWebCamLayer);
+    if (this.webCamSubscription) {
+      this.webCamSubscription.unsubscribe();
+    }
+    this.webCamSubscription = this._webCamService.getNearestWebcams(this.model.mapCenterLat, this.model.mapCenterLon, 10000).subscribe(data => {
+      this.createLayerLocator();
+      this.map.removeLayer(this.webCamLayer);
+      this.map.removeLayer(this.areaWebCamLayer);
+      this.map.removeLayer(this.locatorLayer);
+      this.createLayeWebCam();
+      this.map.addLayer(this.locatorLayer);
+      this.map.addLayer(this.webCamLayer);
+      this.map.addLayer(this.areaWebCamLayer);
+      this.isWorking = false;
+
+
+      let target = fromLonLat([this.model.mapCenterLon, this.model.mapCenterLat]);
+      this.mapView.animate({
+        center: fromLonLat([this.model.mapCenterLon, this.model.mapCenterLat]),
+        duration: HrOpenLayerMapComponent.ANIMATION_LOCATOR_DURATION,
+      });
+    });
+  }
+
+  private changeRange(rangeToSet : RangeModel) : boolean{
+    if (rangeToSet.display) {
+      if (this.model.range.display !== rangeToSet.display
+        || this.model.range.range !== rangeToSet.range) {
+        this.model.range.display = true;
+        this.model.range.range = rangeToSet.range;
+        this.map.removeLayer(this.webCamLayer);
+        this.map.removeLayer(this.areaWebCamLayer);
+        this.createLayeWebCam();
+        this.map.addLayer(this.webCamLayer);
+        this.map.addLayer(this.areaWebCamLayer);
+        return true;
+      }
+    } else {
+      if (this.model.range.display !== rangeToSet.display) {
+        this.model.range.display = false;
+        this.map.removeLayer(this.webCamLayer);
+        this.map.removeLayer(this.areaWebCamLayer);
+        return true;
+      }
+    }
+    return false;
+  }
 
   private initModelFrom(value: HRGeoLocatorOpenLayerModel): void {
     //TODO a blinder bien sur.
@@ -319,9 +327,9 @@ export class HrOpenLayerMapComponent implements ControlValueAccessor, OnInit {
       this.model.range.min = value.range.min,
       this.model.range.display = value.range.display;
 
-    //TODO Cheat
-    this.model.mapCenterLat = 43.6;
-    this.model.mapCenterLon = 2.7167;
+    //TODO Cheat Le soulié :-)
+    this.model.mapCenterLat = 43.5514;
+    this.model.mapCenterLon = 2.6895;
 
   }
   /**
@@ -348,33 +356,38 @@ export class HrOpenLayerMapComponent implements ControlValueAccessor, OnInit {
     * @param isDisabled The disabled status to set on the element
     */
   setDisabledState?(isDisabled: boolean): void {
-    //Dummy.
+    //Dummy for the moment.
   }
 
 
   private processSelectedFeature(event: any): void {
     event.target.getFeatures().forEach(element => {
-      if (element.getId() !== "privateID") {
+      if (element.getId() !== HrOpenLayerMapComponent.FEATURE_LOCATION_ID) {
         this.propagateChange({ webcam: element.get("WebCam") });
       }
     });
   }
 
   ngOnInit(): void {
+    //Disponibles a la selection : Locator et les WebCams
     this.selectSingleClick = new Select({
       layers: (data) => {
         return (data === this.locatorLayer || data === this.webCamLayer)
       }
     });
+    //Disponible à la modification sur la carto. : Locator
     var translate = new Translate({
       layers: (data) => {
         return (data === this.locatorLayer)
       },
       features: this.selectSingleClick.getFeatures()
     });
-    this.initMap();
+    //Creation de la carto vide
+    this.instanciateEmptyMap();
+    //Branchement des interactions
     this.map.addInteraction(this.selectSingleClick);
     this.map.addInteraction(translate);
+    //Branchement de la selection
     this.selectSingleClick.on('select', (event) => {
       this.processSelectedFeature(event);
     });
@@ -382,199 +395,13 @@ export class HrOpenLayerMapComponent implements ControlValueAccessor, OnInit {
 
     translate.on('translateend', (event) => {
       let coord = toLonLat(event.coordinate);
-      this.model.mapCenterLon = coord[0];
-      this.model.mapCenterLat = coord[1];
-
-      this.isWorking = true;
-      this.map.removeLayer(this.locatorLayer);
-      this.map.removeLayer(this.webCamLayer);
-      this.map.removeLayer(this.areaWebCamLayer);
+      let coordinates = toLonLat([coord[0], coord[1]], 'EPSG:4326');
+      this.writeValue({
+        map : undefined,
+        mapCenterLat : coordinates[1],
+        mapCenterLon : coordinates[0],
+        range : undefined
+      });
     });
-  }
-
-  public flyTo(location, done): void {
-    var duration = 4000;
-    let view = this.mapView;
-    var zoom = view.getZoom();
-    var parts = 4;
-    var called = false;
-    function callback(complete) {
-      --parts;
-      if (called) {
-        return;
-      }
-      if (parts === 0 || !complete) {
-        called = true;
-        done(complete);
-      }
-    }
-    view.animate({
-      center: location,
-      duration: duration
-    }, callback);
-    view.animate({
-      zoom: zoom - 1,
-      duration: duration / 4
-    }, {
-      zoom: zoom,
-      duration: duration / 4
-    }, callback);
-  }
-
-  private getStubbedwebCams(): WebCamItemModel[] {
-    let webCam1 = {
-      id: "1",
-      status: "Active",
-      title: "Le soulié",
-      image: {
-        current: {
-          icon: "",
-          thumbnail: "https://images-webcams.windy.com/63/1514532263/current/thumbnail/1514532263.jpg",
-          preview: "",
-          toenail: ""
-        },
-        daylight: {
-          icon: "string",
-          thumbnail: "string",
-          preview: "string",
-          toenail: "string"
-        },
-        sizes: {
-          icon: {
-            width: 100,
-            height: 100
-          },
-          thumbnail: {
-            width: 100,
-            height: 100
-          },
-          preview: {
-            width: 100,
-            height: 100
-          },
-          toenail: {
-            width: 100,
-            height: 100
-          }
-        },
-        update: 100
-      },
-      location: {
-        city: "string",
-        region: "string",
-        region_code: "string",
-        country: "string",
-        country_code: "string",
-        continent: "string",
-        continent_code: "string",
-        latitude: 48,
-        longitude: 2,
-        timezone: "string"
-      },
-      player: {
-        live: {
-          available: false,
-          embed: "string"
-        },
-        day: {
-          available: true,
-          link: "string",
-          embed: "https://webcams.windy.com/webcams/public/embed/player/1514532263/day"
-        },
-        month: {
-          available: true,
-          link: "string",
-          embed: "string"
-        },
-        year: {
-          available: true,
-          link: "string",
-          embed: "string"
-        },
-        lifetime: {
-          available: true,
-          link: "string",
-          embed: "https://webcams.windy.com/webcams/public/embed/player/1514532263/lifetime"
-        }
-      }
-    };
-    let webCam2 = {
-      id: "2",
-      status: "Active",
-      title: "La salvetat",
-      image: {
-        current: {
-          icon: "",
-          thumbnail: "https://images-webcams.windy.com/65/1565047565/current/thumbnail/1565047565.jpg",
-          preview: "",
-          toenail: ""
-        },
-        daylight: {
-          icon: "string",
-          thumbnail: "string",
-          preview: "string",
-          toenail: "string"
-        },
-        sizes: {
-          icon: {
-            width: 100,
-            height: 100
-          },
-          thumbnail: {
-            width: 100,
-            height: 100
-          },
-          preview: {
-            width: 100,
-            height: 100
-          },
-          toenail: {
-            width: 100,
-            height: 100
-          }
-        },
-        update: 100
-      },
-      location: {
-        city: "string",
-        region: "string",
-        region_code: "string",
-        country: "string",
-        country_code: "string",
-        continent: "string",
-        continent_code: "string",
-        latitude: 48,
-        longitude: 2,
-        timezone: "string"
-      },
-      player: {
-        live: {
-          available: false,
-          embed: "string"
-        },
-        day: {
-          available: true,
-          link: "string",
-          embed: "https://webcams.windy.com/webcams/public/embed/player/1565047565/day"
-        },
-        month: {
-          available: true,
-          link: "string",
-          embed: "string"
-        },
-        year: {
-          available: true,
-          link: "string",
-          embed: "string"
-        },
-        lifetime: {
-          available: true,
-          link: "string",
-          embed: "https://webcams.windy.com/webcams/public/embed/player/1565047565/year"
-        }
-      }
-    }
-    return [webCam1, webCam2];
-
   }
 }

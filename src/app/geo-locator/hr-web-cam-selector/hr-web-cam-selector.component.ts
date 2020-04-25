@@ -55,8 +55,6 @@ export class HrWebCamSelectorComponent implements OnInit, OnDestroy, ControlValu
  * ### Write a value to the element
  */
   writeValue(obj: RangeModel): void {
-    console.log("WEBCAM RANGE RECOIT");
-    console.log(obj);
     if (obj) {
       if (obj.range !== undefined && obj.range != this.range.value) {
         this.range.setValue(obj.range);
