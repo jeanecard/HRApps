@@ -79,8 +79,8 @@ export class MainGeoLocatorComponent implements OnInit, OnDestroy {
       this.locatorMap.patchValue({range : data});
     }));
     this.webCamDialog = this.locatorMap.valueChanges.subscribe( data =>{
-      if(data.webCam){
-        this.openDialog(data);
+      if(data.webcam){
+        this.openDialog(data.webcam);
       }
     }
     );

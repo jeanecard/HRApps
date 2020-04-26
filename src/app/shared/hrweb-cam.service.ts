@@ -7,7 +7,8 @@ import { HttpClient } from '@angular/common/http';
   providedIn: 'root'
 })
 export class HRWebCamService {
-  private readonly serviceURL1 = 'https://localhost:44357/api/v1.0/HRWebCams?wgs84_lat=';
+  //https://hrcorebordersservicesv-3-1.azurewebsites.net
+  private readonly serviceURL1 = 'https://hrcorebordersservicesv-3-1.azurewebsites.net/api/v1.0/HRWebCams?wgs84_lat=';
   private readonly serviceURL2 = '&wgs84_lon=';
   private readonly serviceURL3 = '&radiusInKilometers=';
   

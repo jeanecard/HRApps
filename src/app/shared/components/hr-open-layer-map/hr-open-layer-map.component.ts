@@ -3,15 +3,15 @@ import { Component, OnInit, forwardRef } from '@angular/core';
 import Circle from 'ol/geom/Circle';
 import 'ol/ol.css';
 import { Map, View } from 'ol/index';
-import {  Vector as VectorLayer } from 'ol/layer';
+import { Vector as VectorLayer } from 'ol/layer';
 import OlMap from 'ol/Map';
 import 'ol/ol.css';
 import { Vector as VectorSource } from 'ol/source';
-import {ScaleLine } from 'ol/control';
+import { ScaleLine } from 'ol/control';
 import { fromLonLat, toLonLat } from 'ol/proj';
 import { defaults, DragPan, MouseWheelZoom, Translate } from 'ol/interaction';
 import { platformModifierKeyOnly } from 'ol/events/condition';
-import { Style} from 'ol/style';
+import { Style } from 'ol/style';
 import Select from 'ol/interaction/Select';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MapLayerService } from '../../map-layer.service';
@@ -74,99 +74,106 @@ export class HrOpenLayerMapComponent implements ControlValueAccessor, OnInit {
 
   constructor(private _layerService: MapLayerService, private _webCamService: HRWebCamService) { }
 
-  private createLayeWebCam() {
-    //1- création du Layer Area.
-    this.createLayerArea(this.model.mapCenterLon, this.model.mapCenterLat);
-   if(this.webCamSubscription){
-     this.webCamSubscription.unsubscribe();
-   }
-   if (this.model.range.display) {
-    this.webCamSubscription = this._webCamService.getNearestWebcams(this.model.mapCenterLat, this.model.mapCenterLon, this.model.range.range).subscribe(data => {
-      
-      let webCamItems = null;
-      if(data && data.result){
-          webCamItems = data.result.webcams;
-      }
-      let webCamfeatures = [];
-      let latDelta = 0.001;
-      let lonDelta = 0.001;
-      if(webCamItems){
-        
-        webCamItems.forEach(element => {
-          console.log("WAHOU ");
-
-          let lonConverted = element.location.longitude;
-          let latConverted = element.location.latitude;
-
-          console.log(latConverted);
-          console.log(lonConverted);
-          let webCamFeaturei = new Feature({
-            geometry: new Point(fromLonLat([lonConverted, latConverted]))
-          });
-          webCamFeaturei.set(HrOpenLayerMapComponent.WEBCAM_FEATURE_PROPERTY_NAME, element, true);
-          webCamFeaturei.setStyle(HrOpenLayerMapComponent.WEBCAM_STYLE);
-          webCamfeatures.push(webCamFeaturei);
-        });
-    
-      }
-  
-      this.webCamSource = new VectorSource({
-        features: webCamfeatures
-      });
-  
-      this.webCamLayer = new VectorLayer({
-        source: this.webCamSource,
-        zIndex: 9
-      });
-    })
-   } else{
-    this.webCamSource = new VectorSource({
-      features: []
-    });
-
-    this.webCamLayer = new VectorLayer({
-      source: this.webCamSource,
-      zIndex: 9
-    });
-   }
-    
-  
-  }
-
-  private createLayerArea(lon : number, lat : number) : void{
-    let areaFeatures = [];
+  private updateLayeWebCam(requestService: boolean) {
+    this.updateLayerArea(requestService);
     if (this.model.range.display) {
-      let circleFeature = new Feature({
-        geometry: new Circle(fromLonLat([lon, lat]), 1100 * this.model.range.range, 'XY')
-      });
-      areaFeatures.push(circleFeature);
+      this.webCamLayer.setVisible(true);
+      if (true /*requestService*/ ) {
+        if (this.webCamSubscription) {
+          this.webCamSubscription.unsubscribe();
+        }
+        this.webCamSource.clear();
+        this.isWorking = true;
+        this.webCamSubscription = this._webCamService.getNearestWebcams(this.model.mapCenterLat, this.model.mapCenterLon, this.model.range.range).subscribe({
+          next: (data) => {
+
+            let webCamItems = null;
+            if (data && data.result) {
+              webCamItems = data.result.webcams;
+            }
+            let webCamfeatures = [];
+            let i = 0;
+            if (webCamItems) {
+              webCamItems.forEach(element => {
+                let lonConverted = element.location.longitude;
+                let latConverted = element.location.latitude;
+                let webCamFeaturei = new Feature({
+                  geometry: new Point(fromLonLat([lonConverted, latConverted]))
+                });
+                webCamFeaturei.set(HrOpenLayerMapComponent.WEBCAM_FEATURE_PROPERTY_NAME, element, true);
+                webCamFeaturei.setStyle(HrOpenLayerMapComponent.WEBCAM_STYLE);
+                webCamFeaturei.setId(i);
+                i++;
+                webCamfeatures.push(webCamFeaturei);
+              });
+              this.webCamSource.addFeatures(webCamfeatures);
+            }
+            this.isWorking = false;
+          },
+          error: (data) => {
+            this.isWorking = false;
+
+          }, complete: () => {
+            this.isWorking = false;
+
+          }
+        })
+      }
+    } else {
+      this.webCamLayer.setVisible(false);
     }
-    this.areaWebCamSource = new VectorSource({
-      features: areaFeatures
-    });
-    this.areaWebCamLayer = new VectorLayer({
-      source: this.areaWebCamSource
-    });
   }
 
-  private createLayerLocator() {
-    let features = [];
+  private updateLayerArea(updateCenter : boolean): void {
+    if (this.model.range.display) {
+      if(true/*updateCenter*/){
+        this.areaWebCamSource.clear();
+        let circleFeature = new Feature({
+          geometry: new Circle(fromLonLat([this.model.mapCenterLon, this.model.mapCenterLat]), 1100 * this.model.range.range, 'XY')
+        });
+        this.areaWebCamSource.addFeature(circleFeature);
+      }
+      this.areaWebCamLayer.setVisible(true);
+
+    } else {
+      this.areaWebCamLayer.setVisible(false);
+    }
+
+  }
+
+  private updateLayerLocator() {
     this.featureLocation = new Feature({
       geometry: new Point(fromLonLat([this.model.mapCenterLon, this.model.mapCenterLat])),
     });
     this.featureLocation.setId(HrOpenLayerMapComponent.FEATURE_LOCATION_ID);
-    features.push(this.featureLocation);
     this.featureLocation.setStyle(HrOpenLayerMapComponent.LOCATOR_STYLE);
+    this.locatorSource.clear();
+    this.locatorSource.addFeature(this.featureLocation);
+
+  }
+
+  private instanciateEmptyMap(): void {
+
+    this.webCamSource = new VectorSource({
+      features: []
+    });
+    this.webCamLayer = new VectorLayer({
+      source: this.webCamSource,
+      zIndex: 9
+    });
+    this.areaWebCamSource = new VectorSource({
+      features: []
+    });
+    this.areaWebCamLayer = new VectorLayer({
+      source: this.areaWebCamSource
+    });
     this.locatorSource = new VectorSource({
-      features: features
+      features: []
     });
     this.locatorLayer = new VectorLayer({
       source: this.locatorSource,
       zIndex: HrOpenLayerMapComponent.LOCATOR_LAYER_INDEX
     });
-  }
-
-  private instanciateEmptyMap(): void {
 
     this.mapView = new View({
       center: [0, 0],
@@ -234,8 +241,8 @@ export class HrOpenLayerMapComponent implements ControlValueAccessor, OnInit {
     if (this.map) {
       let querriedLayer = this._layerService.getSource(this.model.map);
       if (querriedLayer && querriedLayer.layer) {
-        this.createLayerLocator();
-        this.createLayeWebCam();
+        this.updateLayerLocator();
+        this.updateLayeWebCam(true);
         this.map.addLayer(querriedLayer.layer);
         this.map.addLayer(this.locatorLayer);
         this.map.addLayer(this.webCamLayer);
@@ -262,53 +269,30 @@ export class HrOpenLayerMapComponent implements ControlValueAccessor, OnInit {
   }
 
   private changeLocator(lon: number, lat: number): void {
-    this.isWorking = true;
     this.model.mapCenterLat = lat;
     this.model.mapCenterLon = lon;
-    this.map.removeLayer(this.locatorLayer);
-    this.map.removeLayer(this.webCamLayer);
-    this.map.removeLayer(this.areaWebCamLayer);
-    if (this.webCamSubscription) {
-      this.webCamSubscription.unsubscribe();
-    }
-    this.webCamSubscription = this._webCamService.getNearestWebcams(this.model.mapCenterLat, this.model.mapCenterLon, 10000).subscribe(data => {
-      this.createLayerLocator();
-      this.map.removeLayer(this.webCamLayer);
-      this.map.removeLayer(this.areaWebCamLayer);
-      this.map.removeLayer(this.locatorLayer);
-      this.createLayeWebCam();
-      this.map.addLayer(this.locatorLayer);
-      this.map.addLayer(this.webCamLayer);
-      this.map.addLayer(this.areaWebCamLayer);
-      this.isWorking = false;
-
-
-      let target = fromLonLat([this.model.mapCenterLon, this.model.mapCenterLat]);
-      this.mapView.animate({
-        center: fromLonLat([this.model.mapCenterLon, this.model.mapCenterLat]),
-        duration: HrOpenLayerMapComponent.ANIMATION_LOCATOR_DURATION,
-      });
+    this.updateLayerLocator();
+    this.updateLayeWebCam(true);
+    let target = fromLonLat([this.model.mapCenterLon, this.model.mapCenterLat]);
+    this.mapView.animate({
+      center: fromLonLat([this.model.mapCenterLon, this.model.mapCenterLat]),
+      duration: HrOpenLayerMapComponent.ANIMATION_LOCATOR_DURATION,
     });
   }
 
-  private changeRange(rangeToSet : RangeModel) : boolean{
+  private changeRange(rangeToSet: RangeModel): boolean {
     if (rangeToSet.display) {
       if (this.model.range.display !== rangeToSet.display
         || this.model.range.range !== rangeToSet.range) {
         this.model.range.display = true;
         this.model.range.range = rangeToSet.range;
-        this.map.removeLayer(this.webCamLayer);
-        this.map.removeLayer(this.areaWebCamLayer);
-        this.createLayeWebCam();
-        this.map.addLayer(this.webCamLayer);
-        this.map.addLayer(this.areaWebCamLayer);
+        this.updateLayeWebCam(this.model.range.range !== rangeToSet.range);
         return true;
       }
     } else {
       if (this.model.range.display !== rangeToSet.display) {
         this.model.range.display = false;
-        this.map.removeLayer(this.webCamLayer);
-        this.map.removeLayer(this.areaWebCamLayer);
+        this.updateLayeWebCam(false);
         return true;
       }
     }
@@ -369,6 +353,8 @@ export class HrOpenLayerMapComponent implements ControlValueAccessor, OnInit {
   }
 
   ngOnInit(): void {
+    //Creation de la carto vide
+    this.instanciateEmptyMap();
     //Disponibles a la selection : Locator et les WebCams
     this.selectSingleClick = new Select({
       layers: (data) => {
@@ -382,8 +368,7 @@ export class HrOpenLayerMapComponent implements ControlValueAccessor, OnInit {
       },
       features: this.selectSingleClick.getFeatures()
     });
-    //Creation de la carto vide
-    this.instanciateEmptyMap();
+
     //Branchement des interactions
     this.map.addInteraction(this.selectSingleClick);
     this.map.addInteraction(translate);
@@ -397,10 +382,10 @@ export class HrOpenLayerMapComponent implements ControlValueAccessor, OnInit {
       let coord = toLonLat(event.coordinate);
       let coordinates = toLonLat([coord[0], coord[1]], 'EPSG:4326');
       this.writeValue({
-        map : undefined,
-        mapCenterLat : coordinates[1],
-        mapCenterLon : coordinates[0],
-        range : undefined
+        map: undefined,
+        mapCenterLat: coordinates[1],
+        mapCenterLon: coordinates[0],
+        range: undefined
       });
     });
   }
