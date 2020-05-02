@@ -1,0 +1,51 @@
+<div fxLayout="row wrap" fxLayoutAlign="space-around center" fxLayoutGap="10px grid"
+    style="min-height: 500px; flex-flow: row wrap; display: flex; align-items: center; box-sizing: border-box; margin: 5px -10px -10px 5px; place-content: center space-around;overflow: hidden">
+    <mat-card fxFlex *ngIf="isDatabaseWorking">
+        <mat-card-header>
+            <mat-card-title>Processing ...</mat-card-title>
+            <mat-card-subtitle>Retrieving data</mat-card-subtitle>
+        </mat-card-header>
+        <mat-spinner [diameter]='200'></mat-spinner>
+        <mat-card-content>
+        </mat-card-content>
+        <mat-card-actions>
+        </mat-card-actions>
+    </mat-card>
+    <mat-card fxFlex *ngIf="hrBirdsInfoDisplayed?.length === 0">
+        <mat-card-header>
+            <mat-card-title>No result</mat-card-title>
+        </mat-card-header>
+        <img mat-card-image src="../../../assets/icons/no-result.png" >
+        <mat-card-content>
+            <p>
+                Try to change filter's property on left side bar.
+            </p>
+            <p>
+                <mat-divider></mat-divider>
+            </p>
+
+        </mat-card-content>
+    </mat-card>
+
+    <div fxFlex *ngFor="let member of hrBirdsInfoDisplayed">
+        <mat-card fxFlex>
+            <mat-card-header>
+                <mat-card-title>{{member.name}}</mat-card-title>
+                <mat-card-subtitle>{{member.scientificName}}</mat-card-subtitle>
+            </mat-card-header>
+            <img mat-card-image class="test" [src]="member.mainPicture" alt="picture of {{member.name}}">
+            <mat-card-content>
+                <p>
+                    <!-- <strong>Population : </strong>{{member.population}} -->
+                </p>
+            </mat-card-content>
+            <mat-card-actions>
+                <button mat-button (click)="openDialog(member)">
+                    Details
+                </button>
+            </mat-card-actions>
+        </mat-card>
+    </div>
+</div>
+<!-- TODO no inline style -->
+<button mat-flat-button color="primary" style="width:100%" *ngIf="isMoreBirds" (click)="onDisplayMore()">Display more</button>

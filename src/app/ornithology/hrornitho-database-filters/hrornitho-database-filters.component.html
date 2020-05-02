@@ -1,0 +1,34 @@
+<mat-card>
+  <mat-card-header>
+    <mat-form-field>
+      <mat-label>Seasons</mat-label>
+      <mat-select [formControl]="seasonForm" multiple>
+        <mat-option *ngFor="let item of seasons" [value]="item">{{item}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </mat-card-header>
+</mat-card>
+<mat-card>
+  <mat-card-header>
+    <form class="example-form">
+      <mat-form-field class="example-full-width">
+        <mat-label>Latitude (WGS 84)</mat-label>
+        <input matInput type="number" placeholder="" value="">
+      </mat-form-field>
+      <mat-form-field class="example-full-width">
+        <mat-label>Longitude (WGS 84)</mat-label>
+        <input matInput type="number" placeholder="" value="">
+      </mat-form-field>      
+    </form>
+  </mat-card-header>
+</mat-card>
+<mat-card>
+  <mat-card-header>
+    <mat-form-field>
+      <mat-label>Range of search</mat-label>
+      <mat-select [formControl]="rangeForm" >
+        <mat-option *ngFor="let range of ranges" [value]="range">{{range}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </mat-card-header>
+</mat-card>

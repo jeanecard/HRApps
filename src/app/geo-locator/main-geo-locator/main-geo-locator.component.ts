@@ -6,7 +6,6 @@ import { MatDialog,  } from '@angular/material/dialog';
 import {  WebCamItemModel } from 'src/app/model/web-cam-model';
 import { WebCamDetailComponent } from '../web-cam-detail/web-cam-detail.component';
 import { HRGeolocatorPreferencesService } from 'src/app/shared/hrgeolocator-preferences.service';
-import { HRGeoLocatorPreferences } from 'src/app/model/hrgeo-locator-preferences';
 
 @Component({
   selector: 'app-main-geo-locator',
@@ -39,13 +38,7 @@ export class MainGeoLocatorComponent implements OnInit, OnDestroy {
 
     //2- Enregistrement despréférences
     if(this.prefService){
-      let  prefs : HRGeoLocatorPreferences = {
-        map : this.hrLayerSelector.value,
-        mapCenterLat : 0,
-        mapCenterLon : 0,
-        range : this.hrwebCamRange.value,
-      }
-      this.prefService.setDefaultValue(prefs);
+      this.prefService.setDefaultValue(this.locatorMap.value);
   
     }
   }
@@ -70,13 +63,27 @@ export class MainGeoLocatorComponent implements OnInit, OnDestroy {
     });
 
     this.subscription.add(this.hrLayerSelector.valueChanges.subscribe(data => {
-      this.locatorMap.patchValue({map : data});
+      let valueToUpdate = this.locatorMap.value;
+      valueToUpdate.map = data;
+      this.locatorMap.setValue(valueToUpdate, {emitEvent : false} );
+      console.log(this.locatorMap.value);
     }));
     this.subscription.add(this.hrLocatorSelector.valueChanges.subscribe(data => {
-      this.locatorMap.patchValue(data);
+      if(data.mapCenterLat !== undefined && data.mapCenterLon !== undefined){
+        let valueToUpdate = this.locatorMap.value;
+        valueToUpdate.mapCenterLat = data.mapCenterLat;
+        valueToUpdate.mapCenterLon = data.mapCenterLon;
+        this.locatorMap.setValue(valueToUpdate, {emitEvent : false} );
+      
+      }
     }));
     this.subscription.add(this.hrwebCamRange.valueChanges.subscribe(data => {
-      this.locatorMap.patchValue({range : data});
+      if(data){
+        let valueToUpdate = this.locatorMap.value;
+        valueToUpdate.range = data;
+        this.locatorMap.setValue(valueToUpdate, {emitEvent : false} );
+
+      }
     }));
     this.webCamDialog = this.locatorMap.valueChanges.subscribe( data =>{
       if(data.webcam){

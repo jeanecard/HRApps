@@ -65,11 +65,16 @@ export class HRGeolocatorPreferencesService {
  //1-
  if(val){
   //2-
-
   try {
-    localStorage.setItem(HRGeolocatorPreferencesService._keyMapStorage, val.map);
-    localStorage.setItem(HRGeolocatorPreferencesService._keyCenterLatStorage, val.mapCenterLat.toString());
-    localStorage.setItem(HRGeolocatorPreferencesService._keyCenterLonStorage, val.mapCenterLon.toString());
+    if(val.map){
+      localStorage.setItem(HRGeolocatorPreferencesService._keyMapStorage, val.map);
+    }
+    if(val.mapCenterLat){
+      localStorage.setItem(HRGeolocatorPreferencesService._keyCenterLatStorage, val.mapCenterLat.toString());
+    }
+    if(val.mapCenterLon){
+      localStorage.setItem(HRGeolocatorPreferencesService._keyCenterLonStorage, val.mapCenterLon.toString());
+    }
     this.webCamRangeService.setDefaultValue(val.range);
   }
   catch{

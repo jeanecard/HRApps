@@ -1,6 +1,27 @@
-<div fxFlex fxLayout="column" fxLayoutGap="10px">
-    <div fxFlex="100" style="padding: 5px;">
-        <h1>Ornithology under construction ....</h1>
-        <img class="sizedimg" src='./assets/icons/nitho-under-construction.svg' alt="barrier" />
-    </div>
-</div>
+<form [formGroup]="mainOrnithoFormGroup">
+    <mat-sidenav-container class="sidenav-container">
+        <!-- LEFT SIDE NAV -->
+        <mat-sidenav #leftDrawer class="left-sidenav" position="start" fixedInViewport="true"
+            [attr.role]="isHandset ? 'dialog' : 'navigation'" [mode]="(isHandset | async)!.matches ? 'over' : 'side'"
+            [opened]="!(isHandset | async)!.matches">
+            <mat-toolbar color="primary">
+                <span>HR Ornithology</span>
+            </mat-toolbar>
+            <app-hrornitho-database-filters *ngIf="selectedFeature === 0"></app-hrornitho-database-filters>
+            <app-hrornitho-map-filters *ngIf="selectedFeature === 1"></app-hrornitho-map-filters>
+        </mat-sidenav>
+        <!-- Main Tool Bar -->
+        <mat-sidenav-content>
+            <mat-toolbar color="primary">
+                <button type="button" aria-label="Toggle sidenav" mat-icon-button (click)="leftDrawer.toggle()">
+                    <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+                </button>
+            </mat-toolbar>
+            <!-- MAIN CONTENT -->
+            <mat-tab-group (selectedTabChange)="featureSelectedChanged($event)">
+                <mat-tab label="Database"> <app-hrornitho-birds-list formControlName="ornithoList"></app-hrornitho-birds-list> </mat-tab>
+                <mat-tab label="Map"> <app-hrornitho-map formControlName="ornithoMap"></app-hrornitho-map> </mat-tab>
+              </mat-tab-group>
+        </mat-sidenav-content>
+    </mat-sidenav-container>
+</form>

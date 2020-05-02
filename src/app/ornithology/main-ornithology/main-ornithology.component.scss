@@ -2,3 +2,101 @@
   width: 400px;
   height: 400px;
 }
+
+@import '~@angular/material/theming';
+
+.sidenav-container {
+  height: 100%;
+}
+.white-police{
+  color: white;
+}
+
+
+.left-sidenav {
+  width: 290px;
+  box-shadow: 3px 0 6px rgba(0,0,0,.24);
+  margin-top: 64px;
+}
+
+.right-sidenav {
+  width: 230px;
+  box-shadow: -3px 0px 6px rgba(0,0,0,.24);
+}
+
+.navigation-2nd{
+  padding-left: 0px;
+  padding-top: 0px;
+}
+
+.navigation-extra{
+  padding-left: 0px;
+  padding-top: 0px;
+  padding-bottom: 0px;
+  border-top-width: 0px;
+  border-bottom-width: 0px;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  height: 15px;
+}
+
+
+.icon-1st{
+  padding-right: 10px;
+  width: 18px;
+  max-height: 18px;
+}
+.puce-grey{
+  padding-right: 10px;
+  width: 8px;
+  max-height: 8px;
+}
+.rightToggleButton{
+  position: relative;
+    right: 0px;
+}
+.navigation-1st{
+  padding-left: 0px;
+  padding-top: 0px;
+}
+
+.navigation-2nd{
+  padding-left: 20px;
+  padding-top: 0px;
+}
+
+.navigation-3nd{
+  padding-left: 25px;
+  padding-top: 0px;
+}
+
+.logo-img{
+  width: 50px;
+  max-height: 50px;
+}
+
+.navicon-img{
+  width: 18px;
+  max-height: 18px;
+  padding: 1px;
+}
+
+.mat-list-item-horizontal {
+  float: right;
+    /* color: white; */
+}
+
+
+.mat-list-item-horizontal {
+   color: white;
+  // margin-top: 0px;
+  // margin-bottom: 0px;
+  // padding-top: 0px;
+  // font-size: 14px;
+}
+
+.mat-nav-list-left{
+  color: blue;
+  font-size: 60px;
+  padding: 0px;
+}

@@ -347,7 +347,14 @@ export class HrOpenLayerMapComponent implements ControlValueAccessor, OnInit {
   private processSelectedFeature(event: any): void {
     event.target.getFeatures().forEach(element => {
       if (element.getId() !== HrOpenLayerMapComponent.FEATURE_LOCATION_ID) {
-        this.propagateChange({ webcam: element.get("WebCam") });
+        let modelToPropagate = {
+          webcam: element.get("WebCam"),
+          map: this.model.map,
+          range: this.model.range,
+          mapCenterLat : this.model.mapCenterLat,
+          mapCenterLon : this.model.mapCenterLon
+        }
+        this.propagateChange(modelToPropagate);
       }
     });
   }

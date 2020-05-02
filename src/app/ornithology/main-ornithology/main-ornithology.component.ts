@@ -1,4 +1,10 @@
 import { Component, OnInit } from '@angular/core';
+import { Observable, Subscription } from 'rxjs';
+import { BreakpointState, Breakpoints, BreakpointObserver } from '@angular/cdk/layout';
+import { FormGroup, FormControl } from '@angular/forms';
+import { MatTabChangeEvent } from '@angular/material';
+import { HROrnithoBirdsService } from 'src/app/shared/hrornitho-birds.service';
+import { HRBirdModel } from 'src/app/model/hrbird-model';
 
 @Component({
   selector: 'app-main-ornithology',
@@ -7,15 +13,38 @@ import { Component, OnInit } from '@angular/core';
 })
 export class MainOrnithologyComponent implements OnInit {
 
-  card: object = {
-    src: './assets/icons/barrier.svg',
-    alt: 'En construction',
-    title: 'En construction ...'
-  };
+  isHandset: Observable<BreakpointState> = this.breakpointObserver.observe(Breakpoints.Handset);
+  breakpoint = 1;
 
-  constructor() { }
+  public mainOrnithoFormGroup: FormGroup = null;
+  public ornithoList : FormControl = null;
+  public ornithoMap : FormControl = null;
+  private selectedFeature = 0;
+
+
+
+  constructor(private breakpointObserver: BreakpointObserver) { 
+  }
 
   ngOnInit() {
+    this.ornithoList = new FormControl('');
+    this.ornithoMap = new FormControl('');
+
+    this.mainOrnithoFormGroup = new FormGroup({
+      ornithoList : this.ornithoList,
+      ornithoMap : this.ornithoMap
+    });
+
+
+  }
+
+  public featureSelectedChanged(evt : MatTabChangeEvent): void{
+    console.log(evt);
+    this.selectedFeature = evt.index;
+  }
+
+  public onDisplayMore() : void {
+
   }
 
 }
