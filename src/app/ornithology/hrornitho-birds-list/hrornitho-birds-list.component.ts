@@ -3,6 +3,7 @@ import { NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
 import { HROrnithoBirdsService } from 'src/app/shared/hrornitho-birds.service';
 import { Subscription } from 'rxjs';
 import { HRBirdModel } from 'src/app/model/hrbird-model';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-hrornitho-birds-list',
@@ -24,7 +25,7 @@ export class HROrnithoBirdsListComponent implements OnInit, ControlValueAccessor
 
 
 
-  constructor( private service : HROrnithoBirdsService) { 
+  constructor( private service : HROrnithoBirdsService, private sanitizer:DomSanitizer) { 
     this.hrBirdsInfoDisplayed = [];
   }
   writeValue(obj: any): void {
@@ -45,9 +46,16 @@ export class HROrnithoBirdsListComponent implements OnInit, ControlValueAccessor
     this.isDatabaseWorking = true;
     this.serviceSubscription = this.service.getBirds().subscribe(data =>{
       this.isDatabaseWorking = false;
-      this.hrBirdsInfoDisplayed = data;
+      this.hrBirdsInfoDisplayed = data.pageItems;
+      this.hrBirdsInfoDisplayed.forEach(element => {
+        element.mainSoundURL = this.sanitizer.bypassSecurityTrustResourceUrl('https://www.xeno-canto.org/562791/embed?simple=1');
+      });
     });
 
+  }
+  public openDialog(thing : any) : void{}
+  public onDisplayMore() : void{
+    
   }
 
 }

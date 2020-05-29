@@ -70,8 +70,6 @@ export class HRWebcamRangePreferencesService {
 */
   public setDefaultValue(val: RangeModel): void {
     //1-
-    console.log("JE sauve");
-    console.log(val);
     if (val && val.max !== NaN && val.min != NaN && val.range != NaN ) {
       //2-
 
@@ -92,7 +90,7 @@ export class HRWebcamRangePreferencesService {
  * @return a initialized  RangeModel
  */
   public getNullValue(): RangeModel {
-    return { max: 50, min: 1, range: 5, display: true };
+    return { max: 150, min: 1, range: 20, display: true };
   }
 
 

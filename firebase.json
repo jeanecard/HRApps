@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "site": "hrapps-sig",
+    
     "public": "dist/angular-firebase-app",
     "ignore": [
       "firebase.json",

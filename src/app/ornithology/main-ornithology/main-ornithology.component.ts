@@ -19,7 +19,7 @@ export class MainOrnithologyComponent implements OnInit {
   public mainOrnithoFormGroup: FormGroup = null;
   public ornithoList : FormControl = null;
   public ornithoMap : FormControl = null;
-  private selectedFeature = 0;
+  public selectedFeature = 0;
 
 
 
