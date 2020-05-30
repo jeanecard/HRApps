@@ -48,7 +48,7 @@ export class HROrnithoBirdsListComponent implements OnInit, ControlValueAccessor
       this.isDatabaseWorking = false;
       this.hrBirdsInfoDisplayed = data.pageItems;
       this.hrBirdsInfoDisplayed.forEach(element => {
-        element.mainSoundURL = this.sanitizer.bypassSecurityTrustResourceUrl('https://www.xeno-canto.org/562791/embed?simple=1');
+        element.mainSoundURL = this.sanitizer.bypassSecurityTrustResourceUrl('https://www.xeno-canto.org/' + element.mainSound + '/embed?simple=1');
       });
     });
 
