@@ -4,6 +4,7 @@ import { HROrnithoBirdsService } from 'src/app/shared/hrornitho-birds.service';
 import { Subscription } from 'rxjs';
 import { HRBirdModel } from 'src/app/model/hrbird-model';
 import { DomSanitizer } from '@angular/platform-browser';
+import { HRCDNPicturesService } from 'src/app/shared/hrcdnpictures.service';
 
 @Component({
   selector: 'app-hrornitho-birds-list',
@@ -22,11 +23,16 @@ export class HROrnithoBirdsListComponent implements OnInit, ControlValueAccessor
   public isDatabaseWorking = false;
   public hrBirdsInfoDisplayed : HRBirdModel[];
   public isMoreBirds = true;
+  public noResult:String;
 
 
 
-  constructor( private service : HROrnithoBirdsService, private sanitizer:DomSanitizer) { 
+  constructor( 
+    private service : HROrnithoBirdsService, 
+    private sanitizer:DomSanitizer,
+    private picService : HRCDNPicturesService) { 
     this.hrBirdsInfoDisplayed = [];
+    this.noResult = picService.getPicture(HRCDNPicturesService.NO_RESULT_ID);
   }
   writeValue(obj: any): void {
 

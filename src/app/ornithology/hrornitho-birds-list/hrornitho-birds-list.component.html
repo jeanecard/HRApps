@@ -15,7 +15,7 @@
         <mat-card-header>
             <mat-card-title>No result</mat-card-title>
         </mat-card-header>
-        <img mat-card-image src="../../../assets/icons/no-result.png" >
+        <img mat-card-image src="{{noResult}}" >
         <mat-card-content>
             <p>
                 Try to change filter's property on left side bar.
@@ -37,7 +37,6 @@
             <mat-card-content>
                 <p>
                     <iframe [src]="member.mainSoundURL" scrolling='no' frameborder='0' width='300' height='115'></iframe>
-                    <!-- <strong>Population : </strong>{{member.population}} -->
                 </p>
             </mat-card-content>
             <mat-card-actions>
