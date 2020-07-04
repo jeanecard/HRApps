@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { HRBirdModel } from 'src/app/model/hrbird-model';
 
 @Component({
   selector: 'app-hrornitho-birds-detail',
@@ -7,9 +9,14 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HROrnithoBirdsDetailComponent implements OnInit {
 
-  constructor() { }
+  constructor(public dialogRef: MatDialogRef<HROrnithoBirdsDetailComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: HRBirdModel) { }
 
   ngOnInit() {
+  }
+
+  onCloseClick(): void {
+    this.dialogRef.close();
   }
 
 }

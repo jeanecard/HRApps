@@ -1,1 +1,27 @@
-<p>hrornitho-birds-detail works!</p>
+<mat-card class="example-card">
+        <mat-card-header>
+                <mat-card-title>{{data.name}}</mat-card-title>
+                <mat-card-subtitle>{{(data.scientificName)}}
+                        <img class="imageHeader" [src]="data.mainPicture" alt="Flag of country">
+                </mat-card-subtitle>
+        </mat-card-header>
+</mat-card>
+<mat-tab-group>
+        <mat-tab label="General">
+                <app-hrornitho-birds-detail-technicals>
+                </app-hrornitho-birds-detail-technicals>
+        </mat-tab>
+        <mat-tab label="Details">
+                <app-hrornitho-birds-detail-technicals></app-hrornitho-birds-detail-technicals>
+        </mat-tab>
+        <mat-tab label="Sounds">
+                <app-hrornitho-birds-detail-songs></app-hrornitho-birds-detail-songs>
+        </mat-tab>
+        <mat-tab label="Pictures">
+                <app-hrornitho-birds-detail-pictures></app-hrornitho-birds-detail-pictures>
+        </mat-tab>
+        <mat-tab label="Confused with">
+                <app-hrconfuse-birds></app-hrconfuse-birds>
+        </mat-tab>
+</mat-tab-group>
+<button mat-button (click)="onCloseClick()">CLOSE</button>

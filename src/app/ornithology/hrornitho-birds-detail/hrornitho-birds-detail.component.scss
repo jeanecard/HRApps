@@ -1,0 +1,30 @@
+.example-card {
+  width: 95%;
+}
+.imageHeader{
+  width:100px; /* you can use % */
+  height: auto; 
+  position: absolute;
+  right: 0px;
+  top: 0px;
+  border-radius: 5%;
+}
+table {
+  width: 100%;
+}
+.wrapper {
+  // border: 2px dotted rgb(96, 139, 168);
+  width: 80%;
+  overflow: hidden;
+}
+.box {
+
+  display: flex;
+  flex-wrap: wrap;
+  margin:10px;
+  overflow: hidden;
+}
+.box>* {
+  flex: 1 1 160px;
+  margin: 10px;
+}

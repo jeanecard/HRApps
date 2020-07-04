@@ -11,16 +11,29 @@ import { AngularMaterialBasicModule } from '../shared/angular-material-basic/ang
 import { CommonModule } from '@angular/common';
 import { HROrnithoMapFiltersComponent } from './hrornitho-map-filters/hrornitho-map-filters.component';
 import { HROrnithoDatabaseFiltersComponent } from './hrornitho-database-filters/hrornitho-database-filters.component';
+import { HRConfuseBirdsComponent } from './hrconfuse-birds/hrconfuse-birds.component';
 
 @NgModule({
-  declarations: [MainOrnithologyComponent, HROrnithoMapComponent, HROrnithoBirdsListComponent, HROrnithoBirdsDetailComponent, HROrnithoBirdsDetailPicturesComponent, HROrnithoBirdsDetailSongsComponent, HROrnithoBirdsDetailTechnicalsComponent, HROrnithoMapFiltersComponent, HROrnithoDatabaseFiltersComponent],
+  declarations: [
+    MainOrnithologyComponent, 
+    HROrnithoMapComponent, 
+    HROrnithoBirdsListComponent, 
+    HROrnithoBirdsDetailComponent, 
+    HROrnithoBirdsDetailPicturesComponent, 
+    HROrnithoBirdsDetailSongsComponent, 
+    HROrnithoBirdsDetailTechnicalsComponent, 
+    HROrnithoMapFiltersComponent, 
+    HROrnithoDatabaseFiltersComponent, HRConfuseBirdsComponent],
+  
   imports: [
     OrnithologyRoutingModule,
     AngularMaterialBasicModule,
     CommonModule
   ],
+  entryComponents: [HROrnithoBirdsDetailComponent],
   exports: [
-    MainOrnithologyComponent
+    MainOrnithologyComponent,
+    HROrnithoBirdsDetailComponent
   ]
 })
 export class OrnithologyModule { }

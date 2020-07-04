@@ -5,6 +5,8 @@ import { Subscription } from 'rxjs';
 import { HRBirdModel } from 'src/app/model/hrbird-model';
 import { DomSanitizer } from '@angular/platform-browser';
 import { HRCDNPicturesService } from 'src/app/shared/hrcdnpictures.service';
+import { MatDialog } from '@angular/material';
+import { HROrnithoBirdsDetailComponent } from '../hrornitho-birds-detail/hrornitho-birds-detail.component';
 
 @Component({
   selector: 'app-hrornitho-birds-list',
@@ -30,7 +32,8 @@ export class HROrnithoBirdsListComponent implements OnInit, ControlValueAccessor
   constructor( 
     private service : HROrnithoBirdsService, 
     private sanitizer:DomSanitizer,
-    private picService : HRCDNPicturesService) { 
+    private picService : HRCDNPicturesService,
+    public dialog: MatDialog) { 
     this.hrBirdsInfoDisplayed = [];
     this.noResult = picService.getPicture(HRCDNPicturesService.NO_RESULT_ID);
   }
@@ -60,7 +63,12 @@ export class HROrnithoBirdsListComponent implements OnInit, ControlValueAccessor
     });
 
   }
-  public openDialog(thing : any) : void{}
+  public openDialog(bird : HRBirdModel) : void{
+    const dialogRef = this.dialog.open(HROrnithoBirdsDetailComponent, {
+      width: '1000px',
+      data: bird
+    });
+  }
   public onDisplayMore() : void{
     
   }
