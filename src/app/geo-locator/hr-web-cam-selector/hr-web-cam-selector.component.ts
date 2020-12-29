@@ -1,5 +1,5 @@
 import { Component, OnInit, forwardRef, OnDestroy } from '@angular/core';
-import { MatSlideToggleChange } from '@angular/material';
+import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { ControlValueAccessor, FormControl, NG_VALUE_ACCESSOR, FormGroup } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { RangeModel } from 'src/app/model/range-model';

@@ -5,7 +5,7 @@ import { Subscription } from 'rxjs';
 import { HRBirdModel } from 'src/app/model/hrbird-model';
 import { DomSanitizer } from '@angular/platform-browser';
 import { HRCDNPicturesService } from 'src/app/shared/hrcdnpictures.service';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { HROrnithoBirdsDetailComponent } from '../hrornitho-birds-detail/hrornitho-birds-detail.component';
 
 @Component({

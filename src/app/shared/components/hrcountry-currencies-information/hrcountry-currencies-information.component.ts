@@ -1,6 +1,9 @@
 import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { Currency } from 'src/app/model/currency';
-import { MatDialogRef, MAT_DIALOG_DATA, MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
   selector: 'app-hrcountry-currencies-information',

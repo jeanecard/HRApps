@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
 import { BreakpointState, Breakpoints, BreakpointObserver } from '@angular/cdk/layout';
 import { FormGroup, FormControl } from '@angular/forms';
-import { MatTabChangeEvent } from '@angular/material';
+import { MatTabChangeEvent } from '@angular/material/tabs';
 import { HROrnithoBirdsService } from 'src/app/shared/hrornitho-birds.service';
 import { HRBirdModel } from 'src/app/model/hrbird-model';
 

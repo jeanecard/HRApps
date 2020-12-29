@@ -7,24 +7,22 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms'; // !TODO not 
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSliderModule } from '@angular/material/slider';
-import {
-  MatButtonModule,
-  MatGridListModule,
-  MatToolbarModule,
-  MatSidenavModule,
-  MatIconModule,
-  MatListModule,
-  MatTableModule,
-  MatSlideToggleModule,
-  MatCheckboxModule,
-  MatDialogModule,
-  MatMenuModule,
-  MatRadioModule,
-  MatBadgeModule,
-  MatTabsModule,
-  MatSortModule,
-  MatPaginatorModule
-} from '@angular/material';
+import { MatBadgeModule } from '@angular/material/badge';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatGridListModule } from '@angular/material/grid-list';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatSortModule } from '@angular/material/sort';
+import { MatTableModule } from '@angular/material/table';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatToolbarModule } from '@angular/material/toolbar';
 
 import { MatInputModule } from '@angular/material/input';
 
