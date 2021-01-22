@@ -1,0 +1,29 @@
+<mat-card>
+  <mat-card-header>
+    <div mat-card-avatar class="example-header-image"></div>
+    <mat-card-title>General</mat-card-title>
+  </mat-card-header>  
+  <mat-card-content>
+    <mat-form-field class="form-field-width" >
+      <mat-label>Vernacular name</mat-label>
+      <input required="true" matInput placeholder="Ex. turdus merula">
+    </mat-form-field>
+  </mat-card-content>
+  <mat-card-content>
+    <mat-form-field >
+      <mat-label>Select an language</mat-label >
+      <mat-select [(value)]="selected" required="true">
+        <mat-option>None</mat-option>
+        <mat-option value="option1">Français</mat-option>
+        <mat-option value="option2">English</mat-option>
+        <mat-option value="option3">Occitan</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </mat-card-content>
+  <mat-card-content>
+    <mat-form-field class="form-field-width">
+      <mat-label>Name</mat-label>
+      <input matInput placeholder="Ex. Merle noir" value="">
+    </mat-form-field>
+  </mat-card-content>
+</mat-card>

@@ -8,7 +8,7 @@
                 <span>HR Ornithology</span>
             </mat-toolbar>
             <app-hrornitho-database-filters *ngIf="selectedFeature === 0"></app-hrornitho-database-filters>
-            <app-hrornitho-map-filters *ngIf="selectedFeature === 1"></app-hrornitho-map-filters>
+            <app-hr-submission-filter *ngIf="selectedFeature === 1"></app-hr-submission-filter>
         </mat-sidenav>
         <!-- Main Tool Bar -->
         <mat-sidenav-content>
@@ -19,9 +19,10 @@
             </mat-toolbar>
             <!-- MAIN CONTENT -->
             <mat-tab-group (selectedTabChange)="featureSelectedChanged($event)">
-                <mat-tab label="Database"> <app-hrornitho-birds-list formControlName="ornithoList"></app-hrornitho-birds-list> </mat-tab>
-                <mat-tab label="Map"> <app-hrornitho-map formControlName="ornithoMap"></app-hrornitho-map> </mat-tab>
-              </mat-tab-group>
+                <mat-tab label="Browse"> <app-hrornitho-birds-list formControlName="ornithoList"></app-hrornitho-birds-list> </mat-tab>
+                <mat-tab label="Submit"> <app-hrornitho-admin formControlName="ornithoAdmin"></app-hrornitho-admin> </mat-tab>
+                
+            </mat-tab-group>
         </mat-sidenav-content>
     </mat-sidenav-container>
 </form>

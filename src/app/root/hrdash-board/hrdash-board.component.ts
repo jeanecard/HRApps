@@ -66,6 +66,15 @@ export class HRDashBoardComponent {
               caption: 'Birds sound recognition',
               reDirect: '/ornithology',
               description: 'Birds sounds recognition by Machine learning. Work in progress...'
+            },
+            {
+              title: 'HR Drawing',
+              tech: 'pure js',
+              alt: 'Image of drawing',
+              src: picService.getPicture(HRCDNPicturesService.HRDRAWING_ID),
+              caption: 'Vectorial drawing',
+              reDirect: '/drawing',
+              description: 'Vectorial drawing using canvas. Work in progress...'
             }
           ];
         })

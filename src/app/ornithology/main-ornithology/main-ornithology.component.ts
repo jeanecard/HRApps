@@ -19,6 +19,7 @@ export class MainOrnithologyComponent implements OnInit {
   public mainOrnithoFormGroup: FormGroup = null;
   public ornithoList : FormControl = null;
   public ornithoMap : FormControl = null;
+  public ornithoAdmin : FormControl = null;
   public selectedFeature = 0;
 
 
@@ -29,17 +30,18 @@ export class MainOrnithologyComponent implements OnInit {
   ngOnInit() {
     this.ornithoList = new FormControl('');
     this.ornithoMap = new FormControl('');
+    this.ornithoAdmin = new FormControl('');
 
     this.mainOrnithoFormGroup = new FormGroup({
       ornithoList : this.ornithoList,
-      ornithoMap : this.ornithoMap
+      ornithoMap : this.ornithoMap,
+      ornithoAdmin : this.ornithoAdmin
     });
 
 
   }
 
   public featureSelectedChanged(evt : MatTabChangeEvent): void{
-    console.log(evt);
     this.selectedFeature = evt.index;
   }
 
