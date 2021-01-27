@@ -8,3 +8,14 @@
 table {
   width: 80%;
 }
+// img {
+//   width: 130px;
+//   height: 130px;
+// }
+img {
+  display: block;
+  max-width:130px;
+  max-height:130px;
+  width: auto;
+  height: auto;
+}

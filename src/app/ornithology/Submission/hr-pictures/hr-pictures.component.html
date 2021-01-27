@@ -2,43 +2,59 @@
   <mat-card-header>
     <div mat-card-avatar class="example-header-image"></div>
     <mat-card-title>Pictures</mat-card-title>
-  </mat-card-header>  
+  </mat-card-header>
   <mat-card-content>
     <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
 
       <!--- Note that these columns can be defined in any order.
             The actual rendered columns are set as a property on the row definition" -->
-    
-      <!-- Position Column -->
-      <ng-container matColumnDef="position">
-        <th mat-header-cell *matHeaderCellDef> No. </th>
-        <td mat-cell *matCellDef="let element"> {{element.position}} </td>
-      </ng-container>
-    
+
       <!-- Name Column -->
-      <ng-container matColumnDef="name">
-        <th mat-header-cell *matHeaderCellDef> Name </th>
-        <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef>Vernacular Name</th>
+        <td mat-cell *matCellDef="let element"> {{element?.id}} </td>
       </ng-container>
-    
-      <!-- Weight Column -->
-      <ng-container matColumnDef="weight">
-        <th mat-header-cell *matHeaderCellDef> Weight </th>
-        <td mat-cell *matCellDef="let element"> {{element.weight}} </td>
+
+      <!-- Age Column -->
+      <ng-container matColumnDef="typeAge">
+        <th mat-header-cell *matHeaderCellDef>Age</th>
+        <td mat-cell *matCellDef="let element"> {{element?.typeAge}} </td>
       </ng-container>
-    
-      <!-- Symbol Column -->
-      <ng-container matColumnDef="symbol">
-        <th mat-header-cell *matHeaderCellDef> Symbol </th>
-        <td mat-cell *matCellDef="let element"> {{element.symbol}} </td>
+
+      <!-- Sex Column -->
+      <ng-container matColumnDef="isMale">
+        <th mat-header-cell *matHeaderCellDef>Male</th>
+        <td mat-cell *matCellDef="let element"> {{element?.isMale}} </td>
       </ng-container>
-    
+
+      <!-- Source Column -->
+      <ng-container matColumnDef="source">
+        <th mat-header-cell *matHeaderCellDef>Source</th>
+        <td mat-cell *matCellDef="let element"> {{element?.source}} </td>
+      </ng-container>
+
+      <!-- Credit Column -->
+      <ng-container matColumnDef="credit">
+        <th mat-header-cell *matHeaderCellDef>Credit</th>
+        <td mat-cell *matCellDef="let element"> {{element?.credit}} </td>
+      </ng-container>
+
+
+      <!-- url Column -->
+      <ng-container matColumnDef="url">
+        <th mat-header-cell *matHeaderCellDef>Picture</th>
+        <td mat-cell *matCellDef="let element"> <img [src]="element?.url" /></td>
+      </ng-container>
+
+
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
     </table>
-    
+
+
+
   </mat-card-content>
   <mat-card-actions>
-    <button mat-button>Add</button>
+    <button mat-button (click)="openAddPictureDialog()"><mat-icon>add_a_photo</mat-icon></button>
   </mat-card-actions>
 </mat-card>

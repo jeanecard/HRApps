@@ -20,6 +20,9 @@ export class MainOrnithologyComponent implements OnInit {
   public ornithoList : FormControl = null;
   public ornithoMap : FormControl = null;
   public ornithoAdmin : FormControl = null;
+  public ornithoPictures : FormControl = null;
+  public ornithoSounds : FormControl = null;
+
   public selectedFeature = 0;
 
 
@@ -31,11 +34,15 @@ export class MainOrnithologyComponent implements OnInit {
     this.ornithoList = new FormControl('');
     this.ornithoMap = new FormControl('');
     this.ornithoAdmin = new FormControl('');
+    this.ornithoPictures = new FormControl('');
+    this.ornithoSounds = new FormControl('');
 
     this.mainOrnithoFormGroup = new FormGroup({
       ornithoList : this.ornithoList,
       ornithoMap : this.ornithoMap,
-      ornithoAdmin : this.ornithoAdmin
+      ornithoAdmin : this.ornithoAdmin,
+      ornithoPictures : this.ornithoPictures,
+      ornithoSounds : this.ornithoSounds
     });
 
 

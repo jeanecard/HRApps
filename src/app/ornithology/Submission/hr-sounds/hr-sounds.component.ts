@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { HRSoundOrnitho } from 'src/app/model/Ornitho/hrsound-ornitho';
 export interface PeriodicElement {
   name: string;
   position: number;
@@ -6,7 +7,8 @@ export interface PeriodicElement {
   symbol: string;
 }
 
-const ELEMENT_DATA: PeriodicElement[] = [
+const ELEMENT_DATA: HRSoundOrnitho[] = [
+  {id : 'Psittacus erithacus', url : '', isMale : true, source:"", typeSound:"Alarm", xenoCantoId:"666"}
 ];
 @Component({
   selector: 'app-hr-sounds',
@@ -14,7 +16,7 @@ const ELEMENT_DATA: PeriodicElement[] = [
   styleUrls: ['./hr-sounds.component.scss']
 })
 export class HrSoundsComponent implements OnInit {
-  displayedColumns: string[] = ['position', 'name', 'weight', 'symbol'];
+  displayedColumns: string[] = ['id', 'typeSound', 'isMale', 'source', 'xenoCantoId'];
   dataSource = ELEMENT_DATA;
   constructor() { }
 

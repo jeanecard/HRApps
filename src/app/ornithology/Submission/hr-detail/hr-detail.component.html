@@ -1,12 +1,93 @@
-<mat-card>
-  <mat-card-header>
-    <div mat-card-avatar class="example-header-image"></div>
-    <mat-card-title>Details</mat-card-title>
-  </mat-card-header>  
-  <mat-card-content>
-    <mat-form-field class="form-field-width" >
-      <mat-label>Sum up</mat-label>
-      <textarea matTextareaAutosize="true" required="false" matInput placeholder="a brief synthesis of the bord's life.."></textarea>
-    </mat-form-field>
-  </mat-card-content>
-</mat-card>
+<form [formGroup]="ornithoDetail">
+  <mat-card>
+    <mat-card-header>
+      <div mat-card-avatar class="example-header-image"></div>
+      <mat-card-title>Details</mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <mat-form-field class="form-field-width">
+        <mat-label>Source</mat-label>
+        <input formControlName="source" matInput placeholder="personnel" value="">
+      </mat-form-field>
+    </mat-card-content>
+
+    <mat-card-content>
+      <mat-form-field class="form-field-width">
+        <mat-label>Statut</mat-label>
+        <input formControlName="statut" matInput placeholder="protected" value="">
+      </mat-form-field>
+    </mat-card-content>
+
+
+    <mat-card-content>
+      <mat-icon>zoom_out</mat-icon>
+      <mat-form-field class="form-field-width">
+        <mat-label>Min. span (cm)</mat-label>
+        <input formControlName="minEnvergure" matInput type="number" placeholder="25" value="">
+      </mat-form-field>
+      <mat-icon>zoom_in</mat-icon>
+      <mat-form-field class="form-field-width">
+        <mat-label>Max. span (cm)</mat-label>
+        <input formControlName="maxEnvergure" matInput type="number" placeholder="45" value="">
+      </mat-form-field>
+    </mat-card-content>
+
+    <mat-card-content>
+      <mat-icon>zoom_out</mat-icon>
+      <mat-form-field class="form-field-width">
+        <mat-label>Min. eggs by lay</mat-label>
+        <input formControlName="minEggs" matInput type="number" placeholder="1" value="">
+      </mat-form-field>
+      <mat-icon>zoom_in</mat-icon>
+      <mat-form-field class="form-field-width">
+        <mat-label>Min. eggs by lay</mat-label>
+        <input formControlName="maxEggs" matInput type="number" placeholder="4" value="">
+      </mat-form-field>
+    </mat-card-content>
+
+    <mat-card-content>
+      <mat-icon>zoom_out</mat-icon>
+      <mat-form-field class="form-field-width">
+        <mat-label>Min. weight (gr)</mat-label>
+        <input formControlName="minWeight" matInput type="number" placeholder="25" value="">
+      </mat-form-field>
+      <mat-icon>zoom_in</mat-icon>
+      <mat-form-field class="form-field-width">
+        <mat-label>Max. weight (gr)</mat-label>
+        <input formControlName="maxWeight" matInput type="number" placeholder="1500" value="">
+      </mat-form-field>
+    </mat-card-content>
+
+    <mat-card-content>
+      <mat-icon>zoom_out</mat-icon>
+      <mat-form-field class="form-field-width">
+        <mat-label>Min. lay count by year</mat-label>
+        <input formControlName="minLayCount" matInput type="number" placeholder="0" value="">
+      </mat-form-field>
+      <mat-icon>zoom_in</mat-icon>
+      <mat-form-field class="form-field-width">
+        <mat-label>Max. lay count by year</mat-label>
+        <input formControlName="maxLayCount" matInput type="number" placeholder="3" value="">
+      </mat-form-field>
+    </mat-card-content>
+
+    <mat-card-content>
+      <mat-icon>zoom_out</mat-icon>
+      <mat-form-field class="form-field-width">
+        <mat-label>Min. length (cm)</mat-label>
+        <input formControlName="minLength" matInput type="number" placeholder="25" value="">
+      </mat-form-field>
+      <mat-icon>zoom_in</mat-icon>
+      <mat-form-field class="form-field-width">
+        <mat-label>Max. length (cm)</mat-label>
+        <input formControlName="maxLength" matInput type="number" placeholder="50" value="">
+      </mat-form-field>
+    </mat-card-content>
+
+
+
+
+
+  </mat-card>
+</form>

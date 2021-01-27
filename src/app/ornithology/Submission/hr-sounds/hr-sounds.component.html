@@ -9,30 +9,37 @@
       <!--- Note that these columns can be defined in any order.
             The actual rendered columns are set as a property on the row definition" -->
     
-      <!-- Position Column -->
-      <ng-container matColumnDef="position">
-        <th mat-header-cell *matHeaderCellDef> No. </th>
-        <td mat-cell *matCellDef="let element"> {{element.position}} </td>
-      </ng-container>
     
       <!-- Name Column -->
-      <ng-container matColumnDef="name">
-        <th mat-header-cell *matHeaderCellDef> Name </th>
-        <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef>Vernacular Name</th>
+        <td mat-cell *matCellDef="let element"> {{element.id}} </td>
       </ng-container>
     
-      <!-- Weight Column -->
-      <ng-container matColumnDef="weight">
-        <th mat-header-cell *matHeaderCellDef> Weight </th>
-        <td mat-cell *matCellDef="let element"> {{element.weight}} </td>
+      <!-- Sound type Column -->
+      <ng-container matColumnDef="typeSound">
+        <th mat-header-cell *matHeaderCellDef>Sound Type</th> 
+        <td mat-cell *matCellDef="let element"> {{element.typeSound}} </td>
       </ng-container>
     
-      <!-- Symbol Column -->
-      <ng-container matColumnDef="symbol">
-        <th mat-header-cell *matHeaderCellDef> Symbol </th>
-        <td mat-cell *matCellDef="let element"> {{element.symbol}} </td>
-      </ng-container>
+     <!-- Sex Column -->
+     <ng-container matColumnDef="isMale">
+      <th mat-header-cell *matHeaderCellDef>Male</th>
+      <td mat-cell *matCellDef="let element"> {{element.isMale}} </td>
+    </ng-container>
     
+      <!-- Source Column -->
+      <ng-container matColumnDef="source">
+        <th mat-header-cell *matHeaderCellDef>Source</th>
+        <td mat-cell *matCellDef="let element"> {{element.source}} </td>
+      </ng-container>
+
+      <!-- XenoCanto id Column -->
+      <ng-container matColumnDef="xenoCantoId">
+        <th mat-header-cell *matHeaderCellDef>Xeno Canto ID</th>
+        <td mat-cell *matCellDef="let element"> {{element.xenoCantoId}} </td>
+      </ng-container>
+
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
     </table>

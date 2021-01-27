@@ -19,6 +19,9 @@ import { HrSoundsComponent } from './Submission/hr-sounds/hr-sounds.component';
 import { HrPicturesComponent } from './Submission/hr-pictures/hr-pictures.component';
 import { HrSimilarityComponent } from './Submission/hr-similarity/hr-similarity.component';
 import { HrSubmissionFilterComponent } from './Submission/hr-submission-filter/hr-submission-filter.component';
+import { HRSubmitPictureComponent } from './Submission/hrsubmit-picture/hrsubmit-picture.component';
+import { HRSubmitSoundComponent } from './Submission/hrsubmit-sound/hrsubmit-sound.component';
+import { HRAddPictureDialogComponent } from './Submission/hradd-picture-dialog/hradd-picture-dialog.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +33,7 @@ import { HrSubmissionFilterComponent } from './Submission/hr-submission-filter/h
     HROrnithoBirdsDetailSongsComponent, 
     HROrnithoBirdsDetailTechnicalsComponent, 
     HROrnithoMapFiltersComponent, 
-    HROrnithoDatabaseFiltersComponent, HRConfuseBirdsComponent, HrornithoAdminComponent, HrgeneralComponent, HrDetailComponent, HrSoundsComponent, HrPicturesComponent, HrSimilarityComponent, HrSubmissionFilterComponent],
+    HROrnithoDatabaseFiltersComponent, HRConfuseBirdsComponent, HrornithoAdminComponent, HrgeneralComponent, HrDetailComponent, HrSoundsComponent, HrPicturesComponent, HrSimilarityComponent, HrSubmissionFilterComponent, HRSubmitPictureComponent, HRSubmitSoundComponent, HRAddPictureDialogComponent],
   
   imports: [
     OrnithologyRoutingModule,

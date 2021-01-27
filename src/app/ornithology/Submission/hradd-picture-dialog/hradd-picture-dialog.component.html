@@ -1,0 +1,98 @@
+<form [formGroup]="ornithoPictureDialog">
+  <mat-card>
+    <mat-card-header>
+      <div mat-card-avatar class="example-header-image"></div>
+      <mat-card-title>Bird's Picture</mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <mat-form-field>
+        <mat-label>Age</mat-label>
+        <mat-select formControlName="ageType" [(value)]="ageSelected" required="true">
+          <mat-option>None</mat-option>
+          <mat-option value="option1">Juvenile</mat-option>
+          <mat-option value="option2">Immature</mat-option>
+          <mat-option value="option3">Adulte</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </mat-card-content>
+
+    <mat-card-content>
+      <mat-form-field>
+        <mat-label>Gender</mat-label>
+        <mat-select formControlName="gender" [(value)]="genderSelected" required="true">
+          <mat-option>None</mat-option>
+          <mat-option value="option1">Male</mat-option>
+          <mat-option value="option2">Female</mat-option>
+          <mat-option value="option3">Unknown</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </mat-card-content>
+
+
+    <mat-card-content>
+      <mat-form-field>
+        <mat-label>Source</mat-label>
+        <mat-select formControlName="source" [(value)]="sourceSelected" required="true">
+          <mat-option>None</mat-option>
+          <mat-option value="option1">HR</mat-option>
+          <mat-option value="option2">Machin</mat-option>
+          <mat-option value="option3">Saucisse</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </mat-card-content>
+
+
+    <mat-card-content>
+      <mat-form-field class="form-field-width">
+        <mat-label>Credit</mat-label>
+        <input formControlName="credit" matInput placeholder="Ex. http://hrcorp.com">
+      </mat-form-field>
+    </mat-card-content>
+
+
+    <!-- <mat-card-content>
+      <div>
+        <label for="file">Choose File</label>
+        <input type="file" id="file" (change)="handleFileInput($event.target.files)">
+      </div>
+      <img src={{url}}>
+      {{message}}
+    </mat-card-content> -->
+
+    
+    <div *ngIf="files?.length === 0" class="container" appDnd (fileDropped)="onFileDropped($event)">
+      <input type="file" #fileDropRef id="fileDropRef"  (change)="fileBrowseHandler($event.target.files)" />
+      <img src="../../../assets/icons/upload.svg" class="imgUpload">
+    
+      <h3>Drag and drop file here</h3>
+      <h3>or</h3>
+      <label for="fileDropRef">Browse for file</label>
+    </div>
+    <div class="files-list">
+      <div class="single-file" *ngFor="let file of files; let i = index">
+        <img src={{url}} class=".dragAndDropImg">
+
+        <div class="info">
+          <h4 class="name">
+            {{ file?.name }}
+          </h4>
+          <p class="size">
+            {{ formatBytes(file?.size) }}
+          </p>
+          <!-- <app-progress [progress]="file?.progress"></app-progress> -->
+        </div>
+    
+        <div class="delete" (click)="deleteFile(i)">
+          <mat-icon>delete</mat-icon>
+        </div>
+      </div>
+    </div>
+
+
+    <mat-card-actions>
+      <button mat-button [mat-dialog-close]="data" (click)="onYesClick()" ><mat-icon>check</mat-icon></button>
+      <button mat-button (click)="onNoClick()"><mat-icon>cancel</mat-icon></button>
+    </mat-card-actions>
+  </mat-card>
+</form>
