@@ -1,20 +1,11 @@
 import { Component, forwardRef, OnInit } from '@angular/core';
-import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { ControlValueAccessor, FormControl, FormGroup, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { HRPictureOrnitho } from 'src/app/model/Ornitho/hrpicture-ornitho';
+import { HRPicturesSubmissionService } from 'src/app/shared/Ornithology/hrpictures-submission.service';
 import { HRAddPictureDialogComponent } from '../hradd-picture-dialog/hradd-picture-dialog.component';
-export interface PeriodicElement {
-  name: string;
-  position: number;
-  weight: number;
-  symbol: string;
-}
 
-const ELEMENT_DATA: HRPictureOrnitho[] = [
-  {id: 'turdus merula', source : 'HR corp', credit : 'Hr', isMale : true, typeAge : 'Juvenile', url : "https://jeanecard.github.io/HRBirdsPicturesDB/turdus%20merula/male_back_small.jpg"},
-  {id: 'turdus merula', source : 'HR corp', credit : 'Hr', isMale : true, typeAge : 'Adulte', url : "https://jeanecard.github.io/HRBirdsPicturesDB/Streptopelia%20decaocto/Streptopelia_decaocto_side_small.jpg"},
-];
 @Component({
   selector: 'app-hr-pictures',
   templateUrl: './hr-pictures.component.html',
@@ -27,47 +18,101 @@ const ELEMENT_DATA: HRPictureOrnitho[] = [
     }]
 })
 export class HrPicturesComponent implements OnInit, ControlValueAccessor {
-  displayedColumns: string[] = ['id', 'typeAge', 'isMale', 'source', 'credit', 'url'];
-  birdsPictures :HRPictureOrnitho[];
-  dataSource : MatTableDataSource<HRPictureOrnitho>;
+
+  private _model : string;
+  public displayedColumns: string[] = ['url','typeAge', 'gender', 'source', 'credit',  'update', 'delete'];
+  private birdsPictures: HRPictureOrnitho[];
+  public dataSource: MatTableDataSource<HRPictureOrnitho>;
+  public isButtonDisabled: boolean;
+  private _propagateChange = (_: any) => { };
+  private _propagateTouch = (_: any) => { };
 
 
+  constructor(public dialog: MatDialog, private _picService : HRPicturesSubmissionService) { }
 
-
-  constructor(public dialog: MatDialog) { }
-  writeValue(obj: any): void {
-    // throw new Error('Method not implemented.');
+  writeValue(vernacularName: string): void {
+    // dispose
+    this._model = vernacularName;
+    if (vernacularName) {
+      this._picService.getImages(vernacularName).subscribe({
+        next:
+          data => {
+            this.birdsPictures = data;
+          },
+        error: (dataError) => {
+          console.log(dataError);
+        },
+        complete: () => {}
+      });
+    } else {
+      this.birdsPictures = [];
+    }
+    this.dataSource = new MatTableDataSource<HRPictureOrnitho>(this.birdsPictures);
   }
   registerOnChange(fn: any): void {
-    // throw new Error('Method not implemented.');
+    this._propagateChange(fn);
   }
   registerOnTouched(fn: any): void {
-    // throw new Error('Method not implemented.');
+    this._propagateTouch(fn);
   }
   setDisabledState?(isDisabled: boolean): void {
-    // throw new Error('Method not implemented.');
+    this.isButtonDisabled = isDisabled;
   }
 
   ngOnInit(): void {
     this.birdsPictures = [];
     this.dataSource = new MatTableDataSource<HRPictureOrnitho>(this.birdsPictures);
   }
- 
-  
-openAddPictureDialog(): void {
-  const dialogRef = this.dialog.open(HRAddPictureDialogComponent, {
-    width: '600px',
-    data: {}
-  });
 
-  dialogRef.afterClosed().subscribe(result => {
-    console.log('The dialog was closed');
-    console.log(result);
-    this.birdsPictures.push(result);
-    this.dataSource = new MatTableDataSource<HRPictureOrnitho>(this.birdsPictures);
-    console.log(this.dataSource);
+  openAddPictureDialog(): void {
 
-  });
-}
+    const dialogRef = this.dialog.open(HRAddPictureDialogComponent, {
+      width: '600px',
+      data: { vernacularName: this._model, isCreationMode: true  }
+    });
 
+    dialogRef.afterClosed().subscribe(result => {
+      if(result){
+        this._picService.getImages(this._model).subscribe({
+          next:
+            data => {
+              this.birdsPictures = data;
+              this.dataSource = new MatTableDataSource<HRPictureOrnitho>(this.birdsPictures);    
+            },
+          error: (dataError) => {
+            console.log(dataError);
+          },
+          complete: () => {}
+        });
+      } else{
+        this.dataSource = new MatTableDataSource<HRPictureOrnitho>([]);
+      }
+    });
+  }
+
+  openUpdatePictureDialog(idBird : string): void {
+
+    const dialogRef = this.dialog.open(HRAddPictureDialogComponent, {
+      width: '600px',
+      data: { id: idBird,  vernacularName: this._model, isCreationMode: false  }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if(result){
+        this._picService.getImages(this._model).subscribe({
+          next:
+            data => {
+              this.birdsPictures = data;
+              this.dataSource = new MatTableDataSource<HRPictureOrnitho>(this.birdsPictures);    
+            },
+          error: (dataError) => {
+            console.log(dataError);
+          },
+          complete: () => {}
+        });
+      } else{
+        this.dataSource = new MatTableDataSource<HRPictureOrnitho>([]);
+      }
+    });
+  }
 }

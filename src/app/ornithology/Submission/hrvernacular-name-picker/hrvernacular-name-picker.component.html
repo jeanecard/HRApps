@@ -1,0 +1,24 @@
+<mat-card>
+  <mat-card-header>
+    <div mat-card-avatar class="example-header-image"></div>
+    <mat-card-title>Birds'Id</mat-card-title>
+  </mat-card-header>  
+  <mat-card-content>
+    <mat-form-field>
+      <input matInput required
+             placeholder="Vernacular Name"
+             aria-label="Vernacular Name"
+             [matAutocomplete]="auto"
+             [formControl]="vernacularName"
+             >
+      <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onOptionSelected($event)">
+        <mat-option *ngIf="isLoading" class="is-loading"><mat-spinner diameter="20"></mat-spinner></mat-option>
+        <mat-option *ngIf="isWaiting"><div class="is-waiting">Waiting before launch {{remaining}}</div></mat-option>
+        <mat-option *ngIf="isNoData" class="is-loading">No data found</mat-option>
+        <mat-option *ngFor="let item of results" [value]="item" >
+          <span >{{item}}</span> 
+        </mat-option>
+      </mat-autocomplete>
+    </mat-form-field>
+  </mat-card-content>
+</mat-card>

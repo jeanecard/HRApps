@@ -1,7 +1,8 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { HRPictureOrnitho } from 'src/app/model/Ornitho/hrpicture-ornitho';
+import { HRPictureOrnitho, HRPictureOrnithoDialog } from 'src/app/model/Ornitho/hrpicture-ornitho';
+import { HRPicturesSubmissionService } from 'src/app/shared/Ornithology/hrpictures-submission.service';
 
 @Component({
   selector: 'app-hradd-picture-dialog',
@@ -10,6 +11,7 @@ import { HRPictureOrnitho } from 'src/app/model/Ornitho/hrpicture-ornitho';
 })
 export class HRAddPictureDialogComponent implements OnInit {
 
+  private _model: HRPictureOrnitho;
   public ornithoPictureDialog: FormGroup;
   public ageType: FormControl;
   public gender: FormControl;
@@ -20,59 +22,72 @@ export class HRAddPictureDialogComponent implements OnInit {
   message: string;
   url: string | ArrayBuffer;
 
-  constructor(public dialogRef: MatDialogRef<HRAddPictureDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: HRPictureOrnitho) { }
+  constructor(
+    public dialogRef: MatDialogRef<HRAddPictureDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: HRPictureOrnithoDialog,
+    private _picService: HRPicturesSubmissionService) { }
 
   ngOnInit(): void {
-    this.ageType = new FormControl();
-    this.gender = new FormControl();
-    this.credit = new FormControl();
-    this.source = new FormControl();
+    // TODO HR charge l'objet en cas d'update ici
+    this._model = new HRPictureOrnitho();
+    this.ageType = new FormControl(this.data?.typeAge);
+    this.gender = new FormControl(this.data?.isMale);
+    this.credit = new FormControl(this.data?.credit);
+    this.source = new FormControl(this.data?.source);
     this.ornithoPictureDialog = new FormGroup({
       ageType: this.ageType,
       gender: this.gender,
       credit: this.credit,
-      source : this.source
+      source: this.source
     });
-    this.data = new HRPictureOrnitho();
-
+    
   }
 
-  public onYesClick():void{
-    this.data.credit = this.credit.value;
-    this.data.id = "turdus merula passe en input";
-    this.data.isMale = this.gender.value;
-    this.data.typeAge = this.ageType.value;
-    this.data.source = this.source.value;
-    this.dialogRef.close(this.data);
+  public onYesClick(): void {
+    this.updateModelFromView();
+    if (this.data?.isCreationMode) {
+      this._picService.addImage(this._model).subscribe({
+        next:
+          data => {
+            this.dialogRef.close(data);
+          },
+        error: (dataError) => {
+          console.log(dataError);
+        },
+        complete: () => {
+
+        }
+      });
+    } else {
+      this._picService.updateImage(this._model).subscribe({
+        next:
+          data => {
+            this.dialogRef.close(data);
+          },
+        error: (dataError) => {
+          console.log(dataError);
+        },
+        complete: () => {
+        }
+      });
+    }
   }
-  // public handleFileInput(files: FileList): void {
-  //   this.fileToUpload = files.item(0);
 
-  //   if (files.length === 0)
-  //     return;
-
-  //   const mimeType = files[0].type;
-  //   if (mimeType.match(/image\/*/) == null) {
-  //     this.message = "Only images are supported.";
-  //     return;
-  //   }
-
-  //   const reader = new FileReader();
-  //   reader.readAsDataURL(files[0]);
-  //   reader.onload = (_event) => {
-  //     this.url = reader.result;
-  //     this.data.url = reader.result;
-  //     console.log("Saucisse");
-  //     console.log(this.data.url);
-  //   }
-  // }
   onNoClick(): void {
     this.dialogRef.close();
   }
 
-// CODE DROP
-files: any[] = [];
+  private updateModelFromView(): void {
+    this._model.credit = this.credit.value;
+    this._model.id = this.data.id;
+    this._model.vernacularName = this.data.vernacularName;
+    this._model.isMale = this.gender.value;
+    this._model.source = this.source.value;
+    this._model.typeAge = this.ageType.value;
+    this._model.url = this.url;
+  }
+  // CODE DROP
+  files: any[] = [];
 
   /**
    * on file drop handler

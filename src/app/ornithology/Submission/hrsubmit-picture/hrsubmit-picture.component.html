@@ -1,18 +1,19 @@
+<form [formGroup]="submitPicture">
   <mat-card>
-    <mat-card-header>
-      <div mat-card-avatar class="example-header-image"></div>
-      <mat-card-title>Birds'Id</mat-card-title>
-    </mat-card-header>
     <mat-card-content>
-      <mat-form-field class="form-field-width">
-        <mat-label>Vernacular name</mat-label>
-        <input required="true" matInput placeholder="Ex. turdus merula">
-      </mat-form-field>
+      <app-hrvernacular-name-picker formControlName="vernacularName"></app-hrvernacular-name-picker>
     </mat-card-content>
-    <app-hr-pictures></app-hr-pictures>
+    <mat-card-content>
+      <app-hr-pictures formControlName="pictureList"></app-hr-pictures>
+    </mat-card-content>
     <mat-card-actions>
-      <button mat-button><mat-icon>add_to_queue</mat-icon>Add to queue</button>
-      <button mat-button><mat-icon>clear</mat-icon>Clear</button>
+      <button mat-button>
+        <mat-icon>add_to_queue</mat-icon>Add to queue
+      </button>
+      <button mat-button>
+        <mat-icon>clear</mat-icon>Clear
+      </button>
     </mat-card-actions>
- 
-</mat-card>
+
+  </mat-card>
+</form>

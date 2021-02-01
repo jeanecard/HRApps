@@ -10,9 +10,9 @@
         <mat-label>Age</mat-label>
         <mat-select formControlName="ageType" [(value)]="ageSelected" required="true">
           <mat-option>None</mat-option>
-          <mat-option value="option1">Juvenile</mat-option>
-          <mat-option value="option2">Immature</mat-option>
-          <mat-option value="option3">Adulte</mat-option>
+          <mat-option value="Juvenile">Juvenile</mat-option>
+          <mat-option value="Immature">Immature</mat-option>
+          <mat-option value="Adulte">Adulte</mat-option>
         </mat-select>
       </mat-form-field>
     </mat-card-content>
@@ -22,9 +22,9 @@
         <mat-label>Gender</mat-label>
         <mat-select formControlName="gender" [(value)]="genderSelected" required="true">
           <mat-option>None</mat-option>
-          <mat-option value="option1">Male</mat-option>
-          <mat-option value="option2">Female</mat-option>
-          <mat-option value="option3">Unknown</mat-option>
+          <mat-option value="Male">Male</mat-option>
+          <mat-option value="Female">Female</mat-option>
+          <mat-option value="Unknown">Unknown</mat-option>
         </mat-select>
       </mat-form-field>
     </mat-card-content>
@@ -35,13 +35,12 @@
         <mat-label>Source</mat-label>
         <mat-select formControlName="source" [(value)]="sourceSelected" required="true">
           <mat-option>None</mat-option>
-          <mat-option value="option1">HR</mat-option>
-          <mat-option value="option2">Machin</mat-option>
-          <mat-option value="option3">Saucisse</mat-option>
+          <mat-option value="HR">HR</mat-option>
+          <mat-option value="Machin">Machin</mat-option>
+          <mat-option value="Saucisse">Saucisse</mat-option>
         </mat-select>
       </mat-form-field>
     </mat-card-content>
-
 
     <mat-card-content>
       <mat-form-field class="form-field-width">
@@ -49,18 +48,7 @@
         <input formControlName="credit" matInput placeholder="Ex. http://hrcorp.com">
       </mat-form-field>
     </mat-card-content>
-
-
-    <!-- <mat-card-content>
-      <div>
-        <label for="file">Choose File</label>
-        <input type="file" id="file" (change)="handleFileInput($event.target.files)">
-      </div>
-      <img src={{url}}>
-      {{message}}
-    </mat-card-content> -->
-
-    
+   
     <div *ngIf="files?.length === 0" class="container" appDnd (fileDropped)="onFileDropped($event)">
       <input type="file" #fileDropRef id="fileDropRef"  (change)="fileBrowseHandler($event.target.files)" />
       <img src="../../../assets/icons/upload.svg" class="imgUpload">
