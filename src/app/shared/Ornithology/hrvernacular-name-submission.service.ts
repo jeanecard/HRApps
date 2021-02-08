@@ -7,8 +7,17 @@ import { Observable, of } from 'rxjs';
 })
 export class HRVernacularNameSubmissionService {
 
+  private _birdsSubmissionGetNames = 'https://hrbirdswebapi-dev-as.azurewebsites.net/api/v1.0/HRBirdSubmission/matching-names/';
+
+
+
   constructor(private http: HttpClient) { }
   getExistingVernacularNames(pattern: String): Observable<string[]> {
-    return of(["Turdus Merula", "Psitacus erithacus", "Angela Merkel"]);
+
+    if (pattern) {
+    let urlToCall = this._birdsSubmissionGetNames + pattern;
+    return this.http.get<string[]>(urlToCall);
+    }   
+    return of([]);
 }
 }

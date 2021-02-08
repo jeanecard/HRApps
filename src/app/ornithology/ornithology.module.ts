@@ -23,6 +23,7 @@ import { HRSubmitPictureComponent } from './Submission/hrsubmit-picture/hrsubmit
 import { HRSubmitSoundComponent } from './Submission/hrsubmit-sound/hrsubmit-sound.component';
 import { HRAddPictureDialogComponent } from './Submission/hradd-picture-dialog/hradd-picture-dialog.component';
 import { HRVernacularNamePickerComponent } from './Submission/hrvernacular-name-picker/hrvernacular-name-picker.component';
+import { HRConfirmDeletionComponent } from '../shared/components/hrconfirm-deletion/hrconfirm-deletion.component';
 
 @NgModule({
   declarations: [
@@ -34,6 +35,7 @@ import { HRVernacularNamePickerComponent } from './Submission/hrvernacular-name-
     HROrnithoBirdsDetailSongsComponent, 
     HROrnithoBirdsDetailTechnicalsComponent, 
     HROrnithoMapFiltersComponent, 
+    HRConfirmDeletionComponent,
     HROrnithoDatabaseFiltersComponent, HRConfuseBirdsComponent, HrornithoAdminComponent, HrgeneralComponent, HrDetailComponent, HrSoundsComponent, HrPicturesComponent, HrSimilarityComponent, HrSubmissionFilterComponent, HRSubmitPictureComponent, HRSubmitSoundComponent, HRAddPictureDialogComponent, HRVernacularNamePickerComponent],
   
   imports: [

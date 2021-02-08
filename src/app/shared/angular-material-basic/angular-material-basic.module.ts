@@ -23,6 +23,8 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import {MatProgressBarModule} from '@angular/material/progress-bar';
+import {MatStepperModule} from '@angular/material/stepper';
 
 import { MatInputModule } from '@angular/material/input';
 
@@ -30,6 +32,8 @@ import { MatInputModule } from '@angular/material/input';
   declarations: [],
   imports: [
     CommonModule,
+    MatStepperModule,
+    MatProgressBarModule,
     MatCardModule,
     MatButtonModule,
     MatGridListModule,
@@ -59,10 +63,12 @@ import { MatInputModule } from '@angular/material/input';
   ],
   exports: [
     MatCardModule,
+    MatStepperModule,
     MatButtonModule,
     MatGridListModule,
     MatToolbarModule,
     MatSidenavModule,
+    MatProgressBarModule,
     MatIconModule,
     MatListModule,
     MatTableModule,

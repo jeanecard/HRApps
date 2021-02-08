@@ -1,86 +1,129 @@
 <form [formGroup]="ornithoPictureDialog">
-  <mat-card>
-    <mat-card-header>
-      <div mat-card-avatar class="example-header-image"></div>
-      <mat-card-title>Bird's Picture</mat-card-title>
-    </mat-card-header>
-
-    <mat-card-content>
-      <mat-form-field>
-        <mat-label>Age</mat-label>
-        <mat-select formControlName="ageType" [(value)]="ageSelected" required="true">
-          <mat-option>None</mat-option>
-          <mat-option value="Juvenile">Juvenile</mat-option>
-          <mat-option value="Immature">Immature</mat-option>
-          <mat-option value="Adulte">Adulte</mat-option>
-        </mat-select>
-      </mat-form-field>
-    </mat-card-content>
-
-    <mat-card-content>
-      <mat-form-field>
-        <mat-label>Gender</mat-label>
-        <mat-select formControlName="gender" [(value)]="genderSelected" required="true">
-          <mat-option>None</mat-option>
-          <mat-option value="Male">Male</mat-option>
-          <mat-option value="Female">Female</mat-option>
-          <mat-option value="Unknown">Unknown</mat-option>
-        </mat-select>
-      </mat-form-field>
-    </mat-card-content>
 
 
-    <mat-card-content>
-      <mat-form-field>
-        <mat-label>Source</mat-label>
-        <mat-select formControlName="source" [(value)]="sourceSelected" required="true">
-          <mat-option>None</mat-option>
-          <mat-option value="HR">HR</mat-option>
-          <mat-option value="Machin">Machin</mat-option>
-          <mat-option value="Saucisse">Saucisse</mat-option>
-        </mat-select>
-      </mat-form-field>
-    </mat-card-content>
-
-    <mat-card-content>
-      <mat-form-field class="form-field-width">
-        <mat-label>Credit</mat-label>
-        <input formControlName="credit" matInput placeholder="Ex. http://hrcorp.com">
-      </mat-form-field>
-    </mat-card-content>
-   
-    <div *ngIf="files?.length === 0" class="container" appDnd (fileDropped)="onFileDropped($event)">
-      <input type="file" #fileDropRef id="fileDropRef"  (change)="fileBrowseHandler($event.target.files)" />
-      <img src="../../../assets/icons/upload.svg" class="imgUpload">
+  <mat-horizontal-stepper [linear]="isLinear" #stepper>
+    <mat-step [stepControl]="dataPickerFormGroup" label="Bird's image info">
+      <form [formGroup]="dataPickerFormGroup">
+        <mat-card >
+          <mat-card-content>
+            <mat-form-field class="form-field-width">
+              <mat-label>Age</mat-label>
+              <mat-select formControlName="ageType" [(value)]="ageSelected" required="true">
+                <mat-option>None</mat-option>
+                <mat-option value="Juvenile">Juvenile</mat-option>
+                <mat-option value="Immature">Immature</mat-option>
+                <mat-option value="Adulte">Adulte</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <mat-icon></mat-icon>
+            <mat-form-field class="form-field-width">
+              <mat-label>Gender</mat-label>
+              <mat-select formControlName="gender" [(value)]="genderSelected" required="true">
+                <mat-option>None</mat-option>
+                <mat-option value="Male">Male</mat-option>
+                <mat-option value="Female">Female</mat-option>
+                <mat-option value="Unknown">Unknown</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </mat-card-content>
+      
+          <mat-card-content>
+            <mat-form-field class="form-field-width">
+              <mat-label>Source</mat-label>
+              <mat-select formControlName="source" [(value)]="sourceSelected" required="true">
+                <mat-option>None</mat-option>
+                <mat-option value="HR">HR</mat-option>
+                <mat-option value="Machin">Machin</mat-option>
+                <mat-option value="Saucisse">Saucisse</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </mat-card-content>
+      
+         <mat-card-content>
+            <mat-form-field class="form-field-full-width">
+              <mat-label>Credit</mat-label>
+              <input formControlName="credit" matInput placeholder="Ex. http://hrcorp.com">
+            </mat-form-field>
+          </mat-card-content>
+        </mat-card>
+        <div>
+          <button mat-button matStepperNext>Next</button>
+        </div>
+      </form>
+    </mat-step>
+    <mat-step [stepControl]="imagePickerFormGroup" label="upload Picture">
+      <form [formGroup]="imagePickerFormGroup">
+        <div *ngIf="files?.length === 0" class="container" appDnd (fileDropped)="onFileDropped($event)">
+          {{imageError}}
+          <input type="file" #fileDropRef id="fileDropRef" (change)="fileChangeEvent($event)" />
+          <img src="../../../assets/icons/upload.svg" class="imgUpload">
     
-      <h3>Drag and drop file here</h3>
-      <h3>or</h3>
-      <label for="fileDropRef">Browse for file</label>
-    </div>
-    <div class="files-list">
-      <div class="single-file" *ngFor="let file of files; let i = index">
-        <img src={{url}} class=".dragAndDropImg">
+          <h3>Drag and drop file here</h3>
+          <h3>or</h3>
+          <label for="fileDropRef">Browse for file</label>
+        </div>
+    
+        <div *ngFor="let file of files; let i = index">
+          <mat-card class="example-card">
+            <mat-card-header>
+              <mat-card-title>{{ file?.name }}</mat-card-title>
+              <mat-card-subtitle>{{ formatBytes(file?.size) }}</mat-card-subtitle>
+            </mat-card-header>
+            <img mat-card-image src={{cardImageBase64}} alt="Bird's picture to submit">
+            <mat-card-content>
+            </mat-card-content>
+            <mat-card-actions>
+              <button mat-button (click)="deleteFile(i)">
+                <mat-icon>delete</mat-icon>Delete
+              </button>
+            </mat-card-actions>
+          </mat-card>
+        </div>
+        <div *ngIf="isUploadingState">
+          <mat-card-content>
+            <mat-label>Uploading progress</mat-label>
+            <mat-progress-bar mode="determinate" value="10"></mat-progress-bar>
+            <mat-label>{{uploadStatus}}</mat-label>
+          </mat-card-content>
+        </div>
+        <div>
+          <button mat-button matStepperPrevious>Back</button>
+          <button mat-button matStepperNext>Next</button>
+        </div>
+      </form>
+    </mat-step>
+    <mat-step label="Summerize">
 
-        <div class="info">
-          <h4 class="name">
-            {{ file?.name }}
-          </h4>
-          <p class="size">
-            {{ formatBytes(file?.size) }}
+      <mat-card class="example-card">
+        <mat-card-header>
+          <div mat-card-avatar class="example-header-image"></div>
+          <mat-card-title>Turdus Merula TODO</mat-card-title>
+          <mat-card-subtitle> Sexe</mat-card-subtitle>
+          <mat-card-subtitle>Age </mat-card-subtitle>
+        </mat-card-header>
+        <img mat-card-image src={{cardImageBase64}} alt="Bird's picture to submit">
+        <mat-card-content>
+          <p>
+            a comment on 2 lines ...
           </p>
-          <!-- <app-progress [progress]="file?.progress"></app-progress> -->
-        </div>
-    
-        <div class="delete" (click)="deleteFile(i)">
-          <mat-icon>delete</mat-icon>
-        </div>
+        </mat-card-content>
+
+      </mat-card>
+
+      <div>
+        <button mat-button matStepperPrevious>Back</button>
+      <!-- </div> -->
+        <!-- <div class="validateButtons"> -->
+        <button class=".validateButtons" mat-button (click)="onNoClick()">
+          <mat-icon>cancel</mat-icon>
+        </button>
+        <button class=".validateButtons" mat-button [mat-dialog-close]="data" (click)="onYesClick()">
+          <mat-icon>check</mat-icon>
+        </button>
       </div>
-    </div>
 
-
-    <mat-card-actions>
-      <button mat-button [mat-dialog-close]="data" (click)="onYesClick()" ><mat-icon>check</mat-icon></button>
-      <button mat-button (click)="onNoClick()"><mat-icon>cancel</mat-icon></button>
-    </mat-card-actions>
-  </mat-card>
+        <!-- <button mat-button (click)="stepper.reset()">Reset</button> -->
+   
+    </mat-step>
+  </mat-horizontal-stepper>
 </form>

@@ -3,6 +3,7 @@ import { ControlValueAccessor, FormControl, FormGroup, NG_VALUE_ACCESSOR } from 
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { HRPictureOrnitho } from 'src/app/model/Ornitho/hrpicture-ornitho';
+import { HRConfirmDeletionComponent } from 'src/app/shared/components/hrconfirm-deletion/hrconfirm-deletion.component';
 import { HRPicturesSubmissionService } from 'src/app/shared/Ornithology/hrpictures-submission.service';
 import { HRAddPictureDialogComponent } from '../hradd-picture-dialog/hradd-picture-dialog.component';
 
@@ -38,16 +39,19 @@ export class HrPicturesComponent implements OnInit, ControlValueAccessor {
         next:
           data => {
             this.birdsPictures = data;
+            this.dataSource = new MatTableDataSource<HRPictureOrnitho>(this.birdsPictures);            
           },
         error: (dataError) => {
           console.log(dataError);
+          this.birdsPictures = [];          
+          this.dataSource = new MatTableDataSource<HRPictureOrnitho>(this.birdsPictures);            
         },
         complete: () => {}
       });
     } else {
       this.birdsPictures = [];
     }
-    this.dataSource = new MatTableDataSource<HRPictureOrnitho>(this.birdsPictures);
+
   }
   registerOnChange(fn: any): void {
     this._propagateChange(fn);
@@ -90,11 +94,25 @@ export class HrPicturesComponent implements OnInit, ControlValueAccessor {
     });
   }
 
-  openUpdatePictureDialog(idBird : string): void {
+  public deletePictureDialog(bird : HRPictureOrnitho): void {
+    const dialogRef = this.dialog.open(HRConfirmDeletionComponent);
+
+    dialogRef.afterClosed().subscribe(result => {
+      if(result){
+        console.log("Suprression !!!");
+      }else{
+        console.log("Suprression annulée");
+
+      }
+
+    });
+  }
+
+  public openUpdatePictureDialog(bird : HRPictureOrnitho): void {
 
     const dialogRef = this.dialog.open(HRAddPictureDialogComponent, {
       width: '600px',
-      data: { id: idBird,  vernacularName: this._model, isCreationMode: false  }
+      data: bird
     });
 
     dialogRef.afterClosed().subscribe(result => {
