@@ -2,7 +2,7 @@
 export class HRPictureOrnitho {
   id: string | null;
   vernacularName: string;
-  url: any; //Uint32Array;// string | ArrayBuffer;
+  url: any; 
   typeAge: string;
   isMale : boolean;
   source : string | null;

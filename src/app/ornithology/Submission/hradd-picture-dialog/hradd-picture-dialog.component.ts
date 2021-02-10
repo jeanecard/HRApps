@@ -9,6 +9,9 @@ import { HrSubmitSource } from 'src/app/model/Ornitho/hr-submit-source';
 import { HrSubmitGender } from 'src/app/model/Ornitho/hr-submit-gender';
 import { HrSubmitAge } from 'src/app/model/Ornitho/hr-submit-age';
 
+
+const UNASSIGNED_VALUE_DISPLAY = " _ ";
+const MORE_INFO_DISPLAY = " ...";
 @Component({
   selector: 'app-hradd-picture-dialog',
   templateUrl: './hradd-picture-dialog.component.html',
@@ -268,7 +271,7 @@ export class HRAddPictureDialogComponent implements OnInit {
 
   public getReducedText(value: string): string {
     if (value && value.length > 50) {
-      return value.substring(0, 50) + " ...";
+      return value.substring(0, 50) + MORE_INFO_DISPLAY;
     }
     return value;
   }
@@ -276,7 +279,7 @@ export class HRAddPictureDialogComponent implements OnInit {
     if (this.gender?.value?.submitGender) {
       return this.gender?.value?.submitGender;
     } else {
-      return " _ "
+      return UNASSIGNED_VALUE_DISPLAY;
     }
 
   }
@@ -284,7 +287,7 @@ export class HRAddPictureDialogComponent implements OnInit {
     if (this.ageType?.value?.age) {
       return this.ageType?.value?.age;
     } else {
-      return " _ "
+      return UNASSIGNED_VALUE_DISPLAY;
     }
   }
 
