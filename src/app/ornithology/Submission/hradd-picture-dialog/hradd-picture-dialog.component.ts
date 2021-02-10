@@ -1,9 +1,13 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FileToUpload, HRPictureOrnitho } from 'src/app/model/Ornitho/hrpicture-ornitho';
 import { HRPicturesSubmissionService } from 'src/app/shared/Ornithology/hrpictures-submission.service';
 import * as _ from 'lodash';
+import { Observable } from 'rxjs';
+import { HrSubmitSource } from 'src/app/model/Ornitho/hr-submit-source';
+import { HrSubmitGender } from 'src/app/model/Ornitho/hr-submit-gender';
+import { HrSubmitAge } from 'src/app/model/Ornitho/hr-submit-age';
 
 @Component({
   selector: 'app-hradd-picture-dialog',
@@ -13,14 +17,16 @@ import * as _ from 'lodash';
 export class HRAddPictureDialogComponent implements OnInit {
 
   private _model: HRPictureOrnitho;
-  public ornithoPictureDialog: FormGroup;
+  public dataPickerFormGroup: FormGroup;
   public ageType: FormControl;
   public gender: FormControl;
   public credit: FormControl;
   public source: FormControl;
-  fr: FileReader;
-  fileToUpload: File = null;
-  message: string;
+  public comment: FormControl;
+  public imagePickerFormGroup: FormGroup;
+  public sources: Observable<HrSubmitSource[]>;
+  public genders: Observable<HrSubmitGender[]>;
+  public ageTypes: Observable<HrSubmitAge[]>;
   url: string | ArrayBuffer;
   cardImageBase64: string;
   imageError: string;
@@ -28,8 +34,6 @@ export class HRAddPictureDialogComponent implements OnInit {
   uploadStatus = "saucisse";
 
   isLinear = false;
-  dataPickerFormGroup: FormGroup;
-  imagePickerFormGroup: FormGroup;
 
   theFile: any = null;
   messages: string[] = [];
@@ -38,30 +42,29 @@ export class HRAddPictureDialogComponent implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<HRAddPictureDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: HRPictureOrnitho,
-    private _picService: HRPicturesSubmissionService,
-    private _formBuilder: FormBuilder) { }
+    private _picService: HRPicturesSubmissionService
+  ) { }
 
   ngOnInit(): void {
 
-    this.dataPickerFormGroup = this._formBuilder.group({
-      firstCtrl: ['', Validators.required]
-    });
-    this.imagePickerFormGroup = this._formBuilder.group({
-      secondCtrl: ['', Validators.required]
-    });
     // TODO HR charge l'objet en cas d'update ici
     this._model = new HRPictureOrnitho();
     this.ageType = new FormControl(this.data?.typeAge);
     this.gender = new FormControl(this.data?.isMale);
     this.credit = new FormControl(this.data?.credit);
     this.source = new FormControl(this.data?.source);
-    this.ornithoPictureDialog = new FormGroup({
+    this.comment = new FormControl(this.data?.comment);
+    this.dataPickerFormGroup = new FormGroup({
       ageType: this.ageType,
       gender: this.gender,
       credit: this.credit,
-      source: this.source
+      source: this.source,
+      comment: this.comment
     });
-    
+    this.imagePickerFormGroup = new FormGroup({});
+    this.sources = this._picService.getSources(); // pense a unrelease
+    this.genders = this._picService.getGenders();
+    this.ageTypes = this._picService.getAges();
   }
 
   public onYesClick(): void {
@@ -176,90 +179,113 @@ export class HRAddPictureDialogComponent implements OnInit {
 
   fileChangeEvent(fileInput: any) {
     if (fileInput.target.files && fileInput.target.files[0]) {
-        // Size Filter Bytes
-        const max_size = 20971520;
-        const allowed_types = ['image/png', 'image/jpeg'];
-        const max_height = 15200;
-        const max_width = 25600;
+      // Size Filter Bytes
+      const max_size = 20971520;
+      const allowed_types = ['image/png', 'image/jpeg'];
+      const max_height = 15200;
+      const max_width = 25600;
 
-        if (fileInput.target.files[0].size > max_size) {
+      if (fileInput.target.files[0].size > max_size) {
+        this.imageError =
+          'Maximum size allowed is ' + max_size / 1000 + 'Mb';
+
+        return false;
+      }
+
+      if (!_.includes(allowed_types, fileInput.target.files[0].type)) {
+        this.imageError = 'Only Images are allowed ( JPG | PNG )';
+        return false;
+      }
+
+
+      this.theFile = fileInput.target.files[0];
+      this.readAndUploadFile(this.theFile);
+
+      // a priori dummy
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        const image = new Image();
+        image.src = e.target.result;
+        image.onload = rs => {
+          const img_height = rs.currentTarget['height'];
+          const img_width = rs.currentTarget['width'];
+
+          console.log(img_height, img_width);
+
+
+          if (img_height > max_height && img_width > max_width) {
             this.imageError =
-                'Maximum size allowed is ' + max_size / 1000 + 'Mb';
-
+              'Maximum dimentions allowed ' +
+              max_height +
+              '*' +
+              max_width +
+              'px';
             return false;
-        }
-
-        if (!_.includes(allowed_types, fileInput.target.files[0].type)) {
-            this.imageError = 'Only Images are allowed ( JPG | PNG )';
-            return false;
-        }
-        
-        
-        this.theFile = fileInput.target.files[0];
-        this.readAndUploadFile(this.theFile);
-        
-        // a priori dummy
-        const reader = new FileReader();
-        reader.onload = (e: any) => {
-            const image = new Image();
-            image.src = e.target.result;
-            image.onload = rs => {
-                const img_height = rs.currentTarget['height'];
-                const img_width = rs.currentTarget['width'];
-
-                console.log(img_height, img_width);
-
-
-                if (img_height > max_height && img_width > max_width) {
-                    this.imageError =
-                        'Maximum dimentions allowed ' +
-                        max_height +
-                        '*' +
-                        max_width +
-                        'px';
-                    return false;
-                } else {
-                    const imgBase64Path = e.target.result;
-                    this.cardImageBase64 = imgBase64Path;
-                    this.files.push(fileInput.target.files[0]);
-                    this.data.url = imgBase64Path;
-                    //this.isImageSaved = true;
-                    // this.previewImagePath = imgBase64Path;
-                }
-            };
+          } else {
+            const imgBase64Path = e.target.result;
+            this.cardImageBase64 = imgBase64Path;
+            this.files.push(fileInput.target.files[0]);
+            this.data.url = imgBase64Path;
+            //this.isImageSaved = true;
+            // this.previewImagePath = imgBase64Path;
+          }
         };
+      };
 
-        reader.readAsDataURL(fileInput.target.files[0]);
+      reader.readAsDataURL(fileInput.target.files[0]);
     }
-}
+  }
 
 
-private readAndUploadFile(theFile: any) {
-  let file = new FileToUpload();
-  
-  // Set File Information
-  file.fileName = theFile.name;
-  file.fileSize = theFile.size;
-  file.fileType = theFile.type;
-  file.lastModifiedTime = theFile.lastModified;
-  file.lastModifiedDate = theFile.lastModifiedDate;
-  
-  // Use FileReader() object to get file to upload
-  // NOTE: FileReader only works with newer browsers
-  let reader = new FileReader();
-  
-  // Setup onload event for reader
-  reader.onload = () => {
+  private readAndUploadFile(theFile: any) {
+    let file = new FileToUpload();
+
+    // Set File Information
+    file.fileName = theFile.name;
+    file.fileSize = theFile.size;
+    file.fileType = theFile.type;
+    file.lastModifiedTime = theFile.lastModified;
+    file.lastModifiedDate = theFile.lastModifiedDate;
+
+    // Use FileReader() object to get file to upload
+    // NOTE: FileReader only works with newer browsers
+    let reader = new FileReader();
+
+    // Setup onload event for reader
+    reader.onload = () => {
       // Store base64 encoded representation of file
       file.fileAsBase64 = reader.result.toString();
-      
+
       // POST to server
-      this._picService.uploadFile(file).subscribe(resp => { 
-          this.messages.push("Upload complete"); });
+      this._picService.uploadFile(file).subscribe(resp => {
+        this.messages.push("Upload complete");
+      });
+    }
+
+    // Read the file
+    reader.readAsDataURL(theFile);
   }
-  
-  // Read the file
-  reader.readAsDataURL(theFile);
-}
+
+  public getReducedText(value: string): string {
+    if (value && value.length > 50) {
+      return value.substring(0, 50) + " ...";
+    }
+    return value;
+  }
+  public getGenderSumupDisplay(): string {
+    if (this.gender?.value?.submitGender) {
+      return this.gender?.value?.submitGender;
+    } else {
+      return " _ "
+    }
+
+  }
+  public getAgeSumupDisplay(): string {
+    if (this.ageType?.value?.age) {
+      return this.ageType?.value?.age;
+    } else {
+      return " _ "
+    }
+  }
 
 }

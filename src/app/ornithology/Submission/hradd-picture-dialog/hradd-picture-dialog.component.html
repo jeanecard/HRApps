@@ -1,48 +1,47 @@
-<form [formGroup]="ornithoPictureDialog">
-
-
+<!-- <form [formGroup]="ornithoPictureDialog"> -->
   <mat-horizontal-stepper [linear]="isLinear" #stepper>
+
+    <!-- STEP 1 - Image metadata -->
     <mat-step [stepControl]="dataPickerFormGroup" label="Bird's image info">
       <form [formGroup]="dataPickerFormGroup">
-        <mat-card >
+        <mat-card>
           <mat-card-content>
             <mat-form-field class="form-field-width">
               <mat-label>Age</mat-label>
-              <mat-select formControlName="ageType" [(value)]="ageSelected" required="true">
-                <mat-option>None</mat-option>
-                <mat-option value="Juvenile">Juvenile</mat-option>
-                <mat-option value="Immature">Immature</mat-option>
-                <mat-option value="Adulte">Adulte</mat-option>
+              <mat-select formControlName="ageType" required="true">
+                <mat-option *ngFor="let ageIter of ageTypes | async" [value]="ageIter">
+                  {{ageIter?.age}}
+                </mat-option>
               </mat-select>
             </mat-form-field>
             <mat-icon></mat-icon>
             <mat-form-field class="form-field-width">
               <mat-label>Gender</mat-label>
-              <mat-select formControlName="gender" [(value)]="genderSelected" required="true">
-                <mat-option>None</mat-option>
-                <mat-option value="Male">Male</mat-option>
-                <mat-option value="Female">Female</mat-option>
-                <mat-option value="Unknown">Unknown</mat-option>
+              <mat-select formControlName="gender" required="true">
+                <mat-option *ngFor="let genderIter of genders | async" [value]="genderIter">
+                  {{genderIter?.submitGender}}
+                </mat-option>
               </mat-select>
             </mat-form-field>
           </mat-card-content>
-      
           <mat-card-content>
             <mat-form-field class="form-field-width">
               <mat-label>Source</mat-label>
-              <mat-select formControlName="source" [(value)]="sourceSelected" required="true">
-                <mat-option>None</mat-option>
-                <mat-option value="HR">HR</mat-option>
-                <mat-option value="Machin">Machin</mat-option>
-                <mat-option value="Saucisse">Saucisse</mat-option>
-              </mat-select>
+              <mat-select formControlName="source"  required="true">
+                <mat-option *ngFor="let sourceIter of sources | async" [value]="sourceIter">
+                  {{sourceIter?.source}}
+                </mat-option>
+               </mat-select>
             </mat-form-field>
           </mat-card-content>
-      
-         <mat-card-content>
+          <mat-card-content>
             <mat-form-field class="form-field-full-width">
               <mat-label>Credit</mat-label>
               <input formControlName="credit" matInput placeholder="Ex. http://hrcorp.com">
+            </mat-form-field>
+            <mat-form-field class="form-field-full-width-comment">
+              <mat-label>Leave a comment</mat-label>
+              <textarea formControlName="comment" matInput matTextareaAutosize="true" matAutosizeMaxRows="7"  matAutosizeMinRows="3" placeholder="Nice bird snapshoted on a roof while walking ..."></textarea>
             </mat-form-field>
           </mat-card-content>
         </mat-card>
@@ -51,18 +50,17 @@
         </div>
       </form>
     </mat-step>
+    <!-- STEP 2 - Load image -->
     <mat-step [stepControl]="imagePickerFormGroup" label="upload Picture">
       <form [formGroup]="imagePickerFormGroup">
         <div *ngIf="files?.length === 0" class="container" appDnd (fileDropped)="onFileDropped($event)">
           {{imageError}}
           <input type="file" #fileDropRef id="fileDropRef" (change)="fileChangeEvent($event)" />
           <img src="../../../assets/icons/upload.svg" class="imgUpload">
-    
           <h3>Drag and drop file here</h3>
           <h3>or</h3>
           <label for="fileDropRef">Browse for file</label>
         </div>
-    
         <div *ngFor="let file of files; let i = index">
           <mat-card class="example-card">
             <mat-card-header>
@@ -92,28 +90,24 @@
         </div>
       </form>
     </mat-step>
-    <mat-step label="Summerize">
-
+    <!-- STEP 3 - Synthesis and validation -->
+    <mat-step label="Synthesis">
       <mat-card class="example-card">
         <mat-card-header>
           <div mat-card-avatar class="example-header-image"></div>
-          <mat-card-title>Turdus Merula TODO</mat-card-title>
-          <mat-card-subtitle> Sexe</mat-card-subtitle>
-          <mat-card-subtitle>Age </mat-card-subtitle>
+          <mat-card-title>{{data.vernacularName}}</mat-card-title>
+          <mat-card-subtitle>Gender : {{getGenderSumupDisplay()}}
+          </mat-card-subtitle>
+          <mat-card-subtitle>Age : {{getAgeSumupDisplay()}} </mat-card-subtitle>
         </mat-card-header>
-        <img mat-card-image src={{cardImageBase64}} alt="Bird's picture to submit">
+        <img *ngIf="cardImageBase64"  mat-card-image src={{cardImageBase64}} alt="Bird's picture to submit">
         <mat-card-content>
-          <p>
-            a comment on 2 lines ...
-          </p>
+            {{getReducedText(comment.value)}}
+    
         </mat-card-content>
-
       </mat-card>
-
       <div>
         <button mat-button matStepperPrevious>Back</button>
-      <!-- </div> -->
-        <!-- <div class="validateButtons"> -->
         <button class=".validateButtons" mat-button (click)="onNoClick()">
           <mat-icon>cancel</mat-icon>
         </button>
@@ -121,9 +115,6 @@
           <mat-icon>check</mat-icon>
         </button>
       </div>
-
-        <!-- <button mat-button (click)="stepper.reset()">Reset</button> -->
-   
     </mat-step>
   </mat-horizontal-stepper>
-</form>
+<!-- </form> -->

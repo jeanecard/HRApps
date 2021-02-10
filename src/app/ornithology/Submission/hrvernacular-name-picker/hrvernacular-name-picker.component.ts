@@ -26,6 +26,7 @@ export class HRVernacularNamePickerComponent implements OnInit, ControlValueAcce
   public isNoData = false;
   public remaining = 3;
   public vernacularName : FormControl;
+ 
   private timerSubscription = new Subscription();
   private vernacularSubscription = new Subscription();
   private everySecond: Observable<number> = timer(0, 1000);
@@ -46,6 +47,7 @@ export class HRVernacularNamePickerComponent implements OnInit, ControlValueAcce
 
 
   ngOnInit(): void {
+
    this.results = [];
    this.vernacularName = new FormControl('');
    this.vernacularName.valueChanges.subscribe

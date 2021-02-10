@@ -8,6 +8,7 @@ export class HRPictureOrnitho {
   source : string | null;
   credit : string | null;
   imageData : File;
+  comment : string | null;
 }
 
 export class FileToUpload {
