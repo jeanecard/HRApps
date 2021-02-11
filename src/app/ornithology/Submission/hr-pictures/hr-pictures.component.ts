@@ -2,7 +2,7 @@ import { Component, forwardRef, OnInit } from '@angular/core';
 import { ControlValueAccessor, FormControl, FormGroup, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
-import { HRPictureOrnitho } from 'src/app/model/Ornitho/hrpicture-ornitho';
+import { HRPictureOrnithoAddInput, HRPictureOrnithoListItem } from 'src/app/model/Ornitho/hrpicture-ornitho';
 import { HRConfirmDeletionComponent } from 'src/app/shared/components/hrconfirm-deletion/hrconfirm-deletion.component';
 import { HRPicturesSubmissionService } from 'src/app/shared/Ornithology/hrpictures-submission.service';
 import { HRAddPictureDialogComponent } from '../hradd-picture-dialog/hradd-picture-dialog.component';
@@ -22,8 +22,8 @@ export class HrPicturesComponent implements OnInit, ControlValueAccessor {
 
   private _model : string;
   public displayedColumns: string[] = ['url','typeAge', 'gender', 'source', 'credit',  'update', 'delete'];
-  private birdsPictures: HRPictureOrnitho[];
-  public dataSource: MatTableDataSource<HRPictureOrnitho>;
+  private birdsPictures: HRPictureOrnithoListItem[];
+  public dataSource: MatTableDataSource<HRPictureOrnithoListItem>;
   public isButtonDisabled: boolean;
   private _propagateChange = (_: any) => { };
   private _propagateTouch = (_: any) => { };
@@ -39,12 +39,12 @@ export class HrPicturesComponent implements OnInit, ControlValueAccessor {
         next:
           data => {
             this.birdsPictures = data;
-            this.dataSource = new MatTableDataSource<HRPictureOrnitho>(this.birdsPictures);            
+            this.dataSource = new MatTableDataSource<HRPictureOrnithoListItem>(this.birdsPictures);            
           },
         error: (dataError) => {
           console.log(dataError);
           this.birdsPictures = [];          
-          this.dataSource = new MatTableDataSource<HRPictureOrnitho>(this.birdsPictures);            
+          this.dataSource = new MatTableDataSource<HRPictureOrnithoListItem>(this.birdsPictures);            
         },
         complete: () => {}
       });
@@ -65,14 +65,14 @@ export class HrPicturesComponent implements OnInit, ControlValueAccessor {
 
   ngOnInit(): void {
     this.birdsPictures = [];
-    this.dataSource = new MatTableDataSource<HRPictureOrnitho>(this.birdsPictures);
+    this.dataSource = new MatTableDataSource<HRPictureOrnithoListItem>(this.birdsPictures);
   }
 
   openAddPictureDialog(): void {
 
     const dialogRef = this.dialog.open(HRAddPictureDialogComponent, {
       width: '600px',
-      data: { vernacularName: this._model, isCreationMode: true  }
+      data: { vernacularName: this._model  }
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -81,7 +81,7 @@ export class HrPicturesComponent implements OnInit, ControlValueAccessor {
           next:
             data => {
               this.birdsPictures = data;
-              this.dataSource = new MatTableDataSource<HRPictureOrnitho>(this.birdsPictures);    
+              this.dataSource = new MatTableDataSource<HRPictureOrnithoListItem>(this.birdsPictures);    
             },
           error: (dataError) => {
             console.log(dataError);
@@ -89,12 +89,12 @@ export class HrPicturesComponent implements OnInit, ControlValueAccessor {
           complete: () => {}
         });
       } else{
-        this.dataSource = new MatTableDataSource<HRPictureOrnitho>([]);
+        this.dataSource = new MatTableDataSource<HRPictureOrnithoListItem>([]);
       }
     });
   }
 
-  public deletePictureDialog(bird : HRPictureOrnitho): void {
+  public deletePictureDialog(bird : HRPictureOrnithoListItem): void {
     const dialogRef = this.dialog.open(HRConfirmDeletionComponent);
 
     dialogRef.afterClosed().subscribe(result => {
@@ -108,11 +108,11 @@ export class HrPicturesComponent implements OnInit, ControlValueAccessor {
     });
   }
 
-  public openUpdatePictureDialog(bird : HRPictureOrnitho): void {
+  public openUpdatePictureDialog(bird : HRPictureOrnithoListItem): void {
 
     const dialogRef = this.dialog.open(HRAddPictureDialogComponent, {
       width: '600px',
-      data: bird
+      data: null
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -121,7 +121,7 @@ export class HrPicturesComponent implements OnInit, ControlValueAccessor {
           next:
             data => {
               this.birdsPictures = data;
-              this.dataSource = new MatTableDataSource<HRPictureOrnitho>(this.birdsPictures);    
+              this.dataSource = new MatTableDataSource<HRPictureOrnithoListItem>(this.birdsPictures);    
             },
           error: (dataError) => {
             console.log(dataError);
@@ -129,7 +129,7 @@ export class HrPicturesComponent implements OnInit, ControlValueAccessor {
           complete: () => {}
         });
       } else{
-        this.dataSource = new MatTableDataSource<HRPictureOrnitho>([]);
+        this.dataSource = new MatTableDataSource<HRPictureOrnithoListItem>([]);
       }
     });
   }

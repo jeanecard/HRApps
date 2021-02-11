@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { FileToUpload, HRPictureOrnitho } from 'src/app/model/Ornitho/hrpicture-ornitho';
+import { FileToUpload, HRPictureOrnithoAddInput } from 'src/app/model/Ornitho/hrpicture-ornitho';
 import { HRPicturesSubmissionService } from 'src/app/shared/Ornithology/hrpictures-submission.service';
 import * as _ from 'lodash';
 import { Observable } from 'rxjs';
@@ -19,7 +19,7 @@ const MORE_INFO_DISPLAY = " ...";
 })
 export class HRAddPictureDialogComponent implements OnInit {
 
-  private _model: HRPictureOrnitho;
+  private _model: HRPictureOrnithoAddInput;
   public dataPickerFormGroup: FormGroup;
   public ageType: FormControl;
   public gender: FormControl;
@@ -44,18 +44,18 @@ export class HRAddPictureDialogComponent implements OnInit {
 
   constructor(
     public dialogRef: MatDialogRef<HRAddPictureDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: HRPictureOrnitho,
+    @Inject(MAT_DIALOG_DATA) public data: HRPictureOrnithoAddInput,
     private _picService: HRPicturesSubmissionService
   ) { }
 
   ngOnInit(): void {
 
     // TODO HR charge l'objet en cas d'update ici
-    this._model = new HRPictureOrnitho();
-    this.ageType = new FormControl(this.data?.typeAge);
-    this.gender = new FormControl(this.data?.isMale);
+    this._model = new HRPictureOrnithoAddInput();
+    this.ageType = new FormControl(this.data?.ageType);
+    this.gender = new FormControl(this.data?.genderType);
     this.credit = new FormControl(this.data?.credit);
-    this.source = new FormControl(this.data?.source);
+    this.source = new FormControl(this.data?.sourceType);
     this.comment = new FormControl(this.data?.comment);
     this.dataPickerFormGroup = new FormGroup({
       ageType: this.ageType,
@@ -86,9 +86,9 @@ export class HRAddPictureDialogComponent implements OnInit {
         }
       });
     } else {
-      this._picService.addImage(this._model).subscribe({
+      this._picService.addImageData(this._model).subscribe({
         next:
-          data => {
+          data => { 
             this.dialogRef.close(data);
           },
         error: (dataError) => {
@@ -108,10 +108,9 @@ export class HRAddPictureDialogComponent implements OnInit {
     this._model.credit = this.credit.value;
     this._model.id = this.data.id;
     this._model.vernacularName = this.data.vernacularName;
-    this._model.isMale = this.gender.value;
-    this._model.source = this.source.value;
-    this._model.typeAge = this.ageType.value;
-    this._model.url = this.data.url;
+    this._model.genderType = this.gender.value?.id;
+    this._model.sourceType = this.source.value?.id;
+    this._model.ageType = this.ageType.value?.id;
   }
   // CODE DROP
   files: any[] = [];
@@ -154,7 +153,6 @@ export class HRAddPictureDialogComponent implements OnInit {
     let img = new Image();
     reader.readAsDataURL(files[0]);
     reader.onload = (_event) => {
-      this.data.url = files[0];
       this.url = reader.result;
     }
   }
@@ -228,9 +226,6 @@ export class HRAddPictureDialogComponent implements OnInit {
             const imgBase64Path = e.target.result;
             this.cardImageBase64 = imgBase64Path;
             this.files.push(fileInput.target.files[0]);
-            this.data.url = imgBase64Path;
-            //this.isImageSaved = true;
-            // this.previewImagePath = imgBase64Path;
           }
         };
       };

@@ -4,17 +4,12 @@ import { Observable, of } from 'rxjs';
 import { HrSubmitAge } from 'src/app/model/Ornitho/hr-submit-age';
 import { HrSubmitGender } from 'src/app/model/Ornitho/hr-submit-gender';
 import { HrSubmitSource } from 'src/app/model/Ornitho/hr-submit-source';
-import { FileToUpload, HRPictureOrnitho } from 'src/app/model/Ornitho/hrpicture-ornitho';
+import { FileToUpload, HRPictureOrnithoAddInput, HRPictureOrnithoListItem, HRPictureOrnithoUpdateInput } from 'src/app/model/Ornitho/hrpicture-ornitho';
 
 @Injectable({
   providedIn: 'root'
 })
 export class HRPicturesSubmissionService {
-
-
-  private _stubMerle: HRPictureOrnitho[];
-  private _stubPerroquet: HRPictureOrnitho[];
-  private _stubMerkel: HRPictureOrnitho[];
 
   private API_URL = "https://localhost:44308/api/v1.0/HRBirdSubmission/add-picture";
   private httpOptions = {
@@ -24,37 +19,25 @@ export class HRPicturesSubmissionService {
   };
 
   constructor(private http: HttpClient) {
-    this._stubMerle = [];
-    this._stubPerroquet = [];
-    this._stubMerkel = [];
-
   }
 
-  public getImages(vernacularName: string): Observable<HRPictureOrnitho[]> {
+  public getImages(vernacularName: string): Observable<HRPictureOrnithoListItem[]> {
 
     if (vernacularName) {
-      return this.http.get<HRPictureOrnitho[]>('https://localhost:44308/api/v1.0/HRBirdSubmission/get-images/' + vernacularName);
+      return this.http.get<HRPictureOrnithoListItem[]>('https://localhost:44308/api/v1.0/HRBirdSubmission/get-images/' + vernacularName);
     }
     return of([]);
   }
 
-  public addImage(data: HRPictureOrnitho): Observable<HRPictureOrnitho> {
+  public addImageData(data: HRPictureOrnithoAddInput): Observable<HRPictureOrnithoAddInput> {
 
-    this.http.post<HRPictureOrnitho>('https://localhost:44308/api/v1.0/HRBirdSubmission/add-image', {
-      "id": "063c3cd5-a9ff-4fe1-86c3-c12599077559",
-      "vernacularName": data.vernacularName,
-      "imageData": data.url,
-      "typeAge": 1,
-      "typeGender": 2,
-      "sourceID": 4,
-      "credit": data.credit
-    }).subscribe(result => {
+    this.http.post<HRPictureOrnithoAddInput>('https://localhost:44308/api/v1.0/HRBirdSubmission/add-image-data', data).subscribe(result => {
       console.log("KO ?");
     });
     return of(data);
   }
 
-  public updateImage(data: HRPictureOrnitho): Observable<HRPictureOrnitho> {
+  public updateImage(data: HRPictureOrnithoUpdateInput): Observable<HRPictureOrnithoUpdateInput> {
     return of(data);
   }
 

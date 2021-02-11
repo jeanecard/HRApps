@@ -1,14 +1,32 @@
 
-export class HRPictureOrnitho {
+export class HRPictureOrnithoAddInput {
   id: string | null;
   vernacularName: string;
-  url: any; 
-  typeAge: string;
-  isMale : boolean;
-  source : string | null;
+  ageType: string;
+  genderType : boolean;
+  sourceType : string | null;
   credit : string | null;
-  imageData : File;
   comment : string | null;
+}
+
+export class HRPictureOrnithoUpdateInput {
+  id: string | null;
+  vernacularName: string;
+  ageType: string;
+  genderType : boolean;
+  sourceType : string | null;
+  credit : string | null;
+  comment : string | null;
+}
+export class HRPictureOrnithoListItem {
+  id: string | null;
+  thumbnailUrl : string | null;
+  vernacularName: string;
+  age: string;
+  gender : string;
+  source : string ;
+  credit : string ;
+  comment : string;
 }
 
 export class FileToUpload {

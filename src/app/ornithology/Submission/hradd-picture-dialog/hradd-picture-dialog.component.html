@@ -1,6 +1,45 @@
   <mat-horizontal-stepper [linear]="isLinear" #stepper>
+    <!-- STEP 1 - Load image -->
+    <mat-step [stepControl]="imagePickerFormGroup" label="upload Picture">
+      <form [formGroup]="imagePickerFormGroup">
+        <div *ngIf="files?.length === 0" class="container" appDnd (fileDropped)="onFileDropped($event)">
+          {{imageError}}
+          <input type="file" #fileDropRef id="fileDropRef" (change)="fileChangeEvent($event)" />
+          <img src="../../../assets/icons/upload.svg" class="imgUpload">
+          <h3>Drag and drop file here</h3>
+          <h3>or</h3>
+          <label for="fileDropRef">Browse for file</label>
+        </div>
+        <div *ngFor="let file of files; let i = index">
+          <mat-card class="example-card">
+            <mat-card-header>
+              <mat-card-title>{{ file?.name }}</mat-card-title>
+              <mat-card-subtitle>{{ formatBytes(file?.size) }}</mat-card-subtitle>
+            </mat-card-header>
+            <img mat-card-image src={{cardImageBase64}} alt="Bird's picture to submit">
+            <mat-card-content>
+            </mat-card-content>
+            <mat-card-actions>
+              <button mat-button (click)="deleteFile(i)">
+                <mat-icon>delete</mat-icon>Delete
+              </button>
+            </mat-card-actions>
+          </mat-card>
+        </div>
+        <div *ngIf="isUploadingState">
+          <mat-card-content>
+            <mat-label>Uploading progress</mat-label>
+            <mat-progress-bar mode="determinate" value="10"></mat-progress-bar>
+            <mat-label>{{uploadStatus}}</mat-label>
+          </mat-card-content>
+        </div>
+        <div>
 
-    <!-- STEP 1 - Image metadata -->
+          <button mat-button matStepperNext>Next</button>
+        </div>
+      </form>
+    </mat-step>
+    <!-- STEP 2 - Image metadata -->
     <mat-step [stepControl]="dataPickerFormGroup" label="Bird's image info">
       <form [formGroup]="dataPickerFormGroup">
         <mat-card>
@@ -45,50 +84,12 @@
           </mat-card-content>
         </mat-card>
         <div>
-          <button mat-button matStepperNext>Next</button>
-        </div>
-      </form>
-    </mat-step>
-    <!-- STEP 2 - Load image -->
-    <mat-step [stepControl]="imagePickerFormGroup" label="upload Picture">
-      <form [formGroup]="imagePickerFormGroup">
-        <div *ngIf="files?.length === 0" class="container" appDnd (fileDropped)="onFileDropped($event)">
-          {{imageError}}
-          <input type="file" #fileDropRef id="fileDropRef" (change)="fileChangeEvent($event)" />
-          <img src="../../../assets/icons/upload.svg" class="imgUpload">
-          <h3>Drag and drop file here</h3>
-          <h3>or</h3>
-          <label for="fileDropRef">Browse for file</label>
-        </div>
-        <div *ngFor="let file of files; let i = index">
-          <mat-card class="example-card">
-            <mat-card-header>
-              <mat-card-title>{{ file?.name }}</mat-card-title>
-              <mat-card-subtitle>{{ formatBytes(file?.size) }}</mat-card-subtitle>
-            </mat-card-header>
-            <img mat-card-image src={{cardImageBase64}} alt="Bird's picture to submit">
-            <mat-card-content>
-            </mat-card-content>
-            <mat-card-actions>
-              <button mat-button (click)="deleteFile(i)">
-                <mat-icon>delete</mat-icon>Delete
-              </button>
-            </mat-card-actions>
-          </mat-card>
-        </div>
-        <div *ngIf="isUploadingState">
-          <mat-card-content>
-            <mat-label>Uploading progress</mat-label>
-            <mat-progress-bar mode="determinate" value="10"></mat-progress-bar>
-            <mat-label>{{uploadStatus}}</mat-label>
-          </mat-card-content>
-        </div>
-        <div>
           <button mat-button matStepperPrevious>Back</button>
           <button mat-button matStepperNext>Next</button>
         </div>
       </form>
     </mat-step>
+
     <!-- STEP 3 - Synthesis and validation -->
     <mat-step label="Synthesis">
       <mat-card class="example-card">
