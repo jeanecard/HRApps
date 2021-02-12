@@ -10,6 +10,7 @@ export class HRCDNPicturesService {
   public static readonly GEOLOCATOR_ID  = "GeoLocator";
   public static readonly HRNITHOLOGY_ID  = "HRNothology";
   public static readonly HRDRAWING_ID  = "HRDrawing";
+  public static readonly HRIMAGE_PROCESSING_ID = "HRImageProcessing";
 
 
   private readonly rootUrl = "https://jeanecard.github.io/HRBirdsPicturesDB/HRAPPS-CDN/";
@@ -21,7 +22,7 @@ export class HRCDNPicturesService {
     this._dictionary[HRCDNPicturesService.GEOLOCATOR_ID] = this.rootUrl + "geoLocator12.svg";
     this._dictionary[HRCDNPicturesService.HRNITHOLOGY_ID] = this.rootUrl + "hrnithologie4.svg";
     this._dictionary[HRCDNPicturesService.HRDRAWING_ID] = this.rootUrl + "drawing.svg";
-
+    this._dictionary[HRCDNPicturesService.HRIMAGE_PROCESSING_ID] = this.rootUrl + "imageProcessing.jpg";
   }
  
   public getPicture(id:string) : string{

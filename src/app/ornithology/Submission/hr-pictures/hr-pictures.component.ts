@@ -2,7 +2,7 @@ import { Component, forwardRef, OnInit } from '@angular/core';
 import { ControlValueAccessor, FormControl, FormGroup, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
-import { HRPictureOrnithoAddInput, HRPictureOrnithoListItem } from 'src/app/model/Ornitho/hrpicture-ornitho';
+import {  HRPictureOrnithoListItem } from 'src/app/model/Ornitho/hrpicture-ornitho';
 import { HRConfirmDeletionComponent } from 'src/app/shared/components/hrconfirm-deletion/hrconfirm-deletion.component';
 import { HRPicturesSubmissionService } from 'src/app/shared/Ornithology/hrpictures-submission.service';
 import { HRAddPictureDialogComponent } from '../hradd-picture-dialog/hradd-picture-dialog.component';
@@ -99,12 +99,19 @@ export class HrPicturesComponent implements OnInit, ControlValueAccessor {
 
     dialogRef.afterClosed().subscribe(result => {
       if(result){
-        console.log("Suprression !!!");
+        this._picService.deleteImage(bird.id).subscribe({
+          next:
+            data => {
+              console.log("OK");
+            },
+          error: (dataError) => {
+            console.log(dataError);
+          },
+          complete: () => {}
+        });
       }else{
         console.log("Suprression annulée");
-
       }
-
     });
   }
 
