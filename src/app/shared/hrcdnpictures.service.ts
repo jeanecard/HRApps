@@ -22,7 +22,7 @@ export class HRCDNPicturesService {
     this._dictionary[HRCDNPicturesService.GEOLOCATOR_ID] = this.rootUrl + "geoLocator12.svg";
     this._dictionary[HRCDNPicturesService.HRNITHOLOGY_ID] = this.rootUrl + "hrnithologie4.svg";
     this._dictionary[HRCDNPicturesService.HRDRAWING_ID] = this.rootUrl + "drawing.svg";
-    this._dictionary[HRCDNPicturesService.HRIMAGE_PROCESSING_ID] = this.rootUrl + "imageProcessing.jpg";
+    this._dictionary[HRCDNPicturesService.HRIMAGE_PROCESSING_ID] = this.rootUrl + "image-processing.svg";
   }
  
   public getPicture(id:string) : string{

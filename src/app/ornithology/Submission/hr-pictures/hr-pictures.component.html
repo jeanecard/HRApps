@@ -51,6 +51,10 @@
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
     </table>
   </mat-card-content>
+  <mat-card-content *ngIf="isLoading" >
+    <mat-spinner></mat-spinner>
+  </mat-card-content>
+  
   <mat-card-actions>
     <button [disabled]="isButtonDisabled" mat-button (click)="openAddPictureDialog()">
       <mat-icon>add_a_photo</mat-icon>

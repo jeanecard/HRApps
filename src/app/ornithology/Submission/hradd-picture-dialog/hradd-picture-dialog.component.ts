@@ -107,7 +107,7 @@ export class HRAddPictureDialogComponent implements OnInit {
   private updateModelFromView(): void {
     this._model.credit = this.credit.value;
     this._model.id = this.data.id;
-    this._model.vernacularName = this.data.vernacularName;
+    this._model.vernacularName = this.data?.vernacularName;
     this._model.genderType = this.gender.value?.id;
     this._model.sourceType = this.source.value?.id;
     this._model.ageType = this.ageType.value?.id;
@@ -244,6 +244,14 @@ export class HRAddPictureDialogComponent implements OnInit {
     file.fileType = theFile.type;
     file.lastModifiedTime = theFile.lastModified;
     file.lastModifiedDate = theFile.lastModifiedDate;
+    file.submittedPicture = new HRPictureOrnithoAddInput();
+    file.submittedPicture.ageType = this.ageType.value?.id;
+    file.submittedPicture.genderType = this.gender.value?.id;
+    file.submittedPicture.sourceType = this.source.value?.id;
+    file.submittedPicture.vernacularName = this.data?.vernacularName;
+    file.submittedPicture.credit = this.credit.value;
+
+ 
 
     // Use FileReader() object to get file to upload
     // NOTE: FileReader only works with newer browsers

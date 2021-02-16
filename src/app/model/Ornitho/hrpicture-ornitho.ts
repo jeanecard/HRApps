@@ -36,4 +36,7 @@ export class FileToUpload {
   lastModifiedTime: number = 0;
   lastModifiedDate: Date = null;
   fileAsBase64: string = "";
+  part: number = 0;
+  partCount: number = 0;
+  submittedPicture : HRPictureOrnithoAddInput = null;
 }

@@ -14,7 +14,7 @@ export class HRPicturesSubmissionService {
     return this.http.delete('https://localhost:44308/api/v1.0/HRBirdSubmission/delete-image-data/' + id);
   }
 
-  private API_URL = "https://localhost:44308/api/v1.0/HRBirdSubmission/add-picture";
+  private API_URL = "https://localhost:44308/api/HRPictureStorage/add-picture";
   private httpOptions = {
     headers: new HttpHeaders({
       'Content-Type': 'application/json'
