@@ -36,10 +36,7 @@ export class HRAddPictureDialogComponent implements OnInit {
   imageError: string;
   isUploadingState = false;
   uploadStatus = "saucisse";
-
   isLinear = false;
-
-  // theFile: any = null;
   messages: string[] = [];
 
 
@@ -73,41 +70,47 @@ export class HRAddPictureDialogComponent implements OnInit {
 
   /**
   *  Save data :
-  * 1- Save Metadata
-  * 2- Save corresponding uploaded file
+  * 1- Update model from view
+  * 2- Get service Observable for metadata update or creation
+  * 3- Upload metadata
+  * 4- Upload file
   */
   public onYesClick(): void {
-
+    //1- 
     this.updateModelFromView();
-    //1- Upload metadata
+    //2- 
+    let observable: Observable<any>;
     if (this.data?.id) {
-      this._picService.updateImage(this._model).subscribe({
-        next:
-          data => {
-            this.dialogRef.close(data);
-          },
-        error: (dataError) => {
-          console.log(dataError);
-        },
-        complete: () => {
-
-        }
-      });
+      observable = this._picService.updateImage(this._model);
     } else {
-      this._picService.addImageData(this._model).subscribe({
-        next:
-          data => {
-            this.dialogRef.close(data);
-          },
-        error: (dataError) => {
-          console.log(dataError);
-        },
-        complete: () => {
-        }
-      });
+      observable = this._picService.addImageData(this._model);
     }
-    //2- Upload file
-    this.readAndUploadFile();
+    //3- 
+    observable.subscribe({
+      next:
+        imageData => {
+          //4- 
+          let fileForService = this.createFileToUploadFromSelectedFile();
+          if (fileForService) {
+            this._picService.uploadFile(fileForService).subscribe({ next :uploadResponse => {
+              this.messages.push("Upload complete");
+              this.dialogRef.close(imageData);
+            },      error: (dataError) => {
+              // TODO Error display
+            },
+            complete: () => {
+              // Dummy
+            }
+          });
+          }          
+        },
+      error: (dataError) => {
+        // Dummy
+      },
+      complete: () => {
+        // Dummy
+      }
+    });
   }
 
   /**
@@ -191,7 +194,6 @@ export class HRAddPictureDialogComponent implements OnInit {
       let firstFile = filesInput.target.files[0];
       // 1.1-
       if (!this.isErrorWhileCheckingTypeAndSize(filesInput)) {
-        // this.theFile = filesInput.target.files[0];
         // 1.1.1-
         const reader = new FileReader();
         reader.onload = (e: any) => {
@@ -235,10 +237,9 @@ export class HRAddPictureDialogComponent implements OnInit {
    * Prepare data for service from uploaded file.
    * 
    */
-  private readAndUploadFile() {
-
-    let selectedFile = this.files[0];
-    if (selectedFile) {
+  private createFileToUploadFromSelectedFile(): FileToUpload {
+    if (this.files && this.files[0]) {
+      let selectedFile = this.files[0];
       let fileForService = new FileToUpload();
       // Set File Information
       fileForService.fileName = selectedFile.name;
@@ -252,13 +253,10 @@ export class HRAddPictureDialogComponent implements OnInit {
       fileForService.submittedPicture.sourceType = this.source.value?.id;
       fileForService.submittedPicture.vernacularName = this.data?.vernacularName;
       fileForService.submittedPicture.credit = this.credit.value;
-
       fileForService.fileAsBase64 = this.cardImageBase64;
-      // POST to server
-      this._picService.uploadFile(fileForService).subscribe(resp => {
-        this.messages.push("Upload complete");
-      });
+      return fileForService;
     }
+    return null;
   }
 
   public getReducedText(value: string): string {

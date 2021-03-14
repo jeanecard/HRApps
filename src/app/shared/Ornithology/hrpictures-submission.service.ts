@@ -33,11 +33,7 @@ export class HRPicturesSubmissionService {
   }
 
   public addImageData(data: HRPictureOrnithoAddInput): Observable<HRPictureOrnithoAddInput> {
-
-    this.http.post<HRPictureOrnithoAddInput>('https://localhost:44308/api/v1.0/HRBirdSubmission/add-image-data', data).subscribe(result => {
-      console.log("KO ?");
-    });
-    return of(data);
+    return this.http.post<HRPictureOrnithoAddInput>('https://localhost:44308/api/v1.0/HRBirdSubmission/add-image-metadata', data);
   }
 
   public updateImage(data: HRPictureOrnithoUpdateInput): Observable<HRPictureOrnithoUpdateInput> {
