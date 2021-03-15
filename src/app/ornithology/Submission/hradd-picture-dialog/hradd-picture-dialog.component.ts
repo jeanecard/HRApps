@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { FileToUpload, HRPictureOrnithoAddInput } from 'src/app/model/Ornitho/hrpicture-ornitho';
+import { FileToUpload, HRPictureOrnithoAddOrUpdateInput } from 'src/app/model/Ornitho/hrpicture-ornitho';
 import { HRPicturesSubmissionService } from 'src/app/shared/Ornithology/hrpictures-submission.service';
 import * as _ from 'lodash';
 import { Observable } from 'rxjs';
@@ -18,7 +18,7 @@ const MORE_INFO_DISPLAY = " ...";
 })
 export class HRAddPictureDialogComponent implements OnInit {
 
-  private _model: HRPictureOrnithoAddInput;
+  private _model: HRPictureOrnithoAddOrUpdateInput;
   public dataPickerFormGroup: FormGroup;
   public ageType: FormControl;
   public gender: FormControl;
@@ -42,7 +42,7 @@ export class HRAddPictureDialogComponent implements OnInit {
 
   constructor(
     public dialogRef: MatDialogRef<HRAddPictureDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: HRPictureOrnithoAddInput,
+    @Inject(MAT_DIALOG_DATA) public data: HRPictureOrnithoAddOrUpdateInput,
     private _picService: HRPicturesSubmissionService
   ) { 
   }
@@ -50,7 +50,7 @@ export class HRAddPictureDialogComponent implements OnInit {
   ngOnInit(): void {
 
     // TODO HR charge l'objet en cas d'update ici
-    this._model = new HRPictureOrnithoAddInput();
+    this._model = new HRPictureOrnithoAddOrUpdateInput();
     this.ageType = new FormControl(this.data?.ageType);
     this.gender = new FormControl(this.data?.genderType);
     this.credit = new FormControl(this.data?.credit);
@@ -143,13 +143,20 @@ export class HRAddPictureDialogComponent implements OnInit {
       next:
         imageData => {
           //4- 
-          let fileForService = this.createFileToUploadFromSelectedFile();
-          fileForService.submittedPicture.id = imageData.id;
+          console.log("1 appel du close depuis picdialcomp");
+          let fileForService = this.createFileToUploadFromSelectedFile(imageData);
+          
           if (fileForService) {
-            this._picService.uploadFile(fileForService).subscribe({ next :uploadResponse => {
+            this._picService.uploadFile(fileForService).subscribe(
+              { 
+                next :uploadResponse => {
               this.messages.push("Upload complete");
+              console.log("2 appel du close depuis picdialcomp");
               this.dialogRef.close(imageData);
-            },      error: (dataError) => {
+            },      
+            error: (dataError) => {
+              console.log("Error on_picService.uploadFile ");
+              console.log(dataError);
               // TODO Error display
             },
             complete: () => {
@@ -291,7 +298,7 @@ export class HRAddPictureDialogComponent implements OnInit {
    * Prepare data for service from uploaded file.
    * 
    */
-  private createFileToUploadFromSelectedFile(): FileToUpload {
+  private createFileToUploadFromSelectedFile(element : HRPictureOrnithoAddOrUpdateInput): FileToUpload {
     if (this.files && this.files[0]) {
       let selectedFile = this.files[0];
       let fileForService = new FileToUpload();
@@ -301,13 +308,15 @@ export class HRAddPictureDialogComponent implements OnInit {
       fileForService.fileType = selectedFile.type;
       fileForService.lastModifiedTime = selectedFile.lastModified;
       fileForService.lastModifiedDate = selectedFile.lastModifiedDate;
-      fileForService.submittedPicture = new HRPictureOrnithoAddInput();
+      fileForService.submittedPicture = new HRPictureOrnithoAddOrUpdateInput();
       fileForService.submittedPicture.ageType = this.ageType.value?.id;
       fileForService.submittedPicture.genderType = this.gender.value?.id;
       fileForService.submittedPicture.sourceType = this.source.value?.id;
-      fileForService.submittedPicture.vernacularName = this.data?.vernacularName;
+      fileForService.submittedPicture.vernacularName = element.vernacularName;
       fileForService.submittedPicture.credit = this.credit.value;
+      fileForService.submittedPicture.thumbnailUrl = element.thumbnailUrl;
       fileForService.fileAsBase64 = this.cardImageBase64;
+      fileForService.submittedPicture.id = element.id;
       return fileForService;
     }
     return null;

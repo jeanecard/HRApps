@@ -4,7 +4,7 @@ import { Observable, of } from 'rxjs';
 import { HrSubmitAge } from 'src/app/model/Ornitho/hr-submit-age';
 import { HrSubmitGender } from 'src/app/model/Ornitho/hr-submit-gender';
 import { HrSubmitSource } from 'src/app/model/Ornitho/hr-submit-source';
-import { FileToUpload, HRPictureOrnithoAddInput, HRPictureOrnithoListItem, HRPictureOrnithoUpdateInput } from 'src/app/model/Ornitho/hrpicture-ornitho';
+import { FileToUpload, HRPictureOrnithoAddOrUpdateInput, HRPictureOrnithoListItem, HRPictureOrnithoUpdateInput } from 'src/app/model/Ornitho/hrpicture-ornitho';
 
 @Injectable({
   providedIn: 'root'
@@ -32,8 +32,8 @@ export class HRPicturesSubmissionService {
     return of([]);
   }
 
-  public addImageData(data: HRPictureOrnithoAddInput): Observable<HRPictureOrnithoAddInput> {
-    return this.http.post<HRPictureOrnithoAddInput>('https://localhost:44308/api/v1.0/HRBirdSubmission/add-image-metadata', data);
+  public addImageData(data: HRPictureOrnithoAddOrUpdateInput): Observable<HRPictureOrnithoAddOrUpdateInput> {
+    return this.http.post<HRPictureOrnithoAddOrUpdateInput>('https://localhost:44308/api/v1.0/HRBirdSubmission/add-image-metadata', data);
   }
 
   public updateImage(data: HRPictureOrnithoUpdateInput): Observable<HRPictureOrnithoUpdateInput> {

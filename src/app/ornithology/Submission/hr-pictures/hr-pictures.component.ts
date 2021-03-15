@@ -66,11 +66,11 @@ export class HrPicturesComponent implements OnInit, ControlValueAccessor {
     });
 
     dialogRef.afterClosed().subscribe(result => {
+      console.log("traitement du close depuis piccomp");
+
       if (result) {
         this.RefreshImages();
-      } else {
-        this.dataSource = new MatTableDataSource<HRPictureOrnithoListItem>([]);
-      }
+      } 
     });
   }
 

@@ -1,5 +1,5 @@
 
-export class HRPictureOrnithoAddInput {
+export class HRPictureOrnithoAddOrUpdateInput {
   id: string | null;
   vernacularName: string;
   ageType: string | null;
@@ -47,5 +47,5 @@ export class FileToUpload {
   fileAsBase64: string = "";
   part: number = 0;
   partCount: number = 0;
-  submittedPicture : HRPictureOrnithoAddInput = null;
+  submittedPicture : HRPictureOrnithoAddOrUpdateInput = null;
 }
