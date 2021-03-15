@@ -26,9 +26,9 @@ export class HRAddPictureDialogComponent implements OnInit {
   public source: FormControl;
   public comment: FormControl;
   public imagePickerFormGroup: FormGroup;
-  public sources: Observable<HrSubmitSource[]>;
-  public genders: Observable<HrSubmitGender[]>;
-  public ageTypes: Observable<HrSubmitAge[]>;
+  public sources: HrSubmitSource[];
+  public genders: HrSubmitGender[];
+  public ageTypes: HrSubmitAge[];
   public files: any[] = [];
   private MAX_SIZE = 20971520;
   private ALLOWED_TYPES = ['image/png', 'image/jpeg'];
@@ -44,7 +44,8 @@ export class HRAddPictureDialogComponent implements OnInit {
     public dialogRef: MatDialogRef<HRAddPictureDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: HRPictureOrnithoAddInput,
     private _picService: HRPicturesSubmissionService
-  ) { }
+  ) { 
+  }
 
   ngOnInit(): void {
 
@@ -63,9 +64,61 @@ export class HRAddPictureDialogComponent implements OnInit {
       comment: this.comment
     });
     this.imagePickerFormGroup = new FormGroup({});
-    this.sources = this._picService.getSources(); // pense a unrelease
-    this.genders = this._picService.getGenders();
-    this.ageTypes = this._picService.getAges();
+    this._picService.getSources().subscribe({
+      next:
+        data => {
+          this.sources = data;
+          for(let iter of data){
+            if(iter.id === this.data.sourceType){
+              this.source.setValue(iter);
+              break;
+            }
+          }
+        },
+      error: (dataError) => {
+        // Dummy
+      },
+      complete: () => {
+        // Dummy
+      }
+    });
+    this._picService.getGenders().subscribe({
+      next:
+        data => {
+          this.genders = data;
+          for(let iter of data){
+            if(iter.id === this.data.genderType){
+              this.gender.setValue(iter);
+              break;
+            }
+          }
+        },
+      error: (dataError) => {
+        // Dummy
+      },
+      complete: () => {
+        // Dummy
+      }
+    });
+    this._picService.getAges().subscribe({
+      next:
+        data => {
+          this.ageTypes = data;
+          for(let iter of data){
+            if(iter.id === this.data.ageType){
+              this.ageType.setValue(iter);
+              break;
+            }
+          }
+        },
+ 
+      error: (dataError) => {
+        // Dummy
+      },
+      complete: () => {
+        // Dummy
+      }
+    });
   }
 
   /**
@@ -91,6 +144,7 @@ export class HRAddPictureDialogComponent implements OnInit {
         imageData => {
           //4- 
           let fileForService = this.createFileToUploadFromSelectedFile();
+          fileForService.submittedPicture.id = imageData.id;
           if (fileForService) {
             this._picService.uploadFile(fileForService).subscribe({ next :uploadResponse => {
               this.messages.push("Upload complete");

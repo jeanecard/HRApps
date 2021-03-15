@@ -1,7 +1,8 @@
-  <mat-horizontal-stepper [linear]="isLinear" #stepper>
-    <!-- STEP 1 - Load image -->
-    <mat-step [stepControl]="imagePickerFormGroup" label="upload Picture">
-      <form [formGroup]="imagePickerFormGroup">
+<mat-horizontal-stepper [linear]="isLinear" #stepper>
+  <!-- STEP 1 - Load image -->
+  <mat-step [stepControl]="imagePickerFormGroup" label="upload Picture">
+    <form [formGroup]="imagePickerFormGroup">
+      <div *ngIf="data.isNew">
         <div *ngIf="files?.length === 0" class="container" appDnd (fileDropped)="onFileDropped($event)">
           {{imageError}}
           <input type="file" #fileDropRef id="fileDropRef" (change)="fileChangeEvent($event)" />
@@ -33,87 +34,94 @@
             <mat-label>{{uploadStatus}}</mat-label>
           </mat-card-content>
         </div>
-        <div>
-
-          <button mat-button matStepperNext>Next</button>
-        </div>
-      </form>
-    </mat-step>
-    <!-- STEP 2 - Image metadata -->
-    <mat-step [stepControl]="dataPickerFormGroup" label="Bird's image info">
-      <form [formGroup]="dataPickerFormGroup">
-        <mat-card>
-          <mat-card-content>
-            <mat-form-field class="form-field-width">
-              <mat-label>Age</mat-label>
-              <mat-select formControlName="ageType" required="true">
-                <mat-option *ngFor="let ageIter of ageTypes | async" [value]="ageIter">
-                  {{ageIter?.age}}
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
-            <mat-icon></mat-icon>
-            <mat-form-field class="form-field-width">
-              <mat-label>Gender</mat-label>
-              <mat-select formControlName="gender" required="true">
-                <mat-option *ngFor="let genderIter of genders | async" [value]="genderIter">
-                  {{genderIter?.submitGender}}
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
-          </mat-card-content>
-          <mat-card-content>
-            <mat-form-field class="form-field-width">
-              <mat-label>Source</mat-label>
-              <mat-select formControlName="source"  required="true">
-                <mat-option *ngFor="let sourceIter of sources | async" [value]="sourceIter">
-                  {{sourceIter?.source}}
-                </mat-option>
-               </mat-select>
-            </mat-form-field>
-          </mat-card-content>
-          <mat-card-content>
-            <mat-form-field class="form-field-full-width">
-              <mat-label>Credit</mat-label>
-              <input formControlName="credit" matInput placeholder="Ex. http://hrcorp.com">
-            </mat-form-field>
-            <mat-form-field class="form-field-full-width-comment">
-              <mat-label>Leave a comment</mat-label>
-              <textarea formControlName="comment" matInput matTextareaAutosize="true" matAutosizeMaxRows="7"  matAutosizeMinRows="3" placeholder="Nice bird snapshoted on a roof while walking ..."></textarea>
-            </mat-form-field>
-          </mat-card-content>
-        </mat-card>
-        <div>
-          <button mat-button matStepperPrevious>Back</button>
-          <button mat-button matStepperNext>Next</button>
-        </div>
-      </form>
-    </mat-step>
-
-    <!-- STEP 3 - Synthesis and validation -->
-    <mat-step label="Synthesis">
-      <mat-card class="example-card">
-        <mat-card-header>
-          <div mat-card-avatar class="example-header-image"></div>
-          <mat-card-title>{{data?.vernacularName}}</mat-card-title>
-          <mat-card-subtitle>Gender : {{getGenderSumupDisplay()}}
-          </mat-card-subtitle>
-          <mat-card-subtitle>Age : {{getAgeSumupDisplay()}} </mat-card-subtitle>
-        </mat-card-header>
-        <img *ngIf="cardImageBase64"  mat-card-image src={{cardImageBase64}} alt="Bird's picture to submit">
+      </div>
+      <div *ngIf="!data.isNew">
+        <img [src]="data?.fullImageUrl" />
+      </div>
+      <div>
+        <button mat-button matStepperNext>Next</button>
+      </div>
+    </form>
+  </mat-step>
+  <!-- STEP 2 - Image metadata -->
+  <mat-step [stepControl]="dataPickerFormGroup" label="Bird's image info">
+    <form [formGroup]="dataPickerFormGroup">
+      <mat-card>
         <mat-card-content>
-            {{getReducedText(comment.value)}}
-    
+          <mat-form-field class="form-field-width">
+            <mat-label>Age</mat-label>
+            <mat-select formControlName="ageType" required="true">
+              <mat-option *ngFor="let ageIter of ageTypes" [value]="ageIter">
+                {{ageIter?.age}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-icon></mat-icon>
+          <mat-form-field class="form-field-width">
+            <mat-label>Gender</mat-label>
+            <mat-select formControlName="gender" required="true">
+              <mat-option *ngFor="let genderIter of genders" [value]="genderIter">
+                {{genderIter?.submitGender}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </mat-card-content>
+        <mat-card-content>
+          <mat-form-field class="form-field-width">
+            <mat-label>Source</mat-label>
+            <mat-select formControlName="source" required="true">
+              <mat-option *ngFor="let sourceIter of sources" [value]="sourceIter">
+                {{sourceIter?.source}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </mat-card-content>
+        <mat-card-content>
+          <mat-form-field class="form-field-full-width">
+            <mat-label>Credit</mat-label>
+            <input formControlName="credit" matInput placeholder="Ex. http://hrcorp.com">
+          </mat-form-field>
+          <mat-form-field class="form-field-full-width-comment">
+            <mat-label>Leave a comment</mat-label>
+            <textarea formControlName="comment" matInput matTextareaAutosize="true" matAutosizeMaxRows="7"
+              matAutosizeMinRows="3" placeholder="Nice bird snapshoted on a roof while walking ..."></textarea>
+          </mat-form-field>
         </mat-card-content>
       </mat-card>
       <div>
         <button mat-button matStepperPrevious>Back</button>
-        <button class=".validateButtons" mat-button (click)="onNoClick()">
-          <mat-icon>cancel</mat-icon>
-        </button>
-        <button class=".validateButtons" mat-button [mat-dialog-close]="data" (click)="onYesClick()">
-          <mat-icon>check</mat-icon>
-        </button>
+        <button mat-button matStepperNext>Next</button>
       </div>
-    </mat-step>
-  </mat-horizontal-stepper>
+    </form>
+  </mat-step>
+
+  <!-- STEP 3 - Synthesis and validation -->
+  <mat-step label="Synthesis">
+    <mat-card class="example-card">
+      <mat-card-header>
+        <div mat-card-avatar class="example-header-image"></div>
+        <mat-card-title>{{data?.vernacularName}}</mat-card-title>
+        <mat-card-subtitle>Gender : {{getGenderSumupDisplay()}}
+        </mat-card-subtitle>
+        <mat-card-subtitle>Age : {{getAgeSumupDisplay()}} </mat-card-subtitle>
+      </mat-card-header>
+      <img *ngIf="data.isNew" mat-card-image src={{cardImageBase64}} alt="Bird's picture to submit">
+      <div *ngIf="!data.isNew">
+        <img [src]="data?.fullImageUrl" />
+      </div>
+      <mat-card-content>
+        {{getReducedText(comment.value)}}
+
+      </mat-card-content>
+    </mat-card>
+    <div>
+      <button mat-button matStepperPrevious>Back</button>
+      <button class=".validateButtons" mat-button (click)="onNoClick()">
+        <mat-icon>cancel</mat-icon>
+      </button>
+      <button class=".validateButtons" mat-button [mat-dialog-close]="data" (click)="onYesClick()">
+        <mat-icon>check</mat-icon>
+      </button>
+    </div>
+  </mat-step>
+</mat-horizontal-stepper>

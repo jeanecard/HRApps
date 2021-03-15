@@ -21,7 +21,7 @@ import { HRAddPictureDialogComponent } from '../hradd-picture-dialog/hradd-pictu
 export class HrPicturesComponent implements OnInit, ControlValueAccessor {
 
   private _model: string;
-  public displayedColumns: string[] = ['url', 'typeAge', 'gender', 'source', 'credit', 'update', 'delete'];
+  public displayedColumns: string[] = ['url', 'ageType', 'gender', 'source', 'credit', 'update', 'delete'];
   private birdsPictures: HRPictureOrnithoListItem[];
   public dataSource: MatTableDataSource<HRPictureOrnithoListItem>;
   public isButtonDisabled: boolean;
@@ -60,7 +60,9 @@ export class HrPicturesComponent implements OnInit, ControlValueAccessor {
 
     const dialogRef = this.dialog.open(HRAddPictureDialogComponent, {
       width: '600px',
-      data: { vernacularName: this._model }
+      data: { 
+        vernacularName: this._model,
+       isNew: true }
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -97,9 +99,10 @@ export class HrPicturesComponent implements OnInit, ControlValueAccessor {
 
   public openUpdatePictureDialog(bird: HRPictureOrnithoListItem): void {
 
+    bird.isNew = false;
     const dialogRef = this.dialog.open(HRAddPictureDialogComponent, {
       width: '600px',
-      data: null
+      data: bird 
     });
 
     dialogRef.afterClosed().subscribe(result => {
