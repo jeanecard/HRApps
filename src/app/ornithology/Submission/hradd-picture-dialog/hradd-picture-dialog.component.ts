@@ -143,7 +143,6 @@ export class HRAddPictureDialogComponent implements OnInit {
       next:
         imageData => {
           //4- 
-          console.log("1 appel du close depuis picdialcomp");
           let fileForService = this.createFileToUploadFromSelectedFile(imageData);
           
           if (fileForService) {
@@ -151,7 +150,6 @@ export class HRAddPictureDialogComponent implements OnInit {
               { 
                 next :uploadResponse => {
               this.messages.push("Upload complete");
-              console.log("2 appel du close depuis picdialcomp");
               this.dialogRef.close(imageData);
             },      
             error: (dataError) => {
@@ -163,7 +161,10 @@ export class HRAddPictureDialogComponent implements OnInit {
               // Dummy
             }
           });
-          }          
+          } else{
+            // no update strategy on image in this very first version.
+            this.dialogRef.close(imageData);
+          }         
         },
       error: (dataError) => {
         // Dummy
@@ -191,6 +192,10 @@ export class HRAddPictureDialogComponent implements OnInit {
     this._model.genderType = this.gender.value?.id;
     this._model.sourceType = this.source.value?.id;
     this._model.ageType = this.ageType.value?.id;
+    this._model.comment = this.comment.value;
+    this._model.fullImageUrl = this.data.fullImageUrl;
+    this._model.thumbnailUrl = this.data.thumbnailUrl;
+
   }
 
   /**
@@ -317,6 +322,7 @@ export class HRAddPictureDialogComponent implements OnInit {
       fileForService.submittedPicture.thumbnailUrl = element.thumbnailUrl;
       fileForService.fileAsBase64 = this.cardImageBase64;
       fileForService.submittedPicture.id = element.id;
+      fileForService.submittedPicture.comment = element.comment;
       return fileForService;
     }
     return null;

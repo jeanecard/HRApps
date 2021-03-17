@@ -37,8 +37,8 @@ export class HRPicturesSubmissionService {
   }
 
   public updateImage(data: HRPictureOrnithoUpdateInput): Observable<HRPictureOrnithoUpdateInput> {
-    return of(data);
-  }
+    return this.http.put<HRPictureOrnithoAddOrUpdateInput>('https://localhost:44308/api/v1.0/HRBirdSubmission/update-image-metadata', data);
+  } 
 
   uploadFile(theFile: FileToUpload): Observable<any> {
     return this.http.post<FileToUpload>(this.API_URL, theFile, this.httpOptions);
