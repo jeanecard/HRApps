@@ -11,7 +11,7 @@ import { FileToUpload, HRPictureOrnithoAddOrUpdateInput, HRPictureOrnithoListIte
 })
 export class HRPicturesSubmissionService {
   deleteImage(id: string) : Observable<any> {
-    return this.http.delete('https://localhost:44308/api/v1.0/HRBirdSubmission/delete-image-data/' + id);
+    return this.http.delete('https://localhost:44308/api/v1.0/HRBirdSubmission/delete-image-metadata/' + id);
   }
 
   private API_URL = "https://localhost:44308/api/HRPictureStorage/add-picture";

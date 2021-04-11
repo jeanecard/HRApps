@@ -1,9 +1,11 @@
-import { Component, forwardRef, OnInit } from '@angular/core';
+import { Component, forwardRef, OnDestroy, OnInit } from '@angular/core';
 import { ControlValueAccessor, FormControl, FormGroup, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
+import { HrThumbnailSubscriber } from 'src/app/model/Ornitho/hr-thumbnail-subscriber';
 import { HRPictureOrnithoListItem } from 'src/app/model/Ornitho/hrpicture-ornitho';
 import { HRConfirmDeletionComponent } from 'src/app/shared/components/hrconfirm-deletion/hrconfirm-deletion.component';
+import { HrPictureSubmissionNotificationService } from 'src/app/shared/Ornithology/hr-picture-submission-notification.service';
 import { HRPicturesSubmissionService } from 'src/app/shared/Ornithology/hrpictures-submission.service';
 import { HRAddPictureDialogComponent } from '../hradd-picture-dialog/hradd-picture-dialog.component';
 
@@ -18,7 +20,7 @@ import { HRAddPictureDialogComponent } from '../hradd-picture-dialog/hradd-pictu
       multi: true
     }]
 })
-export class HrPicturesComponent implements OnInit, ControlValueAccessor {
+export class HrPicturesComponent implements OnInit, OnDestroy, ControlValueAccessor, HrThumbnailSubscriber {
 
   private _model: string;
   public displayedColumns: string[] = ['url', 'ageType', 'gender', 'source', 'credit', 'update', 'delete'];
@@ -30,7 +32,13 @@ export class HrPicturesComponent implements OnInit, ControlValueAccessor {
   public isLoading = false;
 
 
-  constructor(public dialog: MatDialog, private _picService: HRPicturesSubmissionService) { }
+  constructor(
+    public dialog: MatDialog, 
+    private _picService: HRPicturesSubmissionService,
+    private _picNotifierService: HrPictureSubmissionNotificationService) { }
+  
+  
+
 
   writeValue(vernacularName: string): void {
     // dispose
@@ -51,12 +59,23 @@ export class HrPicturesComponent implements OnInit, ControlValueAccessor {
     this.isButtonDisabled = isDisabled;
   }
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
     this.birdsPictures = [];
     this.dataSource = new MatTableDataSource<HRPictureOrnithoListItem>(this.birdsPictures);
+    this._picNotifierService.registerToThumbnailEvent(this);
   }
 
-  openAddPictureDialog(): void {
+  public ngOnDestroy(): void {
+    this._picNotifierService.unRegisterFromThumbnailEvent(this);
+  }
+
+  public onThumbnailCreated(data: string): void {
+    console.log('Oh putain !!');
+    console.log(data);
+    console.log('ca marche!!');
+  }
+
+  public openAddPictureDialog(): void {
 
     const dialogRef = this.dialog.open(HRAddPictureDialogComponent, {
       width: '600px',
