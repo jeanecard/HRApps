@@ -36,6 +36,7 @@ export class HrPicturesComponent implements OnInit, OnDestroy, ControlValueAcces
     public dialog: MatDialog, 
     private _picService: HRPicturesSubmissionService,
     private _picNotifierService: HrPictureSubmissionNotificationService) { }
+
   
   
 
@@ -69,11 +70,51 @@ export class HrPicturesComponent implements OnInit, OnDestroy, ControlValueAcces
     this._picNotifierService.unRegisterFromThumbnailEvent(this);
   }
 
-  public onThumbnailCreated(data: string): void {
-    console.log('Oh putain !!');
-    console.log(data);
-    console.log('ca marche!!');
+  public onThumbnailCreated(vernacularName: string, id: string, url: string): void {
+    if(this._model === vernacularName){
+      console.log("yes notification updte thumbnail recu !");
+      this.birdsPictures.forEach(element => {
+        if(element.id === id){
+        console.log("url mise à jour ");
+        console.log(url);
+          element.thumbnailUrl = url;
+          return;
+        }
+      });
+    }else {
+    console.log("Notif update Thumbnail recu mais ca n'est pas pour moi");
+    }
   }
+
+  public onImageCreated(vernacularName: string, id: string, url: string): void {
+    //1 check if same vernacular name
+    if(this._model === vernacularName){
+      this._picService.getImage(id).subscribe({
+        next:
+          data => {
+            if(!this.birdsPictures){
+              this.birdsPictures = [];
+            }
+            console.log("Notif onImageCreated element ajouté");
+            this.birdsPictures.push(data);
+            this.dataSource = new MatTableDataSource<HRPictureOrnithoListItem>(this.birdsPictures);
+          },
+        error: (dataError) => {
+          this.isLoading = false;
+        },
+        complete: () => {
+          this.isLoading = false;
+        }
+      });
+    }else {
+    console.log("Notif onImageCreated recu mais ca n'est pas pour moi");
+    }
+  }
+
+  onConnectionDone(data: string) {
+    console.log(data);
+  }
+  
 
   public openAddPictureDialog(): void {
 
@@ -88,7 +129,7 @@ export class HrPicturesComponent implements OnInit, OnDestroy, ControlValueAcces
       console.log("traitement du close depuis piccomp");
 
       if (result) {
-        this.RefreshImages();
+        // this.RefreshImages();
       } 
     });
   }

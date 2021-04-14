@@ -35,16 +35,31 @@ export class HrPictureSubmissionNotificationService {
   public connectToImageNotificationIfNeeded(): void {
     if (this._hubConnection === null) {
       this._hubConnection = new signalR.HubConnectionBuilder()
-        .withUrl('https://hrbirdswebapi-dev-as.azurewebsites.net/HRBirdPictureSubmission')
+        .withUrl('https://hrbirdssignalrwebapi.azurewebsites.net/HRBirdPictureSubmission')
         .withAutomaticReconnect()
         .configureLogging(signalR.LogLevel.Information)
         .build();
 
       this._hubConnection.start().catch(err => console.error(err.toString()));
 
-      this._hubConnection.on('Message', (data: any) => {
+      this._hubConnection.on('ThumbnailUpdated', (data1: any,data2: any,data3: any) => {
         this._thumbnailSubscribers.forEach(element => {
-          element.onThumbnailCreated(data);
+          element.onThumbnailCreated(data1, data2, data3);
+        }
+        );
+      });
+
+      this._hubConnection.on('ImageCreated', (data1: any,data2: any,data3: any) => {
+        this._thumbnailSubscribers.forEach(element => {
+          element.onImageCreated(data1,data2,data3);
+        }
+        );
+      });
+
+
+      this._hubConnection.on('ConnectionDone', (data: any) => {
+        this._thumbnailSubscribers.forEach(element => {
+          element.onConnectionDone(data);
         }
         );
       });
