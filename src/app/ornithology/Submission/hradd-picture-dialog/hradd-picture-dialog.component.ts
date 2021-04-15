@@ -32,7 +32,7 @@ export class HRAddPictureDialogComponent implements OnInit {
   public files: any[] = [];
   private MAX_SIZE = 20971520;
   private ALLOWED_TYPES = ['image/png', 'image/jpeg'];
-  private isUploading = false;
+  public isUploading = false;
   cardImageBase64: string;
   imageError: string;
   isUploadingState = false;
