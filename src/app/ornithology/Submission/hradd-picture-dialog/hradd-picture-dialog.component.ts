@@ -32,6 +32,7 @@ export class HRAddPictureDialogComponent implements OnInit {
   public files: any[] = [];
   private MAX_SIZE = 20971520;
   private ALLOWED_TYPES = ['image/png', 'image/jpeg'];
+  private isUploading = false;
   cardImageBase64: string;
   imageError: string;
   isUploadingState = false;
@@ -129,6 +130,7 @@ export class HRAddPictureDialogComponent implements OnInit {
   * 4- Upload file
   */
   public onYesClick(): void {
+    this.isUploading = true;
     //1- 
     this.updateModelFromView();
     //2- 
@@ -149,24 +151,25 @@ export class HRAddPictureDialogComponent implements OnInit {
             this._picService.uploadFile(fileForService).subscribe(
               { 
                 next :uploadResponse => {
-              this.messages.push("Upload complete");
+                  this.isUploading = false;
               this.dialogRef.close(imageData);
             },      
             error: (dataError) => {
-              console.log("Error on_picService.uploadFile ");
-              console.log(dataError);
-              // TODO Error display
+              this.isUploading = false;
             },
             complete: () => {
+              this.isUploading = false;
               // Dummy
             }
           });
           } else{
             // no update strategy on image in this very first version.
             this.dialogRef.close(imageData);
+            this.isUploading = false;
           }         
         },
       error: (dataError) => {
+        this.isUploading = false;
         // Dummy
       },
       complete: () => {

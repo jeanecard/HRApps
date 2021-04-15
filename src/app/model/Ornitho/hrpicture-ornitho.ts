@@ -9,6 +9,7 @@ export class HRPictureOrnithoAddOrUpdateInput {
   comment : string | null;
   thumbnailUrl : string | null;
   fullImageUrl : string | null;
+  isNew : boolean;
 }
 
 export class HRPictureOrnithoUpdateInput {
@@ -21,6 +22,8 @@ export class HRPictureOrnithoUpdateInput {
   comment : string | null;
   thumbnailUrl : string | null;
   fullImageUrl : string | null;
+  isNew : boolean;
+
 }
 export class HRPictureOrnithoListItem {
   id: string | null;

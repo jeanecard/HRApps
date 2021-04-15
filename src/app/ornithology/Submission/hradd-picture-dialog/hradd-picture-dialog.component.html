@@ -1,4 +1,4 @@
-<mat-horizontal-stepper [linear]="isLinear" #stepper>
+<mat-horizontal-stepper *ngIf="!isUploading" [linear]="isLinear" #stepper>
   <!-- STEP 1 - Load image -->
   <mat-step [stepControl]="imagePickerFormGroup" label="upload Picture">
     <form [formGroup]="imagePickerFormGroup">
@@ -15,7 +15,7 @@
           <mat-card class="example-card">
             <mat-card-header>
               <mat-card-title>{{ file?.name }}</mat-card-title>
-              <mat-card-subtitle>{{ formatBytesForView(file?.size) }}</mat-card-subtitle>
+              <mat-card-subtitle>{{ formatBytesForView(file?.size, 2) }}</mat-card-subtitle>
             </mat-card-header>
             <img mat-card-image src={{cardImageBase64}} alt="Bird's picture to submit">
             <mat-card-content>
@@ -94,7 +94,6 @@
       </div>
     </form>
   </mat-step>
-
   <!-- STEP 3 - Synthesis and validation -->
   <mat-step label="Synthesis">
     <mat-card class="example-card">
@@ -116,12 +115,13 @@
     </mat-card>
     <div>
       <button mat-button matStepperPrevious>Back</button>
-      <button class=".validateButtons" mat-button (click)="onNoClick()">
+      <button class=".validateButtons" mat-button (click)="onNoClick()" [disabled]="isUploading">
         Cancel
       </button>
-        <button class=".validateButtons" mat-button  (click)="onYesClick()">
+        <button class=".validateButtons" mat-button  (click)="onYesClick()"  [disabled]="isUploading">
         Validate
       </button>
     </div>
   </mat-step>
 </mat-horizontal-stepper>
+<mat-spinner *ngIf="isUploading" [diameter]='200' class="spinner"></mat-spinner>

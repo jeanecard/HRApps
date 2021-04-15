@@ -27,6 +27,7 @@ export class HrgeneralComponent implements OnInit, OnDestroy, ControlValueAccess
   public maxLength: FormControl;
   public source: FormControl;
   public statut: FormControl;
+  public selected : string;
 
   constructor() { }
   
