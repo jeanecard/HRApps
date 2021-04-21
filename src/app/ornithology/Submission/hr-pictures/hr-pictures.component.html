@@ -4,7 +4,6 @@
     <mat-card-title>Pictures</mat-card-title>
   </mat-card-header>
   <mat-card-content>
-
     <table mat-table [dataSource]="dataSource" class="mat-elevation-z1">
       <!-- Age Column -->
       <ng-container matColumnDef="ageType">
@@ -54,10 +53,5 @@
   <mat-card-content *ngIf="isLoading" >
     <mat-spinner></mat-spinner>
   </mat-card-content>
-  
-  <mat-card-actions>
-    <button [disabled]="isButtonDisabled" mat-button (click)="openAddPictureDialog()">
-      <mat-icon>add_a_photo</mat-icon>
-    </button>
-  </mat-card-actions>
+
 </mat-card>

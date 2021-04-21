@@ -25,6 +25,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
 import {MatStepperModule} from '@angular/material/stepper';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
 
 import { MatInputModule } from '@angular/material/input';
 
@@ -59,10 +60,12 @@ import { MatInputModule } from '@angular/material/input';
     MatDialogModule,
     MatTabsModule,
     MatSortModule,
-    MatPaginatorModule
+    MatPaginatorModule,
+    MatSnackBarModule
   ],
   exports: [
     MatCardModule,
+    MatSnackBarModule,
     MatStepperModule,
     MatButtonModule,
     MatGridListModule,

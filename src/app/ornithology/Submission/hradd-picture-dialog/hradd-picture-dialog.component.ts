@@ -1,6 +1,5 @@
-import { Component, Inject, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Component, forwardRef, Inject, OnInit } from '@angular/core';
+import { ControlValueAccessor, FormControl, FormGroup, NG_VALUE_ACCESSOR, Validators } from '@angular/forms';
 import { FileToUpload, HRPictureOrnithoAddOrUpdateInput } from 'src/app/model/Ornitho/hrpicture-ornitho';
 import { HRPicturesSubmissionService } from 'src/app/shared/Ornithology/hrpictures-submission.service';
 import * as _ from 'lodash';
@@ -8,15 +7,23 @@ import { Observable } from 'rxjs';
 import { HrSubmitSource } from 'src/app/model/Ornitho/hr-submit-source';
 import { HrSubmitGender } from 'src/app/model/Ornitho/hr-submit-gender';
 import { HrSubmitAge } from 'src/app/model/Ornitho/hr-submit-age';
+import { MatSnackBar } from '@angular/material/snack-bar';
+
 
 const UNASSIGNED_VALUE_DISPLAY = " _ ";
 const MORE_INFO_DISPLAY = " ...";
 @Component({
   selector: 'app-hradd-picture-dialog',
   templateUrl: './hradd-picture-dialog.component.html',
-  styleUrls: ['./hradd-picture-dialog.component.scss']
+  styleUrls: ['./hradd-picture-dialog.component.scss'],
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => HRAddPictureDialogComponent),
+      multi: true
+    }]
 })
-export class HRAddPictureDialogComponent implements OnInit {
+export class HRAddPictureDialogComponent implements OnInit, ControlValueAccessor {
 
   private _model: HRPictureOrnithoAddOrUpdateInput;
   public dataPickerFormGroup: FormGroup;
@@ -33,30 +40,47 @@ export class HRAddPictureDialogComponent implements OnInit {
   private MAX_SIZE = 20971520;
   private ALLOWED_TYPES = ['image/png', 'image/jpeg'];
   public isUploading = false;
+  public vernacularName: string;
   cardImageBase64: string;
   imageError: string;
   isUploadingState = false;
   uploadStatus = "saucisse";
-  isLinear = false;
   messages: string[] = [];
-
+  public data: HRPictureOrnithoAddOrUpdateInput = null;
+  public _propagateChange = (_: any) => { };
+  public _propagateTouch = (_: any) => { };
 
   constructor(
-    public dialogRef: MatDialogRef<HRAddPictureDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: HRPictureOrnithoAddOrUpdateInput,
-    private _picService: HRPicturesSubmissionService
-  ) { 
+    private _picService: HRPicturesSubmissionService,
+    
+    private _snackBar: MatSnackBar
+  ) {
+    this.data = new HRPictureOrnithoAddOrUpdateInput();
+    this.data.vernacularName = "turdus merula";
+
+  }
+  writeValue(vernacularId: string): void {
+    this.vernacularName = vernacularId;
+  }
+  registerOnChange(fn: any): void {
+    this._propagateChange(fn);
+  }
+  registerOnTouched(fn: any): void {
+    this._propagateTouch(fn);
+  }
+  setDisabledState?(isDisabled: boolean): void {
+    console.log("TODO disable state");
   }
 
   ngOnInit(): void {
 
     // TODO HR charge l'objet en cas d'update ici
     this._model = new HRPictureOrnithoAddOrUpdateInput();
-    this.ageType = new FormControl(this.data?.ageType);
-    this.gender = new FormControl(this.data?.genderType);
-    this.credit = new FormControl(this.data?.credit);
-    this.source = new FormControl(this.data?.sourceType);
-    this.comment = new FormControl(this.data?.comment);
+    this.ageType = new FormControl();
+    this.gender = new FormControl();
+    this.credit = new FormControl();
+    this.source = new FormControl();
+    this.comment = new FormControl();
     this.dataPickerFormGroup = new FormGroup({
       ageType: this.ageType,
       gender: this.gender,
@@ -69,12 +93,6 @@ export class HRAddPictureDialogComponent implements OnInit {
       next:
         data => {
           this.sources = data;
-          for(let iter of data){
-            if(iter.id === this.data.sourceType){
-              this.source.setValue(iter);
-              break;
-            }
-          }
         },
       error: (dataError) => {
         // Dummy
@@ -87,12 +105,6 @@ export class HRAddPictureDialogComponent implements OnInit {
       next:
         data => {
           this.genders = data;
-          for(let iter of data){
-            if(iter.id === this.data.genderType){
-              this.gender.setValue(iter);
-              break;
-            }
-          }
         },
       error: (dataError) => {
         // Dummy
@@ -105,14 +117,8 @@ export class HRAddPictureDialogComponent implements OnInit {
       next:
         data => {
           this.ageTypes = data;
-          for(let iter of data){
-            if(iter.id === this.data.ageType){
-              this.ageType.setValue(iter);
-              break;
-            }
-          }
         },
- 
+
       error: (dataError) => {
         // Dummy
       },
@@ -125,51 +131,76 @@ export class HRAddPictureDialogComponent implements OnInit {
   /**
   *  Save data :
   * 1- Update model from view
-  * 2- Get service Observable for metadata update or creation
+  * 2- Get service Observable for metadata update or creation. Only create in this version
   * 3- Upload metadata
   * 4- Upload file
   */
-  public onYesClick(): void {
+  public onCreate(): void {
     this.isUploading = true;
     //1- 
     this.updateModelFromView();
     //2- 
     let observable: Observable<any>;
-    if (this.data?.id) {
-      observable = this._picService.updateImage(this._model);
-    } else {
-      observable = this._picService.addImageData(this._model);
-    }
+    console.log("---------APPEL DE  _picService.addImageData ----------------------");
+    observable = this._picService.addImageData(this._model);
+
     //3- 
     observable.subscribe({
       next:
+      
         imageData => {
+        console.log("---------RECEPTION DE  _picService.addImageData ----------------------");
+        console.log(imageData);
+        this._model = imageData;
+          this._propagateChange(this._model);
+          this._propagateTouch(this._model);
+
           //4- 
           let fileForService = this.createFileToUploadFromSelectedFile(imageData);
-          
+
           if (fileForService) {
             this._picService.uploadFile(fileForService).subscribe(
-              { 
-                next :uploadResponse => {
+              {
+                next: uploadResponse => {
+                  this.files = [];
                   this.isUploading = false;
-              this.dialogRef.close(imageData);
-            },      
-            error: (dataError) => {
-              this.isUploading = false;
-            },
-            complete: () => {
-              this.isUploading = false;
-              // Dummy
-            }
-          });
-          } else{
+                  this._snackBar.open(
+                    "Upload successful. Images will be refresh automatically", 
+                    "", {
+                    duration: 2000,
+                  });
+
+                },
+                error: (dataError) => {
+                  this.files = [];
+                  this._snackBar.open(
+                    "Upload error !", 
+                    "", {
+                    duration: 2000,
+                  });
+
+                  this.isUploading = false;
+                },
+                complete: () => {
+                  this.isUploading = false;
+                  // Dummy
+                }
+              });
+          } else {
             // no update strategy on image in this very first version.
-            this.dialogRef.close(imageData);
             this.isUploading = false;
-          }         
+          }
         },
       error: (dataError) => {
+        console.log("Error !!");
+        console.log(dataError);
+        this.files = [];
         this.isUploading = false;
+        this._snackBar.open(
+          "Upload error !", 
+          "", {
+          duration: 2000,
+        });
         // Dummy
       },
       complete: () => {
@@ -178,27 +209,18 @@ export class HRAddPictureDialogComponent implements OnInit {
     });
   }
 
-  /**
-  * Close dialog.
-  */
-  onNoClick(): void {
-    this.dialogRef.close();
-  }
 
   /**
 *  update this._model from view data
 */
   private updateModelFromView(): void {
     this._model.credit = this.credit.value;
-    this._model.id = this.data.id;
-    this._model.vernacularName = this.data?.vernacularName;
+    this._model.id = undefined;
+    this._model.vernacularName = this.vernacularName;
     this._model.genderType = this.gender.value?.id;
     this._model.sourceType = this.source.value?.id;
     this._model.ageType = this.ageType.value?.id;
     this._model.comment = this.comment.value;
-    this._model.fullImageUrl = this.data.fullImageUrl;
-    this._model.thumbnailUrl = this.data.thumbnailUrl;
-
   }
 
   /**
@@ -306,7 +328,7 @@ export class HRAddPictureDialogComponent implements OnInit {
    * Prepare data for service from uploaded file.
    * 
    */
-  private createFileToUploadFromSelectedFile(element : HRPictureOrnithoAddOrUpdateInput): FileToUpload {
+  private createFileToUploadFromSelectedFile(element: HRPictureOrnithoAddOrUpdateInput): FileToUpload {
     if (this.files && this.files[0]) {
       let selectedFile = this.files[0];
       let fileForService = new FileToUpload();
@@ -317,9 +339,9 @@ export class HRAddPictureDialogComponent implements OnInit {
       fileForService.lastModifiedTime = selectedFile.lastModified;
       fileForService.lastModifiedDate = selectedFile.lastModifiedDate;
       fileForService.submittedPicture = new HRPictureOrnithoAddOrUpdateInput();
-      fileForService.submittedPicture.ageType = this.ageType.value?.id;
-      fileForService.submittedPicture.genderType = this.gender.value?.id;
-      fileForService.submittedPicture.sourceType = this.source.value?.id;
+      fileForService.submittedPicture.ageType = element.ageType;
+      fileForService.submittedPicture.genderType = element.genderType;
+      fileForService.submittedPicture.sourceType = element.sourceType;
       fileForService.submittedPicture.vernacularName = element.vernacularName;
       fileForService.submittedPicture.credit = this.credit.value;
       fileForService.submittedPicture.thumbnailUrl = element.thumbnailUrl;
@@ -352,4 +374,5 @@ export class HRAddPictureDialogComponent implements OnInit {
       return UNASSIGNED_VALUE_DISPLAY;
     }
   }
+
 }

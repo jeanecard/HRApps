@@ -1,6 +1,7 @@
 import { Component, forwardRef, OnDestroy, OnInit } from '@angular/core';
 import { ControlValueAccessor, FormControl, FormGroup, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource } from '@angular/material/table';
 import { HrThumbnailSubscriber } from 'src/app/model/Ornitho/hr-thumbnail-subscriber';
 import { HRPictureOrnithoListItem } from 'src/app/model/Ornitho/hrpicture-ornitho';
@@ -23,7 +24,9 @@ import { HRAddPictureDialogComponent } from '../hradd-picture-dialog/hradd-pictu
 export class HrPicturesComponent implements OnInit, OnDestroy, ControlValueAccessor, HrThumbnailSubscriber {
 
   private _model: string;
-  public displayedColumns: string[] = ['url', 'ageType', 'gender', 'source', 'credit', 'update', 'delete'];
+  public displayedColumns: string[] = ['url', 'ageType', 'gender', 'source', 'credit', 'delete'];
+
+  // public displayedColumns: string[] = ['url', 'ageType', 'gender', 'source', 'credit', 'update', 'delete'];
   private birdsPictures: HRPictureOrnithoListItem[];
   public dataSource: MatTableDataSource<HRPictureOrnithoListItem>;
   public isButtonDisabled: boolean;
@@ -33,13 +36,10 @@ export class HrPicturesComponent implements OnInit, OnDestroy, ControlValueAcces
 
 
   constructor(
-    public dialog: MatDialog, 
+    public dialog: MatDialog,
     private _picService: HRPicturesSubmissionService,
-    private _picNotifierService: HrPictureSubmissionNotificationService) { }
-
-  
-  
-
+    private _picNotifierService: HrPictureSubmissionNotificationService,
+    private _snackBar: MatSnackBar) { }
 
   writeValue(vernacularName: string): void {
     // dispose
@@ -71,33 +71,41 @@ export class HrPicturesComponent implements OnInit, OnDestroy, ControlValueAcces
   }
 
   public onThumbnailCreated(vernacularName: string, id: string, url: string): void {
-    if(this._model === vernacularName){
-      console.log("yes notification updte thumbnail recu !");
+    if (this._model === vernacularName) {
       this.birdsPictures.forEach(element => {
-        if(element.id === id){
-        console.log("url mise à jour ");
-        console.log(url);
+        if (element.id === id) {
+          this._snackBar.open(
+            "Thumbnail updated.", 
+            "", {
+            duration: 2000,
+          });
           element.thumbnailUrl = url;
           return;
         }
       });
-    }else {
-    console.log("Notif update Thumbnail recu mais ca n'est pas pour moi");
+    } else {
     }
+
   }
 
   public onImageCreated(vernacularName: string, id: string, url: string): void {
+
     //1 check if same vernacular name
-    if(this._model === vernacularName){
+    if (this._model === vernacularName) {
       this._picService.getImage(id).subscribe({
         next:
           data => {
-            if(!this.birdsPictures){
+            if (!this.birdsPictures) {
               this.birdsPictures = [];
             }
-            console.log("Notif onImageCreated element ajouté");
             this.birdsPictures.push(data);
             this.dataSource = new MatTableDataSource<HRPictureOrnithoListItem>(this.birdsPictures);
+            this._snackBar.open(
+              "New image added.", 
+              "", {
+              duration: 2000,
+            });
+
           },
         error: (dataError) => {
           this.isLoading = false;
@@ -106,33 +114,17 @@ export class HrPicturesComponent implements OnInit, OnDestroy, ControlValueAcces
           this.isLoading = false;
         }
       });
-    }else {
-    console.log("Notif onImageCreated recu mais ca n'est pas pour moi");
+    } else {
+
     }
   }
 
   onConnectionDone(data: string) {
     console.log(data);
   }
-  
 
-  public openAddPictureDialog(): void {
 
-    const dialogRef = this.dialog.open(HRAddPictureDialogComponent, {
-      width: '600px',
-      data: { 
-        vernacularName: this._model,
-       isNew: true }
-    });
 
-    dialogRef.afterClosed().subscribe(result => {
-      console.log("traitement du close depuis piccomp");
-
-      if (result) {
-        // this.RefreshImages();
-      } 
-    });
-  }
 
   public deletePictureDialog(bird: HRPictureOrnithoListItem): void {
     const dialogRef = this.dialog.open(HRConfirmDeletionComponent);
@@ -162,13 +154,13 @@ export class HrPicturesComponent implements OnInit, OnDestroy, ControlValueAcces
     bird.isNew = false;
     const dialogRef = this.dialog.open(HRAddPictureDialogComponent, {
       width: '600px',
-      data: bird 
+      data: bird
     });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.RefreshImages();
-      } 
+      }
     });
   }
 

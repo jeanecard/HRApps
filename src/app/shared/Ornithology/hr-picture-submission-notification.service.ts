@@ -11,11 +11,16 @@ export class HrPictureSubmissionNotificationService {
   constructor() { }
   public registerToThumbnailEvent(subscriber: HrThumbnailSubscriber): void {
     let found = false;
-    this._thumbnailSubscribers.forEach(element => {
-      if (element == subscriber) {
-        found = true;
-      }
-    });
+    if(this._thumbnailSubscribers){
+      this._thumbnailSubscribers.forEach(element => {
+        if (element == subscriber) {
+          found = true;
+        }
+      });
+    } else{
+      console.log("this._thumbnailSubscriber is null");
+    }
+
     if (!found) {
       this._thumbnailSubscribers.push(subscriber);
       this.connectToImageNotificationIfNeeded();
