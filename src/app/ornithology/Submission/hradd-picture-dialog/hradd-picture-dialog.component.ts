@@ -8,6 +8,7 @@ import { HrSubmitSource } from 'src/app/model/Ornitho/hr-submit-source';
 import { HrSubmitGender } from 'src/app/model/Ornitho/hr-submit-gender';
 import { HrSubmitAge } from 'src/app/model/Ornitho/hr-submit-age';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Output, EventEmitter } from '@angular/core';
 
 
 const UNASSIGNED_VALUE_DISPLAY = " _ ";
@@ -24,7 +25,7 @@ const MORE_INFO_DISPLAY = " ...";
     }]
 })
 export class HRAddPictureDialogComponent implements OnInit, ControlValueAccessor {
-
+  @Output() imageAddedEvent:EventEmitter<HRPictureOrnithoAddOrUpdateInput> =new EventEmitter<HRPictureOrnithoAddOrUpdateInput>();
   private _model: HRPictureOrnithoAddOrUpdateInput;
   public dataPickerFormGroup: FormGroup;
   public ageType: FormControl;
@@ -50,23 +51,24 @@ export class HRAddPictureDialogComponent implements OnInit, ControlValueAccessor
   public _propagateChange = (_: any) => { };
   public _propagateTouch = (_: any) => { };
 
+
   constructor(
     private _picService: HRPicturesSubmissionService,
     
     private _snackBar: MatSnackBar
   ) {
     this.data = new HRPictureOrnithoAddOrUpdateInput();
-    this.data.vernacularName = "turdus merula";
+    this.data.vernacularName = "";
 
   }
   writeValue(vernacularId: string): void {
     this.vernacularName = vernacularId;
   }
   registerOnChange(fn: any): void {
-    this._propagateChange(fn);
+    this._propagateChange = fn;
   }
   registerOnTouched(fn: any): void {
-    this._propagateTouch(fn);
+    this._propagateTouch = fn;
   }
   setDisabledState?(isDisabled: boolean): void {
     console.log("TODO disable state");
@@ -141,7 +143,6 @@ export class HRAddPictureDialogComponent implements OnInit, ControlValueAccessor
     this.updateModelFromView();
     //2- 
     let observable: Observable<any>;
-    console.log("---------APPEL DE  _picService.addImageData ----------------------");
     observable = this._picService.addImageData(this._model);
 
     //3- 
@@ -149,11 +150,10 @@ export class HRAddPictureDialogComponent implements OnInit, ControlValueAccessor
       next:
       
         imageData => {
-        console.log("---------RECEPTION DE  _picService.addImageData ----------------------");
-        console.log(imageData);
         this._model = imageData;
           this._propagateChange(this._model);
           this._propagateTouch(this._model);
+          this.imageAddedEvent.next(this._model);
 
           //4- 
           let fileForService = this.createFileToUploadFromSelectedFile(imageData);

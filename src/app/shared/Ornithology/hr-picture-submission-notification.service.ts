@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import * as signalR from '@microsoft/signalr';
 import { HubConnection } from '@microsoft/signalr';
 import { HrThumbnailSubscriber } from 'src/app/model/Ornitho/hr-thumbnail-subscriber';
+import { HRPictureOrnithoAddOrUpdateInput } from 'src/app/model/Ornitho/hrpicture-ornitho';
 @Injectable({
   providedIn: 'root'
 })
@@ -36,6 +37,12 @@ export class HrPictureSubmissionNotificationService {
     });
     this._thumbnailSubscribers = newSubscribers;
   }
+
+ public internalImageAddedNotification(data : HRPictureOrnithoAddOrUpdateInput){
+  this._thumbnailSubscribers.forEach(element => {
+    element.onInternalImageCreated(data);
+  });
+ }
 
   public connectToImageNotificationIfNeeded(): void {
     if (this._hubConnection === null) {

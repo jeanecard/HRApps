@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource } from '@angular/material/table';
 import { HrThumbnailSubscriber } from 'src/app/model/Ornitho/hr-thumbnail-subscriber';
-import { HRPictureOrnithoListItem } from 'src/app/model/Ornitho/hrpicture-ornitho';
+import { HRPictureOrnithoAddOrUpdateInput, HRPictureOrnithoListItem } from 'src/app/model/Ornitho/hrpicture-ornitho';
 import { HRConfirmDeletionComponent } from 'src/app/shared/components/hrconfirm-deletion/hrconfirm-deletion.component';
 import { HrPictureSubmissionNotificationService } from 'src/app/shared/Ornithology/hr-picture-submission-notification.service';
 import { HRPicturesSubmissionService } from 'src/app/shared/Ornithology/hrpictures-submission.service';
@@ -26,7 +26,6 @@ export class HrPicturesComponent implements OnInit, OnDestroy, ControlValueAcces
   private _model: string;
   public displayedColumns: string[] = ['url', 'ageType', 'gender', 'source', 'credit', 'delete'];
 
-  // public displayedColumns: string[] = ['url', 'ageType', 'gender', 'source', 'credit', 'update', 'delete'];
   private birdsPictures: HRPictureOrnithoListItem[];
   public dataSource: MatTableDataSource<HRPictureOrnithoListItem>;
   public isButtonDisabled: boolean;
@@ -40,8 +39,42 @@ export class HrPicturesComponent implements OnInit, OnDestroy, ControlValueAcces
     private _picService: HRPicturesSubmissionService,
     private _picNotifierService: HrPictureSubmissionNotificationService,
     private _snackBar: MatSnackBar) { }
+  
+  
+  
+   onInternalImageCreated(data: HRPictureOrnithoAddOrUpdateInput) {
+    if(data){
+      this.birdsPictures.forEach(element => {
+        if (element.id === data.id) {
+          return;
+        }
+      });
+      if (!this.birdsPictures) {
+        this.birdsPictures = [];
+      }
+      let item = new HRPictureOrnithoListItem();
+      item.id = data.id;
+      item.ageType = data.ageType;
+      item.age = "loading..";
+      item.comment = data.comment;
+      item.credit = data.credit;
+      item.fullImageUrl = data.fullImageUrl;
+      item.genderType = data.genderType;
+      item.gender = "loading..";
+      item.sourceType = data.sourceType;
+      item.source = "loading..";
+      item.thumbnailUrl = data.thumbnailUrl;
+      item.vernacularName = data.vernacularName;
 
-  writeValue(vernacularName: string): void {
+      this.birdsPictures.push(item);
+      //5- refresh datasource to update display
+      this.dataSource = new MatTableDataSource<HRPictureOrnithoListItem>(this.birdsPictures);
+      //6- Notify on scrren that a new element has been added.
+      this._snackBar.open("New image added.", "", {duration: 2500});
+    }
+  }
+
+  public writeValue(vernacularName: string): void {
     // dispose
     this._model = vernacularName;
     if (vernacularName) {
@@ -50,13 +83,13 @@ export class HrPicturesComponent implements OnInit, OnDestroy, ControlValueAcces
       this.birdsPictures = [];
     }
   }
-  registerOnChange(fn: any): void {
-    this._propagateChange(fn);
+  public registerOnChange(fn: any): void {
+    this._propagateChange = fn;
   }
-  registerOnTouched(fn: any): void {
-    this._propagateTouch(fn);
+  public registerOnTouched(fn: any): void {
+    this._propagateTouch = fn;
   }
-  setDisabledState?(isDisabled: boolean): void {
+  public setDisabledState?(isDisabled: boolean): void {
     this.isButtonDisabled = isDisabled;
   }
 
@@ -69,29 +102,54 @@ export class HrPicturesComponent implements OnInit, OnDestroy, ControlValueAcces
   public ngOnDestroy(): void {
     this._picNotifierService.unRegisterFromThumbnailEvent(this);
   }
-
+  /**
+  *  onThumbnailCreated :
+  * 1- Check if display is concerned
+  * 2- Look for input in displayed pictures and update thumbnail url if found
+  * 3- Element not found in displayed items so add it in display
+  */
   public onThumbnailCreated(vernacularName: string, id: string, url: string): void {
+    //1- 
     if (this._model === vernacularName) {
+      //2-
       this.birdsPictures.forEach(element => {
         if (element.id === id) {
-          this._snackBar.open(
-            "Thumbnail updated.", 
-            "", {
-            duration: 2000,
-          });
+          this._snackBar.open("Thumbnail updated.","", {duration: 2500});
           element.thumbnailUrl = url;
           return;
         }
       });
-    } else {
+      //3- 
+      this.addElementInDisplay(id);
     }
-
   }
-
+  /**
+  *  onImageCreated :
+  * 1- Check if display is concerned
+  * 2- Check if this data is not already in displayed elements, return if so.
+  * 3- If element does not exit, add it in displayed elements.
+  */
   public onImageCreated(vernacularName: string, id: string, url: string): void {
 
-    //1 check if same vernacular name
+    //1-
     if (this._model === vernacularName) {
+      //2- 
+      this.birdsPictures.forEach(element => {
+        if (element.id === id) {
+          return;
+        }
+      });
+      //3-
+      this.addElementInDisplay(id);
+    }
+  }
+
+  public onConnectionDone(data: string) {
+    console.log(data);
+  }
+
+  private addElementInDisplay(id: string): void {
+    if (id) {
       this._picService.getImage(id).subscribe({
         next:
           data => {
@@ -99,13 +157,10 @@ export class HrPicturesComponent implements OnInit, OnDestroy, ControlValueAcces
               this.birdsPictures = [];
             }
             this.birdsPictures.push(data);
+            //5- refresh datasource to update display
             this.dataSource = new MatTableDataSource<HRPictureOrnithoListItem>(this.birdsPictures);
-            this._snackBar.open(
-              "New image added.", 
-              "", {
-              duration: 2000,
-            });
-
+            //6- Notify on scrren that a new element has been added.
+            this._snackBar.open("New image added.", "", {duration: 2500});
           },
         error: (dataError) => {
           this.isLoading = false;
@@ -114,17 +169,8 @@ export class HrPicturesComponent implements OnInit, OnDestroy, ControlValueAcces
           this.isLoading = false;
         }
       });
-    } else {
-
     }
   }
-
-  onConnectionDone(data: string) {
-    console.log(data);
-  }
-
-
-
 
   public deletePictureDialog(bird: HRPictureOrnithoListItem): void {
     const dialogRef = this.dialog.open(HRConfirmDeletionComponent);

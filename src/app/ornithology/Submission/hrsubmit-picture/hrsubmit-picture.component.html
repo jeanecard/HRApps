@@ -7,7 +7,7 @@
       <app-hr-pictures formControlName="pictureList"></app-hr-pictures>
     </mat-card-content>
     <mat-card-content>
-      <app-hradd-picture-dialog formControlName="addPicture"></app-hradd-picture-dialog>
+      <app-hradd-picture-dialog formControlName="addPicture" (imageAddedEvent)="onImageAdded($event)"></app-hradd-picture-dialog>
     </mat-card-content>
   </mat-card>
 </form>
