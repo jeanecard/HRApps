@@ -1,8 +1,8 @@
-import { HRPictureOrnithoAddOrUpdateInput } from "./hrpicture-ornitho";
+import { HRSubmitPictureModel } from "./hrsubmit-picture-model";
 
 export  interface HrThumbnailSubscriber {
-  onThumbnailCreated(data1: string, data2: string, data3: string): void;
-  onImageCreated(data1: string, data2: string, data3: string): void;
+  onThumbnailCreated(rawJson: string): void;
+  onImageCreated(rawJson: string): void;
   onConnectionDone(data : string);
-  onInternalImageCreated(data : HRPictureOrnithoAddOrUpdateInput); //!bad temporary cheat ;-)
+  onInternalImageCreated(data : HRSubmitPictureModel); //!bad temporary cheat ;-)
 }

@@ -25,21 +25,21 @@ export class HRPictureOrnithoUpdateInput {
   isNew : boolean;
 
 }
-export class HRPictureOrnithoListItem {
-  id: string | null;
-  thumbnailUrl : string | null;
-  vernacularName: string;
-  age: string;
-  ageType: string;
-  gender : string;
-  genderType : string;
-  source : string ;
-  sourceType : string ;
-  credit : string ;
-  comment : string;
-  fullImageUrl : string | null;
-  isNew : boolean
-}
+// export class HRPictureOrnithoListItem {
+//   id: string | null;
+//   thumbnailUrl : string | null;
+//   vernacularName: string;
+//   age: string;
+//   ageType: string;
+//   gender : string;
+//   genderType : string;
+//   source : string ;
+//   sourceType : string ;
+//   credit : string ;
+//   comment : string;
+//   fullImageUrl : string | null;
+//   isNew : boolean
+// }
 
 export class FileToUpload {
   fileName: string = "";

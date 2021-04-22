@@ -4,7 +4,8 @@ import { Observable, of } from 'rxjs';
 import { HrSubmitAge } from 'src/app/model/Ornitho/hr-submit-age';
 import { HrSubmitGender } from 'src/app/model/Ornitho/hr-submit-gender';
 import { HrSubmitSource } from 'src/app/model/Ornitho/hr-submit-source';
-import { FileToUpload, HRPictureOrnithoAddOrUpdateInput, HRPictureOrnithoListItem, HRPictureOrnithoUpdateInput } from 'src/app/model/Ornitho/hrpicture-ornitho';
+import { FileToUpload, HRPictureOrnithoAddOrUpdateInput, HRPictureOrnithoUpdateInput } from 'src/app/model/Ornitho/hrpicture-ornitho';
+import { HRSubmitPictureModel } from 'src/app/model/Ornitho/hrsubmit-picture-model';
 
 @Injectable({
   providedIn: 'root'
@@ -28,10 +29,10 @@ private _rootUrl = "https://hrbirdswebapi-dev-as.azurewebsites.net/";
   constructor(private http: HttpClient) {
   }
 
-  public getImages(vernacularName: string): Observable<HRPictureOrnithoListItem[]> {
+  public getImages(vernacularName: string): Observable<HRSubmitPictureModel[]> {
 
     if (vernacularName) {
-      return this.http.get<HRPictureOrnithoListItem[]>(
+      return this.http.get<HRSubmitPictureModel[]>(
         this._rootUrl 
         + 'api/v1.0/HRBirdSubmission/get-images/' + vernacularName);
     }
@@ -39,23 +40,23 @@ private _rootUrl = "https://hrbirdswebapi-dev-as.azurewebsites.net/";
   }
 
 
-  public getImage(id: string): Observable<HRPictureOrnithoListItem> {
+  public getImage(id: string): Observable<HRSubmitPictureModel> {
 
     if (id) {
-      return this.http.get<HRPictureOrnithoListItem>(
+      return this.http.get<HRSubmitPictureModel>(
         this._rootUrl 
         + 'api/v1.0/HRBirdSubmission/get-image/' + id);
     }
     return of(null);
   }
-  public addImageData(data: HRPictureOrnithoAddOrUpdateInput): Observable<HRPictureOrnithoAddOrUpdateInput> {
-    return this.http.post<HRPictureOrnithoAddOrUpdateInput>(
+  public addImageData(data: HRSubmitPictureModel): Observable<HRSubmitPictureModel> {
+    return this.http.post<HRSubmitPictureModel>(
       this._rootUrl 
       + 'api/v1.0/HRBirdSubmission/add-image-metadata', data);
   }
 
-  public updateImage(data: HRPictureOrnithoUpdateInput): Observable<HRPictureOrnithoUpdateInput> {
-    return this.http.put<HRPictureOrnithoAddOrUpdateInput>(
+  public updateImage(data: HRSubmitPictureModel): Observable<HRSubmitPictureModel> {
+    return this.http.put<HRSubmitPictureModel>(
       this._rootUrl 
       + 'api/v1.0/HRBirdSubmission/update-image-metadata', data);
   } 

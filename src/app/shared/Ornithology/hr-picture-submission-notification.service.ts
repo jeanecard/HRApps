@@ -3,6 +3,7 @@ import * as signalR from '@microsoft/signalr';
 import { HubConnection } from '@microsoft/signalr';
 import { HrThumbnailSubscriber } from 'src/app/model/Ornitho/hr-thumbnail-subscriber';
 import { HRPictureOrnithoAddOrUpdateInput } from 'src/app/model/Ornitho/hrpicture-ornitho';
+import { HRSubmitPictureModel } from 'src/app/model/Ornitho/hrsubmit-picture-model';
 @Injectable({
   providedIn: 'root'
 })
@@ -12,16 +13,14 @@ export class HrPictureSubmissionNotificationService {
   constructor() { }
   public registerToThumbnailEvent(subscriber: HrThumbnailSubscriber): void {
     let found = false;
-    if(this._thumbnailSubscribers){
-      this._thumbnailSubscribers.forEach(element => {
+    if(!this._thumbnailSubscribers){
+      this._thumbnailSubscribers = [];
+    }
+    this._thumbnailSubscribers.forEach(element => {
         if (element == subscriber) {
           found = true;
         }
       });
-    } else{
-      console.log("this._thumbnailSubscriber is null");
-    }
-
     if (!found) {
       this._thumbnailSubscribers.push(subscriber);
       this.connectToImageNotificationIfNeeded();
@@ -38,7 +37,7 @@ export class HrPictureSubmissionNotificationService {
     this._thumbnailSubscribers = newSubscribers;
   }
 
- public internalImageAddedNotification(data : HRPictureOrnithoAddOrUpdateInput){
+ public internalImageAddedNotification(data : HRSubmitPictureModel){
   this._thumbnailSubscribers.forEach(element => {
     element.onInternalImageCreated(data);
   });
@@ -54,16 +53,16 @@ export class HrPictureSubmissionNotificationService {
 
       this._hubConnection.start().catch(err => console.error(err.toString()));
 
-      this._hubConnection.on('ThumbnailUpdated', (data1: any,data2: any,data3: any) => {
+      this._hubConnection.on('ThumbnailUpdated', (data1: any) => {
         this._thumbnailSubscribers.forEach(element => {
-          element.onThumbnailCreated(data1, data2, data3);
+          element.onThumbnailCreated(data1);
         }
         );
       });
 
-      this._hubConnection.on('ImageCreated', (data1: any,data2: any,data3: any) => {
+      this._hubConnection.on('ImageCreated', (data1: any) => {
         this._thumbnailSubscribers.forEach(element => {
-          element.onImageCreated(data1,data2,data3);
+          element.onImageCreated(data1);
         }
         );
       });

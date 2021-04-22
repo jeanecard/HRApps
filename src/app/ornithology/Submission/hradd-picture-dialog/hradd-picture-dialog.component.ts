@@ -9,6 +9,7 @@ import { HrSubmitGender } from 'src/app/model/Ornitho/hr-submit-gender';
 import { HrSubmitAge } from 'src/app/model/Ornitho/hr-submit-age';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Output, EventEmitter } from '@angular/core';
+import { HRSubmitPictureModel } from 'src/app/model/Ornitho/hrsubmit-picture-model';
 
 
 const UNASSIGNED_VALUE_DISPLAY = " _ ";
@@ -25,8 +26,8 @@ const MORE_INFO_DISPLAY = " ...";
     }]
 })
 export class HRAddPictureDialogComponent implements OnInit, ControlValueAccessor {
-  @Output() imageAddedEvent:EventEmitter<HRPictureOrnithoAddOrUpdateInput> =new EventEmitter<HRPictureOrnithoAddOrUpdateInput>();
-  private _model: HRPictureOrnithoAddOrUpdateInput;
+  @Output() imageAddedEvent:EventEmitter<HRSubmitPictureModel> =new EventEmitter<HRSubmitPictureModel>();
+  private _model: HRSubmitPictureModel;
   public dataPickerFormGroup: FormGroup;
   public ageType: FormControl;
   public gender: FormControl;
@@ -77,7 +78,7 @@ export class HRAddPictureDialogComponent implements OnInit, ControlValueAccessor
   ngOnInit(): void {
 
     // TODO HR charge l'objet en cas d'update ici
-    this._model = new HRPictureOrnithoAddOrUpdateInput();
+    this._model = new HRSubmitPictureModel();
     this.ageType = new FormControl();
     this.gender = new FormControl();
     this.credit = new FormControl();

@@ -78,8 +78,5 @@ export class HRSubmitPictureComponent implements OnInit, ControlValueAccessor {
 
   public onImageAdded(data:any):void{
     this.serviceNotificationTemp.internalImageAddedNotification(data);
-    console.log("---------------------------------------------------------------------");
-    console.log(data);
-    console.log("****************************************************************************")
   }
 }
