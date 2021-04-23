@@ -1,10 +1,9 @@
 import { Component, forwardRef, OnDestroy, OnInit } from '@angular/core';
-import { ControlValueAccessor, FormControl, FormGroup, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { ControlValueAccessor,  NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatSnackBar, MatSnackBarRef, TextOnlySnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource } from '@angular/material/table';
 import { HrThumbnailSubscriber } from 'src/app/model/Ornitho/hr-thumbnail-subscriber';
-import { HRPictureOrnithoAddOrUpdateInput } from 'src/app/model/Ornitho/hrpicture-ornitho';
 import { HRSubmitPictureModel } from 'src/app/model/Ornitho/hrsubmit-picture-model';
 import { HRConfirmDeletionComponent } from 'src/app/shared/components/hrconfirm-deletion/hrconfirm-deletion.component';
 import { HrPictureSubmissionNotificationService } from 'src/app/shared/Ornithology/hr-picture-submission-notification.service';
@@ -33,6 +32,7 @@ export class HrPicturesComponent implements OnInit, OnDestroy, ControlValueAcces
   private _propagateChange = (_: any) => { };
   private _propagateTouch = (_: any) => { };
   public isLoading = false;
+  private _snckRef : MatSnackBarRef<TextOnlySnackBar> = null;
 
 
   constructor(
@@ -61,9 +61,34 @@ export class HrPicturesComponent implements OnInit, OnDestroy, ControlValueAcces
         //5- refresh datasource to update display
         this.dataSource = new MatTableDataSource<HRSubmitPictureModel>(this.birdsPictures);
         //6- Notify on scrren that a new element has been added.
-        this._snackBar.open("New image added.", "", { duration: 2500 });
+        this.displaySnackBar("New image added (internal).");
       }
 
+    }
+  }
+  displaySnackBar(arg0: string) {
+    if(arg0){
+      if(this._snckRef){
+        console.log('-------------------');
+        console.log("dismiss call");
+        console.log('-------------------');
+        this._snckRef.dismiss;
+      }
+      console.log('-------------------');
+      console.log(arg0);
+      console.log('-------------------');
+
+      this._snckRef = this._snackBar.open(arg0, "", { 
+        duration: 3000,
+        horizontalPosition: 'center',
+        verticalPosition: 'top' });
+
+      this._snckRef .afterDismissed().subscribe(() => {
+        console.log('-------------------');
+        console.log("dismiss called");
+        console.log('-------------------');
+        this._snckRef = null;
+      });
     }
   }
 
@@ -111,8 +136,8 @@ export class HrPicturesComponent implements OnInit, OnDestroy, ControlValueAcces
         let picturesCount = this.birdsPictures.length;
         for (let i = 0; i < picturesCount; i++) {
           if (this.birdsPictures[i].id === jsonObject.id) {
-            this._snackBar.open("Thumbnail updated.", "", { duration: 2500 });
             this.birdsPictures[i].thumbnailUrl = jsonObject.thumbnailUrl;
+            this.displaySnackBar("Thumbnail updated.");
             found = true;
             break;
           }
@@ -137,6 +162,9 @@ export class HrPicturesComponent implements OnInit, OnDestroy, ControlValueAcces
       //1-
       if (this._model === jsonObject.vernacularName) {
         //2- 
+        if(!this.birdsPictures){
+          this.birdsPictures = [];
+        }
         let picturesCount = this.birdsPictures.length;
         for (let i = 0; i < picturesCount; i++) {
           if (this.birdsPictures[i].id === jsonObject.id) {
@@ -157,15 +185,17 @@ export class HrPicturesComponent implements OnInit, OnDestroy, ControlValueAcces
   }
 
   private addElementInDisplay(data: HRSubmitPictureModel): void {
+    //1- add data only if defined
     if (data) {
+      //2- instanciate empty birdsPicture if needed
       if (!this.birdsPictures) {
         this.birdsPictures = [];
       }
+      //3- add data and refresh datasource
       this.birdsPictures.push(data);
-      //1- refresh datasource to update display
       this.dataSource = new MatTableDataSource<HRSubmitPictureModel>(this.birdsPictures);
-      //2- Notify on scrren that a new element has been added.
-      this._snackBar.open("New image added.", "", { duration: 2500 });
+      //4- Notify on scrren that a new element has been added.
+      this.displaySnackBar("New image added.");
     }
   }
 
@@ -214,7 +244,11 @@ export class HrPicturesComponent implements OnInit, OnDestroy, ControlValueAcces
       next:
         data => {
           this.isLoading = false;
-          this.birdsPictures = data;
+          if(data){
+            this.birdsPictures = data;
+          }else{
+            this.birdsPictures = [];
+          }
           this.dataSource = new MatTableDataSource<HRSubmitPictureModel>(this.birdsPictures);
         },
       error: (dataError) => {

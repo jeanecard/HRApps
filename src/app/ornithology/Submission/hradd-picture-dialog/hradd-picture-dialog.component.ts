@@ -7,7 +7,6 @@ import { Observable } from 'rxjs';
 import { HrSubmitSource } from 'src/app/model/Ornitho/hr-submit-source';
 import { HrSubmitGender } from 'src/app/model/Ornitho/hr-submit-gender';
 import { HrSubmitAge } from 'src/app/model/Ornitho/hr-submit-age';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { Output, EventEmitter } from '@angular/core';
 import { HRSubmitPictureModel } from 'src/app/model/Ornitho/hrsubmit-picture-model';
 
@@ -54,9 +53,7 @@ export class HRAddPictureDialogComponent implements OnInit, ControlValueAccessor
 
 
   constructor(
-    private _picService: HRPicturesSubmissionService,
-    
-    private _snackBar: MatSnackBar
+    private _picService: HRPicturesSubmissionService
   ) {
     this.data = new HRPictureOrnithoAddOrUpdateInput();
     this.data.vernacularName = "";
@@ -165,21 +162,9 @@ export class HRAddPictureDialogComponent implements OnInit, ControlValueAccessor
                 next: uploadResponse => {
                   this.files = [];
                   this.isUploading = false;
-                  this._snackBar.open(
-                    "Upload successful. Images will be refresh automatically", 
-                    "", {
-                    duration: 2000,
-                  });
-
                 },
                 error: (dataError) => {
                   this.files = [];
-                  this._snackBar.open(
-                    "Upload error !", 
-                    "", {
-                    duration: 2000,
-                  });
-
                   this.isUploading = false;
                 },
                 complete: () => {
@@ -197,11 +182,6 @@ export class HRAddPictureDialogComponent implements OnInit, ControlValueAccessor
         console.log(dataError);
         this.files = [];
         this.isUploading = false;
-        this._snackBar.open(
-          "Upload error !", 
-          "", {
-          duration: 2000,
-        });
         // Dummy
       },
       complete: () => {
