@@ -8,6 +8,7 @@ import { HRSubmitPictureModel } from 'src/app/model/Ornitho/hrsubmit-picture-mod
 import { HRConfirmDeletionComponent } from 'src/app/shared/components/hrconfirm-deletion/hrconfirm-deletion.component';
 import { HrPictureSubmissionNotificationService } from 'src/app/shared/Ornithology/hr-picture-submission-notification.service';
 import { HRPicturesSubmissionService } from 'src/app/shared/Ornithology/hrpictures-submission.service';
+import { ToastService } from 'src/app/shared/toast.service';
 import { HRAddPictureDialogComponent } from '../hradd-picture-dialog/hradd-picture-dialog.component';
 
 @Component({
@@ -32,14 +33,13 @@ export class HrPicturesComponent implements OnInit, OnDestroy, ControlValueAcces
   private _propagateChange = (_: any) => { };
   private _propagateTouch = (_: any) => { };
   public isLoading = false;
-  private _snckRef : MatSnackBarRef<TextOnlySnackBar> = null;
 
 
   constructor(
     public dialog: MatDialog,
     private _picService: HRPicturesSubmissionService,
     private _picNotifierService: HrPictureSubmissionNotificationService,
-    private _snackBar: MatSnackBar) { }
+    public toastService: ToastService) { }
 
 
 
@@ -67,27 +67,16 @@ export class HrPicturesComponent implements OnInit, OnDestroy, ControlValueAcces
     }
   }
   displaySnackBar(arg0: string) {
+    // Error bg-danger text-light
+    // info 'bg-info text-light'
+    // success 'bg-success text-light'
     if(arg0){
-      if(this._snckRef){
-        console.log('-------------------');
-        console.log("dismiss call");
-        console.log('-------------------');
-        this._snckRef.dismiss;
-      }
-      console.log('-------------------');
-      console.log(arg0);
-      console.log('-------------------');
 
-      this._snckRef = this._snackBar.open(arg0, "", { 
-        duration: 3000,
-        horizontalPosition: 'center',
-        verticalPosition: 'top' });
-
-      this._snckRef .afterDismissed().subscribe(() => {
-        console.log('-------------------');
-        console.log("dismiss called");
-        console.log('-------------------');
-        this._snckRef = null;
+      this.toastService.show(arg0, {
+        classname: 'bg-success text-light',
+        delay: 3000 ,
+        autohide: true,
+        //headertext: 'HR Information'
       });
     }
   }

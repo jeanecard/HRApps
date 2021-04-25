@@ -9,7 +9,7 @@ import { HttpClient } from '@angular/common/http';
 export class HROrnithoBirdsService {
 
   private readonly stub: HRBirdModel[];
-  private readonly serviceURL1 = 'https://hrcorebordersservicesv-3-1.azurewebsites.net/api/v1.0/HRBird?';
+  private readonly serviceURL1 = 'http://localhost:50147/api/v1.0/HRBird?';
   private readonly serviceURLSeason = 'Season=';
   private readonly serviceURLLat = '&Lat=';
   private readonly serviceURLLon = '&Lon=';

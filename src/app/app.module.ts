@@ -15,6 +15,8 @@ import { AppRoutingModule } from './app-routing.module';
 
 import { FormatNumberDirective } from './shared/format-number.directive';
 import { HRErrorHandler } from './hrerror-handler';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { ToastComponent } from './shared/component/toast/toast.component';
 
 
 
@@ -23,6 +25,7 @@ import { HRErrorHandler } from './hrerror-handler';
   declarations: [
     AppComponent,
     FormatNumberDirective,
+    ToastComponent,
      
   ],
   imports: [
@@ -32,6 +35,7 @@ import { HRErrorHandler } from './hrerror-handler';
     RootModule,
     AppRoutingModule,
     HttpClientModule,
+    NgbModule
    // StorageServiceModule
   ],
   //providers: [{provide: ErrorHandler, useClass: HRErrorHandler}],
