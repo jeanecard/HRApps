@@ -18,7 +18,7 @@ Run `ng build` to build the project. The build artifacts will be stored in the `
 `ng build --prod --aot`
 `firebase deploy`
 
-Deployment URL : https://hrnithoonfirebase.firebaseapp.com/
+Deployment URL : moving on Azure ...
 
 ## Running unit tests
 
